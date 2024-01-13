@@ -1,0 +1,125 @@
+[
+    {
+        "userID" : "1",
+        "assets" : [
+            {
+                "groupName" : "Long Term",
+                "description" : "Long term holdings, preferably 3-5 years",
+                "tokens" : [ 
+                    {
+                        "coin" : "btc",
+                        "amount" : 1.3152
+                    },
+                    {
+                        "coin" : "eth",
+                        "amount" : 7.1940
+                    },
+                    {
+                        "coin" : "ada",
+                        "amount" : 37482.8292
+                    }
+                ]
+            },
+            {
+                "groupName" : "Swing Trades",
+                "description" : "1-3 months holding for swings",
+                "tokens" : [ 
+                    {
+                        "coin" : "matic",
+                        "amount" : 274.8104
+                    },
+                    {
+                        "coin" : "sol",
+                        "amount" : 21.3829
+                    },
+                    {
+                        "coin" : "op",
+                        "amount" : 631.4826
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "userID" : "2",
+        "assets" : [
+            {
+                "groupName" : "HODL",
+                "description" : "Hodling for life",
+                "tokens" : [ 
+                    {
+                        "coin" : "btc",
+                        "amount" : 2.1974
+                    },
+                    {
+                        "coin" : "eth",
+                        "amount" : 22.2397
+                    },
+                    {
+                        "coin" : "sol",
+                        "amount" : 731.3289
+                    }
+                ]
+            },
+            {
+                "groupName" : "Short Term",
+                "description" : "Moving Funds here and there for short term profits",
+                "tokens" : [ 
+                    {
+                        "coin" : "matic",
+                        "amount" : 123.0329
+                    },
+                    {
+                        "coin" : "arb",
+                        "amount" : 216.3208
+                    },
+                    {
+                        "coin" : "link",
+                        "amount" : 83.8391
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "userID" : "3",
+        "assets" : [
+            {
+                "groupName" : "Swings",
+                "description" : "These are swing holdings",
+                "tokens" : [ 
+                    {
+                        "coin" : "sol",
+                        "amount" : 23.2891
+                    },
+                    {
+                        "coin" : "ada",
+                        "amount" : 980.7283
+                    },
+                    {
+                        "coin" : "arb",
+                        "amount" : 182.1184
+                    }
+                ]
+            },
+            {
+                "groupName" : "Meme coins",
+                "description" : "To the moon LFG",
+                "tokens" : [ 
+                    {
+                        "coin" : "bonk",
+                        "amount" : 2983919.1006
+                    },
+                    {
+                        "coin" : "pepe",
+                        "amount" : 81230121.1289
+                    },
+                    {
+                        "coin" : "shib",
+                        "amount" : 4312392.5580
+                    }
+                ]
+            }
+        ]
+    }
+]
