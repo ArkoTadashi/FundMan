@@ -3,6 +3,8 @@
         "postID" : 1,
         "userID" : 2,
         "parentID" : 1,
+        "date" : "",
+        "time" : "",
         "title" : "Buying MATIC, going to moooon!!!",
         "description" : "Just bought the dip at an average of 0.85$, MATIC seems to be in a perfect position to buy. This is a swing trade, so it can take a few weeks to play out. I am looking at a 1.5$ target and beyond.",
         "upvotes" : [
@@ -16,6 +18,8 @@
         "postID" : 2,
         "userID" : 1,
         "parentID" : 1,
+        "date" : "",
+        "time" : "",
         "title" : "Buying MATIC, going to moooon!!!",
         "description" : "That's a great find! Seems in a great position right now. Adding up in my favorites!",
         "upvotes" : [
@@ -29,6 +33,8 @@
         "postID" : 3,
         "userID" : 3,
         "parentID" : 1,
+        "date" : "",
+        "time" : "",
         "title" : "Buying MATIC, going to moooon!!!",
         "description" : "There is a huge risk of breaking support at 0.78$, then it would be a bloodshed. Chances for upside movement right now seems slim right now. Sold my position today, don't wanna lose more!",
         "upvotes" : [
@@ -42,6 +48,8 @@
         "postID" : 4,
         "userID" : 1,
         "parentID" : 2,
+        "date" : "",
+        "time" : "",
         "title" : "Buying MATIC, going to moooon!!!",
         "description" : "TO THE MOOOONNNNNNNNNN!!!!!!",
         "upvotes" : [
@@ -55,6 +63,8 @@
         "postID" : 5,
         "userID" : 2,
         "parentID" : 3,
+        "date" : "",
+        "time" : "",
         "title" : "Buying MATIC, going to moooon!!!",
         "description" : "I am not seeing it going that low anytime soon actually haha",
         "upvotes" : [
@@ -62,6 +72,21 @@
         ],
         "downvotes" : [
             3
+        ]
+    },
+    {
+        "postID" : 6,
+        "userID" : 3,
+        "parentID" : 6,
+        "date" : "",
+        "time" : "",
+        "title" : "Beware of scams!",
+        "description" : "Lately I have been seeing people posting random coins here and telling people to buy them. But right now, a big correction is expected, you should not buy them right now. Just do DCA and you would be doing great right now.",
+        "upvotes" : [
+            1, 2, 3
+        ],
+        "downvotes" : [
+            
         ]
     }
 ]
