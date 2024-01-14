@@ -1,24 +1,24 @@
 [
     {
-        "postID" : "1",
+        "postID" : 1,
         "date" : "",
         "title" : "What is DCA?",
         "description" : ""
     },
     {
-        "postID" : "2",
+        "postID" : 2,
         "date" : "",
         "title" : "Diversifying your portfolio",
         "description" : ""
     },
     {
-        "postID" : "3",
+        "postID" : 3,
         "date" : "",
         "title" : "Long Term vs Short Term - which is better?",
         "description" : ""
     },
     {
-        "postID" : "4",
+        "postID" : 4,
         "date" : "",
         "title" : "How to avoid scams - Finding the best projects in crypto",
         "description" : ""

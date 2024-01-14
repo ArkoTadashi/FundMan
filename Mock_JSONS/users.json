@@ -1,18 +1,18 @@
 [
     {
-        "userID" : "1",
+        "userID" : 1,
         "username" : "arko12",
         "password" : "abc",
         "name" : "Arko Sikder"
     },
     {
-        "userID" : "2",
+        "userID" : 2,
         "username" : "arnob@24",
         "password" : "qwe12",
         "name" : "Arnob Saha"
     },
     {
-        "userID" : "3",
+        "userID" : 3,
         "username" : "aaasad",
         "password" : "asd@12",
         "name" : "Asad Bin"
