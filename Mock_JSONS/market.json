@@ -1,0 +1,122 @@
+[
+    {
+        "token" : "btc",
+        "yearlyPrice" : [
+
+        ],
+        "monthlyPrice" : [
+
+        ],
+        "dailyPrice" : [
+
+        ]
+    },
+    {
+        "token" : "eth",
+        "yearlyPrice" : [
+
+        ],
+        "monthlyPrice" : [
+
+        ],
+        "dailyPrice" : [
+
+        ]
+    },
+    {
+        "token" : "matic",
+        "yearlyPrice" : [
+
+        ],
+        "monthlyPrice" : [
+
+        ],
+        "dailyPrice" : [
+
+        ]
+    },
+    {
+        "token" : "xrp",
+        "yearlyPrice" : [
+
+        ],
+        "monthlyPrice" : [
+
+        ],
+        "dailyPrice" : [
+
+        ]
+    },
+    {
+        "token" : "ada",
+        "yearlyPrice" : [
+
+        ],
+        "monthlyPrice" : [
+
+        ],
+        "dailyPrice" : [
+
+        ]
+    },
+    {
+        "token" : "sol",
+        "yearlyPrice" : [
+
+        ],
+        "monthlyPrice" : [
+
+        ],
+        "dailyPrice" : [
+
+        ]
+    },
+    {
+        "token" : "bonk",
+        "yearlyPrice" : [
+
+        ],
+        "monthlyPrice" : [
+
+        ],
+        "dailyPrice" : [
+
+        ]
+    },
+    {
+        "token" : "pepe",
+        "yearlyPrice" : [
+
+        ],
+        "monthlyPrice" : [
+
+        ],
+        "dailyPrice" : [
+
+        ]
+    },
+    {
+        "token" : "doge",
+        "yearlyPrice" : [
+
+        ],
+        "monthlyPrice" : [
+
+        ],
+        "dailyPrice" : [
+
+        ]
+    },
+    {
+        "token" : "shib",
+        "yearlyPrice" : [
+
+        ],
+        "monthlyPrice" : [
+
+        ],
+        "dailyPrice" : [
+
+        ]
+    }
+]
