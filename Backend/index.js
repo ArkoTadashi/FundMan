@@ -18,3 +18,4 @@ app.listen(backendPort,()=>{
         console.log("Connection to database successful")
     })
 })
+
