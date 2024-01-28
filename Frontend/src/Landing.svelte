@@ -1,8 +1,4 @@
 <script>
-  // import { Router, Route } from 'svelte-routing';
-  // import Holding from './Holding.svelte';
-  // import Landing from './Landing.svelte';
-
 	let pages = [
 		{ name: 'Market', link: "/#/Holding", id: 1}, 
 		{ name: 'Academy', link: 'https://www.google.com', id: 2}, 
@@ -27,7 +23,7 @@
   <Route path="/holding" component={Holding} />
 </Router> -->
 
-<body class="gradient" style="height: 800px; background-size: cover;">
+<body class="gradient" style="height: 800px;">
 <main>
 	<div class="navbar" height="500px" style="gradient">
 		<div class="nav-buttons">
@@ -64,13 +60,6 @@
 		border: 0px;
 		text-align: center;
 		padding: 1em;
-	}
-
-	h1 {
-		color: #ff3e00;
-		text-transform: uppercase;
-		font-size: 4em;
-		font-weight: 100;
 	}
 
 	@media (min-width: 640px) {
