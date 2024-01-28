@@ -1,6 +1,10 @@
 <script>
+  // import { Router, Route } from 'svelte-routing';
+  // import Holding from './Holding.svelte';
+  // import Landing from './Landing.svelte';
+
 	let pages = [
-		{ name: 'Market', link: 'https://www.google.com', id: 1}, 
+		{ name: 'Market', link: '/holding', id: 1}, 
 		{ name: 'Academy', link: 'https://www.google.com', id: 2}, 
 		{ name: 'Forum', link: 'https://www.google.com', id: 3}, 
 		{ name: 'News', link: 'https://www.google.com', id: 4}, 
@@ -18,6 +22,10 @@
         console.log("Register clicked with:", emailOrMobile);
     }
 </script>
+
+<!-- <Router>
+  <Route path="/holding" component={Holding} />
+</Router> -->
 
 <body class="gradient" style="height: 800px; background-size: cover;">
 <main>
@@ -177,5 +185,6 @@
     input[type="text"] {
         padding: 8px;
         margin-right: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
 </style>
