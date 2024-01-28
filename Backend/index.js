@@ -96,6 +96,65 @@ app.get("/holding/:userid/group/:grpid/token/:tid", (req, res) => {
         });
 });
 
+//create asset group
+app.patch('/holding/:userid',(req,res)=>{
+    const entry=req.body //front theke json create korte hobe(tokens:[])
+
+    database.collection('holding')
+    .updateOne(
+        { "userID": req.params.userid },
+        { $push: { "assets": entry } }
+    )
+    .then(result => {
+        res.status(200).json({success:"patched"})
+        console.log(`Matched ${result.matchedCount} document(s) and modified ${result.modifiedCount} document(s)`);
+    })
+    .catch(error => {
+        console.error('Error updating document:', error);
+    });
+})
+
+//add token
+//create asset group
+app.patch('/holding/:userid/group/:grpid',(req,res)=>{
+    const upd=req.body //front theke json create korte hobe(tokens:[])
+    const gid=req.params.grpid
+    let result
+
+    database.collection('holding')
+        .findOne({ userID: req.params.userid })
+        .then((entry) => {
+            if (entry) {
+                if (Array.isArray(entry.assets)) {
+                    result = entry.assets.slice(gid, gid + 1);
+                    console.log(result[0]);
+
+                    //or update token
+                    database.collection('holding')
+                    .updateOne(
+                        { "userID": req.params.userid, "assets.groupName": result[0].groupName},  // specify the document using both userID and asset name
+                        { $push: { "assets.$.tokens": upd } }  // $ specifies the positional operator to update the correct array element
+                    )
+                    .then(result => {
+                        res.status(200).json({success:"token added"})
+                        console.log(`Matched ${result.matchedCount} document(s) and modified ${result.modifiedCount} document(s)`);
+                    })
+                    .catch(error => {
+                        console.error('Error updating document:', error);
+                    });
+                    /////////////////
+                } else {
+                    res.status(404).json({ err: 'Assets not found in the entry' });
+                }
+            } else {
+                res.status(404).json({ err: 'Holding not found' });
+            }
+        })
+        .catch((err) => {
+            console.error(err);
+            res.status(500).json({ err: 'Holding single grp fetching err' });
+        });
+})
 
 app.post('/holding',(req,res)=>{
     const entry=req.body
