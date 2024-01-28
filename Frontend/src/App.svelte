@@ -6,7 +6,6 @@
 		{ name: 'News', link: 'https://www.google.com', id: 4}, 
 		{ name: 'Pricing', link: 'https://www.google.com', id: 5}
 	];
-	
   let emailOrMobile = "";
 
     function handleInputChange(event) {
@@ -14,9 +13,10 @@
     }
 
     function handleRegisterClick() {
-        // Handle registration logic here
-        console.log("Register clicked with:", emailOrMobile);
+      
     }
+
+
 </script>
 
 <body class="gradient" style="height: 800px; background-size: cover;">
