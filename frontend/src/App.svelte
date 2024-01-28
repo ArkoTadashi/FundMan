@@ -6,20 +6,20 @@
 		{ name: 'News', link: 'https://www.google.com', id: 4}, 
 		{ name: 'Pricing', link: 'https://www.google.com', id: 5}
 	];
-	let sections = [
-    { type: 'gradient', size: 1000 },
-    { type: 'solid', size: 500 },
-    { type: 'gradient', size: 1000 },
-    // Add more sections as needed
-  ];
-  let currentSection = 0;
+	
+  let emailOrMobile = "";
 
-  const nextSection = () => {
-    currentSection = (currentSection + 1) % sections.length;
-  };
+    function handleInputChange(event) {
+        emailOrMobile = event.target.value;
+    }
+
+    function handleRegisterClick() {
+        // Handle registration logic here
+        console.log("Register clicked with:", emailOrMobile);
+    }
 </script>
 
-<body style="height: 500px; background: linear-gradient(to right, #7fedec, white); border: 0px">
+<body class="gradient" style="height: 800px; background-size: cover;">
 <main>
 	<div class="navbar" height="500px" style="gradient">
 		<div class="nav-buttons">
@@ -35,17 +35,27 @@
 		  <a href="#" class="signup-button">Sign Up</a>
 		</div>
 	</div>
-	<h1>Hello {name}!</h1>
-	<p>Visit the <a href="https://svelte.dev/tutorial">Svelte tutorial</a> to learn how to build Svelte apps.</p>
+	<div class="container">
+    <div class="image-wrapper">
+        <img src="images/heroart.png" alt="Your Image" />
+    </div>
+    <div class="text-container">
+        <div class="title">Your Personal</div>
+        <div class="crypto">Crypto Tracking Platform</div>
+        <div class="input-container">
+            <input type="text" placeholder="Email/Mobile" bind:value={emailOrMobile} />
+            <button class="register-btn" on:click={handleRegisterClick}>Register</button>
+        </div>
+    </div>
+</div>
 </main>
 </body>
-<body style="height: 500px; background: #f0f0f0"></body>
+<body class="solid" style="height: 500px;"></body>
 <style>
 	main {
 		border: 0px;
 		text-align: center;
 		padding: 1em;
-		max-width: 240px;
 	}
 
 	h1 {
@@ -110,10 +120,65 @@
   }
 
   .gradient {
-	background: linear-gradient(to right, #7fedec, white);
+	background: linear-gradient(to right, #7fedec, #f0f0f0);
   }
 
   .solid {
     background: #f0f0f0;
   }
+
+  .container {
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: flex-end;
+        align-items: center;
+        height: 100vh; /* Adjust as needed */
+        padding-right: 20px; /* Adjust as needed */
+    }
+
+    .image-wrapper {
+        width: 750px; /* Adjust size as needed */
+        height: 750px; /* Adjust size as needed */
+        overflow: hidden;
+        border-radius: 50%;
+        margin-left: 200px; /* Adjust as needed */
+    }
+
+    .image-wrapper img {
+        width: 100%;
+        height: auto;
+        border-radius: 50%;
+    }
+
+    .text-container {
+        text-align: center;
+    }
+
+    .title {
+        color: black;
+        margin-bottom: 5px;
+    }
+
+    .crypto {
+        color: cyan;
+        margin-bottom: 20px;
+    }
+
+    .input-container {
+        display: flex;
+        align-items: center;
+    }
+
+    .register-btn {
+        background-color: cyan;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        cursor: pointer;
+    }
+
+    input[type="text"] {
+        padding: 8px;
+        margin-right: 10px;
+    }
 </style>
