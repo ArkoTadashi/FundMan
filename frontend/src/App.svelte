@@ -41,7 +41,7 @@
     </div>
     <div class="text-container">
         <div class="title">Your Personal</div>
-        <div class="crypto">Crypto Tracking Platform</div>
+        <div class="title">Crypto Tracking Platform</div>
         <div class="input-container">
             <input type="text" placeholder="Email/Mobile" bind:value={emailOrMobile} />
             <button class="register-btn" on:click={handleRegisterClick}>Register</button>
@@ -141,7 +141,7 @@
         height: 750px; /* Adjust size as needed */
         overflow: hidden;
         border-radius: 50%;
-        margin-left: 200px; /* Adjust as needed */
+        margin-left: 20vw; /* Adjust as needed */
     }
 
     .image-wrapper img {
@@ -152,16 +152,13 @@
 
     .text-container {
         text-align: center;
+        margin-left: 10%;
     }
 
     .title {
         color: black;
         margin-bottom: 5px;
-    }
-
-    .crypto {
-        color: cyan;
-        margin-bottom: 20px;
+        font-size: xx-large;
     }
 
     .input-container {
