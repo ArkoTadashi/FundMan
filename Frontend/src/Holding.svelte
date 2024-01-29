@@ -1,22 +1,34 @@
 <script>
-    let assets = [
-        {name: "HODL", total: 1500.62, change: -20.45, id: 1},
-        {name: "DEX", total: 2342.54, change: 150.47, id: 2},
-        {name: "DEX2", total: 242.54, change: 50.47, id: 3},
-        {name: "DEX2", total: 242.54, change: 50.47, id: 4}
-    ];
+    import { onMount } from 'svelte';
+
+    let data = [];
+    let assets = [];
+    
+    onMount(async () => {
+        const response = await fetch('http://localhost:9000/holding/1');
+        const jsonData = await response.json();
+        data = jsonData;
+
+        assets = data.assets.map(asset => ({
+            name: asset.groupName,
+            total: 1000,
+            change: 20
+        }));
+    });
+    
 </script>
 
 <body class="gradient" style="height: 100vh;">
     <main>
         <h1 style="font-family: 'Inter', sans-serif; text-align: left">My Assets</h1>
         <div class="card-container">
-            {#each assets as asset (asset.id)}
-              <div class="card">
-                <h2>{asset.name}</h2>
-                <p>${asset.total} (<span class="{asset.change >= 0 ? 'positive' : 'negative'}">{asset.change}</span>)</p>
-              </div>
+            {#each assets as asset, index}
+                <div class="card" key={index}>
+                    <h2>{asset.name}</h2>
+                    <p>${asset.total} (<span class="{asset.change >= 0 ? 'positive' : 'negative'}">{asset.change}</span>)</p>
+                </div>
             {/each}
+
           </div>
     </main>
 </body>

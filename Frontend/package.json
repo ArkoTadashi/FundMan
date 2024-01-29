@@ -19,10 +19,10 @@
     "svelte": "^3.55.0"
   },
   "dependencies": {
-    "sirv-cli": "^2.0.0",
-    "svelte-routing": "^2.11.0",
-    "svelte-spa-router": "^4.0.1"
     "@metamask/sdk": "^0.14.2",
+    "sirv-cli": "^2.0.0",
+    "svelte-spa-router": "^4.0.1",
+    "svelte-web3": "^4.1.1",
     "web3": "^4.4.0"
   }
 }

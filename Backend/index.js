@@ -73,7 +73,7 @@ setInterval(async () => {
 
     
 
-}, 5000);
+}, 3600000);
 
 
 
@@ -295,6 +295,16 @@ app.post("/login",async (req, res) => {
 
 
 
+app.get("/token/:tname",(req,res)=>{
+    database.collection('token')
+    .findOne({token: req.params.tname})  
+    .then((entry)=>{
+        res.status(200).json(entry)
+    })  
+    .catch(()=>{
+        res.status(500).json({err:'Token fetching err'})
+    })
+})
 
 //-------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------

@@ -1,9 +1,27 @@
 <script>
-    let name = 'HODL';
-    let coins = [
-        {name: "Bitcoin", code: "BTC", amount: 0.8531, usd: 29471.02,change:0.41, id: 1},
-        {name: "Ethereum", code: "ETH", amount: 3.28353, usd: 5965.91,change:-1.21, id: 2},
-    ];
+
+    import { onMount } from 'svelte';
+
+    let data = [];
+    let name = '';
+    let coins = [];
+
+    onMount(async () => {
+        const response = await fetch('http://localhost:9000/holding/1');
+        const jsonData = await response.json();
+        data = jsonData;
+
+        assets = data.assets.map(asset => ({
+            name: asset.groupName,
+            total: 1000,
+            change: 20
+        }));
+    });
+    // let name = 'HODL';
+    // let coins = [
+    //     {name: "Bitcoin", code: "BTC", amount: 0.8531, usd: 29471.02,change:0.41, id: 1},
+    //     {name: "Ethereum", code: "ETH", amount: 3.28353, usd: 5965.91,change:-1.21, id: 2},
+    // ];
 </script>
 
 <body class="gradient" style="height: 100vh;">

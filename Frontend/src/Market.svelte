@@ -1,7 +1,26 @@
 <script>
-    let coins = [
-        {name: "Bitcoin", code: "BTC", price: 34283.53, change24h: 39.23, change7d: -15.21, inCirc: 19528893, volume: 17038253019,  id:1},
-    ]
+
+    import { onMount } from 'svelte';
+
+    let data = [];
+    let coins = [];
+
+    onMount(async () => {
+        const response = await fetch('http://localhost:9000/market');
+        const jsonData = await response.json();
+        data = jsonData;
+
+        coins = data.map(obj => ({
+            name: obj.token,
+            code: obj.token,
+            price: obj.currentPrice,
+            change24h: 200,
+            change7d : 30,
+            inCirc : obj.circulatingSupply,
+            volume: 93184,
+        }));
+        console.log(coins[0]);
+    });
 
     function getMarketCap(price, inCirc){
         const marketCap = price*inCirc;
@@ -12,34 +31,36 @@
 <body class="gradient" style="height: 100vh;">
     <main>
         <h1 style="font-family: 'Inter', sans-serif; text-align: left">Market</h1>
-        <table>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Coin Name</th>
-                <th>Price</th>
-                <th>24%</th>
-                <th>7d%</th>
-                <th>Circulating Supply</th>
-                <th>Volume</th>
-                <th>Market Cap</th>
-              </tr>
-            </thead>
-            <tbody>
-              {#each coins as coin (coin.id)}
-                <tr>
-                    <td>{coin.id}</td>
-                    <td>{coin.name}</td>
-                    <td>${coin.price.toLocaleString()}</td>
-                    <td><span style="text-align: right;" class="{coin.change24h >= 0 ? 'positive' : 'negative'}">{coin.change24h}%</span></td>
-                    <td><span style="text-align: right;" class="{coin.change7d >= 0 ? 'positive' : 'negative'}">{coin.change7d}%</span></td>
-                    <td>{coin.inCirc.toLocaleString()} {coin.code}</td>
-                    <td>${coin.volume.toLocaleString()}</td>
-                    <td>${getMarketCap(coin.price, coin.inCirc)}</td>
-                </tr>
-              {/each}
-            </tbody>
-          </table>
+        <div class="card-container">
+            <table>
+                <thead>
+                  <tr>
+                    <th>Coin Name</th>
+                    <th>Price</th>
+                    <th>24%</th>
+                    <th>7d%</th>
+                    <th>Circulating Supply</th>
+                    <th>Volume</th>
+                    <th>Market Cap</th>
+                  </tr>
+                </thead>
+                <tbody>
+                    {#each coins as coin, index}
+                    <tr>
+                        <td>{coin.name}</td>
+                        <td>${coin.price.toLocaleString()}</td>
+                        <td><span style="text-align: right;" class="{coin.change24h >= 0 ? 'positive' : 'negative'}">{coin.change24h}%</span></td>
+                        <td><span style="text-align: right;" class="{coin.change7d >= 0 ? 'positive' : 'negative'}">{coin.change7d}%</span></td>
+                        <td>{coin.inCirc.toLocaleString()} {coin.code}</td>
+                        <td>${coin.volume.toLocaleString()}</td>
+                        <td>${getMarketCap(coin.price, coin.inCirc)}</td>
+                    </tr>
+                {/each}
+                
+                </tbody>
+              </table>
+          </div>
+        
     </main>
 </body>
 

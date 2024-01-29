@@ -1,30 +1,30 @@
 <script>
+
 	let pages = [
-    { name: 'Holding', link: '/#/Holding', id: 1},
-		{ name: 'Market', link: "/#/Market", id: 2}, 
-		{ name: 'Academy', link: 'https://www.google.com', id: 3}, 
-		{ name: 'Forum', link: 'https://www.google.com', id: 4}, 
-		{ name: 'News', link: 'https://www.google.com', id: 5}, 
-		{ name: 'Pricing', link: 'https://www.google.com', id: 6},
+		{ name: 'Market', link: 'https://www.google.com', id: 1}, 
+		{ name: 'Academy', link: 'https://www.google.com', id: 2}, 
+		{ name: 'Forum', link: 'https://www.google.com', id: 3}, 
+		{ name: 'News', link: 'https://www.google.com', id: 4}, 
+		{ name: 'Pricing', link: 'https://www.google.com', id: 5}
 	];
+
+
 	
-  let emailOrMobile = "";
 
-    function handleInputChange(event) {
-        emailOrMobile = event.target.value;
+
+  let username = "";
+  let password = "";
+
+    function handleLoginClick() {
+        
     }
 
-    function handleRegisterClick() {
-        // Handle registration logic here
-        console.log("Register clicked with:", emailOrMobile);
-    }
+
+
+
 </script>
 
-<!-- <Router>
-  <Route path="/holding" component={Holding} />
-</Router> -->
-
-<body class="gradient" style="height: 800px;">
+<body class="gradient" style="height: 800px; background-size: cover;">
 <main>
 	<div class="navbar" height="500px" style="gradient">
 		<div class="nav-buttons">
@@ -40,27 +40,41 @@
 		  <a href="#" class="signup-button">Sign Up</a>
 		</div>
 	</div>
+
 	<div class="container">
     <div class="image-wrapper">
         <img src="images/heroart.png" alt="Your Image" />
     </div>
     <div class="text-container">
-        <div class="title">Your Personal</div>
-        <div class="title">Crypto Tracking Platform</div>
         <div class="input-container">
-            <input type="text" placeholder="Email/Mobile" bind:value={emailOrMobile} />
-            <button class="register-btn" on:click={handleRegisterClick}>Register</button>
+          <input type="text" placeholder="Username" bind:value={username} />
+        </div>
+        <div>
+          <input type="password" bind:value={password} on:input={validatePassword} placeholder="Enter your password">
         </div>
     </div>
+    <div class="register-button">
+      <button class="register-btn" on:click={handleLoginClick}>Register</button>
+    </div>
+    
 </div>
 </main>
 </body>
 <body class="solid" style="height: 500px;"></body>
+
+
 <style>
 	main {
 		border: 0px;
 		text-align: center;
 		padding: 1em;
+	}
+
+	h1 {
+		color: #ff3e00;
+		text-transform: uppercase;
+		font-size: 4em;
+		font-weight: 100;
 	}
 
 	@media (min-width: 640px) {
@@ -175,6 +189,5 @@
     input[type="text"] {
         padding: 8px;
         margin-right: 10px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
 </style>
