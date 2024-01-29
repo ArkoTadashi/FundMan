@@ -306,6 +306,20 @@ app.get("/token/:tname",(req,res)=>{
     })
 })
 
+app.get("/token",(req,res)=>{
+    let token=[]
+
+    database.collection('token')
+    .find() //cursor
+    .forEach(entry=>token.push(entry))  
+    .then(()=>{
+        res.status(200).json(token)
+    })  
+    .catch(()=>{
+        res.status(500).json({err:'Token collection fetching err'})
+    })     
+})
+
 //-------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------
 //check user debug

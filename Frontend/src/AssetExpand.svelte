@@ -5,18 +5,72 @@
     let data = [];
     let name = '';
     let coins = [];
+    let walletAddress = "";
+    let contractAddress = "";
+
+    async function getCoinsData(data) {
+        const coinsPromises = data.map(async (element) => ({
+            name: element.token,
+            code: element.token,
+            amount: await fetchCoinData(element.address, element.decimal),
+            usd: 10000,
+            change: 20,
+        }));
+
+        // Wait for all promises to resolve
+        const coins = await Promise.all(coinsPromises);
+        return coins;
+    }
+
+    async function fetchCoinData(address, decimal) {
+        try {
+            const wallet = await getWalletAddress();
+            const balance = await ethereum.request({
+                method: 'eth_getBalance',
+                params: [wallet, 'latest'],
+            });
+
+            const bal = await ethereum.request({
+                method: 'eth_call',
+                params: [{
+                    to: address,
+                    data: "0x70a08231" + "000000000000000000000000" + wallet.substring(2),
+                },
+                'latest']
+            });
+
+            const value = parseInt(bal, 16) / (10 ** decimal);
+            return value;
+        } catch (error) {
+            console.error("Error fetching coin data:", error);
+            return 0; // Return default value in case of error
+        }
+    }
+
+    async function getWalletAddress() {
+        try {
+            if (typeof window.ethereum !== 'undefined') {
+                const accs = await ethereum.request({ method: 'eth_requestAccounts' });
+                return accs[0];
+            }
+        } catch (error) {
+            console.error("Error fetching wallet address:", error);
+            return ''; // Return empty string in case of error
+        }
+    }
 
     onMount(async () => {
-        const response = await fetch('http://localhost:9000/holding/1');
-        const jsonData = await response.json();
-        data = jsonData;
+        try {
+            const response = await fetch('http://localhost:9000/token');
+            const jsonData = await response.json();
+            data = jsonData;
 
-        assets = data.assets.map(asset => ({
-            name: asset.groupName,
-            total: 1000,
-            change: 20
-        }));
+            coins = await getCoinsData(data);
+        } catch (error) {
+            console.error("Error fetching token data:", error);
+        }
     });
+
     // let name = 'HODL';
     // let coins = [
     //     {name: "Bitcoin", code: "BTC", amount: 0.8531, usd: 29471.02,change:0.41, id: 1},
@@ -28,7 +82,7 @@
     <main>
         <h1 style="font-family: 'Inter', sans-serif; text-align: left">{name}</h1>
         <div class="card-container">
-            {#each coins as coin (coin.id)}
+            {#each coins as coin }
               <div class="card">
                 <div class="card_text_container">
                     <h2>{coin.name} - {coin.code}</h2>
