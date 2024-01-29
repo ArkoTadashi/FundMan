@@ -1,3 +1,4 @@
+const { useEffect } = require('react');
 const Express=require("express")
 const MongoClient=require("mongodb").MongoClient
 const cors=require("cors")
@@ -24,6 +25,57 @@ connectToDb((err)=>{
         database=getDb()
     }
 })
+
+
+setInterval(async () => {
+    var res = await fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=200&page=1&sparkline=false&locale=en&x_cg_demo_api_key=CG-DXyth2fs4WGhHT5LZUu18m41`);
+    var _res = await res.json();
+
+
+    _res.forEach(obj => {
+        console.log(obj.symbol.toUpperCase());
+        database.collection('market')
+        .updateOne(
+            { "token":  obj.symbol},
+            { $push: { "dailyPrice": obj.current_price } }
+        )
+        .then(result => {
+            console.log(`Matched ${result.matchedCount} document(s) and modified ${result.modifiedCount} document(s)`);
+        })
+        .catch(error => {
+            console.error('Error updating document:', error);
+        });
+
+        database.collection('market')
+        .updateOne(
+            { "token":  obj.symbol},
+            { $pop: { "dailyPrice": -1 } }
+        )
+        .then(result => {
+            console.log(`Matched ${result.matchedCount} document(s) and modified ${result.modifiedCount} document(s)`);
+        })
+        .catch(error => {
+            console.error('Error updating document:', error);
+        });
+
+        database.collection('market')
+        .updateOne(
+            { "token":  obj.symbol},
+            { $set: { "circulatingSupply": obj.circulating_supply } }
+        )
+        .then(result => {
+            console.log(`Matched ${result.matchedCount} document(s) and modified ${result.modifiedCount} document(s)`);
+        })
+        .catch(error => {
+            console.error('Error updating document:', error);
+        });
+    })
+
+    
+
+}, 5000);
+
+
 
 
 app.get("/",(req,res)=>{
@@ -240,6 +292,9 @@ app.post("/login",async (req, res) => {
         res.status(500).json({ err: 'Signup error' });
     }
 })
+
+
+
 
 //-------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------
