@@ -21,6 +21,8 @@
   "dependencies": {
     "@metamask/sdk": "^0.14.2",
     "sirv-cli": "^2.0.0",
+    "svelte-spa-router": "^4.0.1",
+    "svelte-web3": "^4.1.1",
     "web3": "^4.4.0"
   }
 }
