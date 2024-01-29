@@ -1,20 +1,23 @@
 <script>
-    let assets = [
-        {name: "HODL", total: 1500.62, change: -20.45, id: 1},
-        {name: "DEX", total: 2342.54, change: 150.47, id: 2},
-        {name: "DEX2", total: 242.54, change: 50.47, id: 3},
-        {name: "DEX2", total: 242.54, change: 50.47, id: 4}
+    let name = 'HODL';
+    let coins = [
+        {name: "Bitcoin", code: "BTC", amount: 0.8531, usd: 29471.02,change:0.41, id: 1},
+        {name: "Ethereum", code: "ETH", amount: 3.28353, usd: 5965.91,change:-1.21, id: 2},
     ];
 </script>
 
 <body class="gradient" style="height: 100vh;">
     <main>
-        <h1 style="font-family: 'Inter', sans-serif; text-align: left">My Assets</h1>
+        <h1 style="font-family: 'Inter', sans-serif; text-align: left">{name}</h1>
         <div class="card-container">
-            {#each assets as asset (asset.id)}
+            {#each coins as coin (coin.id)}
               <div class="card">
-                <h2>{asset.name}</h2>
-                <p>${asset.total} (<span class="{asset.change >= 0 ? 'positive' : 'negative'}">{asset.change}</span>)</p>
+                <div class="card_text_container">
+                    <h2>{coin.name} - {coin.code}</h2>
+                    <p style="text-align: right;"><span style="text-align: right;" class="{coin.change >= 0 ? 'positive' : 'negative'}">{coin.change}%</span></p>
+                </div>
+                <p style="font-size: larger; font-weight:500">{coin.amount} {coin.code} </p>
+                <p>{coin.usd} USD</p>
               </div>
             {/each}
           </div>
@@ -67,5 +70,16 @@
 
     .negative {
         color: red;
+    }
+
+    .card_text_container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    }
+
+    h2 {
+        margin: 0; /* Remove default margin */
     }
 </style>
