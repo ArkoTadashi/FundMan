@@ -35,8 +35,8 @@
 		</div>
 	  
 		<div>
-		  <a href="#" class="login-button">Login</a>
-		  <a href="#" class="signup-button">Sign Up</a>
+		  <a href="/#/Login" class="login-button">Login</a>
+		  <a href="/#/SignUp" class="signup-button">Sign Up</a>
 		</div>
 	</div>
 	<div class="container">
