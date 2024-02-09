@@ -4,6 +4,8 @@
 	import Holding from './Holding.svelte';
 	import Landing from './Landing.svelte';
 	import Market from './Market.svelte';
+	import Assign from './Assign.svelte';
+    import Request from './Request.svelte';
   let emailOrMobile = "";
 
     function handleInputChange(event) {
@@ -21,5 +23,7 @@
 	'/': Landing,
 	'/Holding': Holding,
     '/AssetExpand': AssetExpand,
-    '/Market': Market
+    '/Market': Market,
+    '/Assign': Assign,
+    '/Request': Request
 }} />
