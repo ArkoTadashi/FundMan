@@ -89,7 +89,7 @@
                 <h3>Client</h3>
                 <hr>
                 <h3>{clientInfo.name}</h3>
-                <img src={clientInfo.picture} alt={clientInfo.name} />
+                <img class="img" src={clientInfo.picture} alt={clientInfo.name} />
                 <p>{clientInfo.info}</p>
             </div>
         {/if}
@@ -116,6 +116,12 @@
       border-radius: 3px;
       background-color: #cff0f3;
     }
+    .card img {
+      width: 30%;
+      height: 30%;
+      border-radius: 2px;
+    }
+
     .top-container{
         display: flex;
     }

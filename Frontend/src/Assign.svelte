@@ -107,7 +107,7 @@
             {#if selectedInfo}
               <div class="card">
                 <h3>{selectedInfo.name}</h3>
-                <img src={selectedInfo.picture} alt={selectedInfo.name} />
+                <img class="img" src={selectedInfo.picture} alt={selectedInfo.name} />
                 <p>{selectedInfo.info}</p>
               </div>
             {/if}
@@ -157,8 +157,9 @@
     }
     
     .card img {
-      max-width: 100%;
-      border-radius: 5px;
+      width: 20%;
+      height: 30%;
+      border-radius: 2px;
     }
 
     .top{
