@@ -67,7 +67,6 @@
 
   </script>
 
-<Navbar />
 
 <div class="top-container">
     <div class="container">

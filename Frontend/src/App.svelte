@@ -10,6 +10,7 @@
 	import Market from './Market.svelte';
 	import Request from './Request.svelte';
 	import SignUp from './SignUp.svelte';
+    import PanelLogin from './PanelLogin.svelte';
 	import UManagementOverview from './UManagementOverview.svelte';
     import Management from './Management.svelte';
 
@@ -37,6 +38,7 @@
     '/Login': Login,
     '/SignUp': SignUp,
     '/FundManageRequest': FundManageRequest,
+    '/PanelLogin': PanelLogin,
     '/UManagementOverview': UManagementOverview,
     '/Management': Management
 }} />
