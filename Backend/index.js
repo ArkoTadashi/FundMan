@@ -387,6 +387,17 @@ app.get('/panel',(req,res)=>{
     })
 })
 
+app.get('/panel/:pname',(req,res)=>{
+    database.collection('panel')
+    .findOne({username : req.params.pname}) 
+    .then((panel)=>{
+        res.status(200).json(panel)
+    })  
+    .catch(()=>{
+        res.status(500).json({err:'Panel collection fetching err'})
+    })
+})
+
 //-------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------
 //check user debug
