@@ -4,6 +4,7 @@ const MongoClient=require("mongodb").MongoClient
 const cors=require("cors")
 const multer=require("multer")
 const SHA3 = require('crypto-js/sha3');
+const { ObjectId } = require('mongodb');
 
 
 
@@ -374,6 +375,31 @@ app.post("/login",async (req, res) => {
     }
 })
 
+//login
+app.post("/panelLogin",async (req, res) => {
+    const entry = req.body;
+
+    try {
+        const existingUser = await database.collection('panel').findOne({ username: req.body.username });
+
+        if (existingUser) {
+            const sha3=SHA3(req.body.password, { outputLength: 256 }).toString()
+            if(existingUser.password==sha3){
+                //send uid to front
+                console.log(existingUser)
+                res.status(200).json(existingUser);
+            }
+            else{
+                res.status(400).json({err: "Incorrect pass"});
+            }
+        } else {            
+            res.status(400).json({ err: "User does not exist" });
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ err: 'Signup error' });
+    }
+})
 
 
 app.get("/token/:tname",(req,res)=>{
@@ -412,6 +438,28 @@ app.get('/panel/:pname',(req,res)=>{
         res.status(500).json({err:'Panel collection fetching err'})
     })
 })
+
+
+//id not solved
+// app.get('/panel/id/:pid', (req, res) => {
+//     let pid = req.params.pid; // Assuming req.params.pid is a valid ObjectId string
+//     let p=new ObjectId(pid);
+//     console.log("-----",p)
+//     database.collection('panel')
+//         .findOne({ _id: p })
+//         .then((panel) => {
+//             if (panel) {
+//                 res.status(200).json(panel);
+//             } else {
+//                 res.status(404).json({ error: 'Panel not found' });
+//             }
+//         })
+//         .catch(() => {
+//             res.status(500).json({ error: 'Panel collection fetching error' });
+//         });
+// });
+
+
 
 //management
 app.patch('/management/:pid',(req,res)=>{
