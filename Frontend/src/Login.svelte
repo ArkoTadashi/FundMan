@@ -1,7 +1,6 @@
 <script>
-
+  import { push } from 'svelte-spa-router';
   import Navbar from "./Navbar.svelte";
-  let isLoggedIn = false;
 
   let username = '';
   let password = '';
@@ -33,7 +32,8 @@
       if (response.status == 200) {
         
         sessionStorage.setItem('userID', variable._id);
-        sessionStorage.setItem('isLoggedIn', true);
+        sessionStorage.setItem('isLoggedIn', JSON.stringify(true));
+        sessionStorage.setItem('userName', variable.username);
         
         push('/holding');
         console.log('Data sent successfully');
@@ -48,7 +48,7 @@
 </script>
 
 <div class="gradient" style="height: 100%; width:100%">
-  <Navbar isLoggedIn={isLoggedIn}/>
+  <Navbar/>
   <div  class="container">
     <div class="image-wrapper">
       <img src="images/heroart.png" alt="Your Image"/>

@@ -1,6 +1,8 @@
 <script>
 
-    // import { onMount } from 'svelte';
+    import { onMount } from 'svelte';
+    import Navbar from './Navbar.svelte';
+    import PieChart from './PieChart.svelte';
 
     // let data = [];
     // let name = '';
@@ -71,19 +73,92 @@
     //     }
     // });
 
-    let name = 'HODL';
+    let name = '';
     let coins = [
-        {name: "Bitcoin", code: "BTC", amount: 0.8531, usd: 29471.02,change:0.41, id: 1},
-        {name: "Ethereum", code: "ETH", amount: 3.28353, usd: 5965.91,change:-1.21, id: 2},
+        
     ];
+
+    let hardCoins = [
+        { name: 'Bitcoin', usd: 5 },
+        { name: 'Ethereum', usd: 8 },
+        { name: 'Litecoin', usd: 3 }
+    ];
+
+    let userID = sessionStorage.getItem('userID');
+    let assetGroupIndex = sessionStorage.getItem('assetGroupIndex');
+
+    
+    async function fetchCoinData(address, decimal) {
+        try {
+            const wallet = sessionStorage.getItem('walletAddress');
+            const bal = await ethereum.request({
+                method: 'eth_call',
+                params: [{
+                    to: address,
+                    data: "0x70a08231" + "000000000000000000000000" + wallet.substring(2),
+                },
+                'latest']
+            });
+
+            const value = parseInt(bal, 16) / (10 ** decimal);
+            return value;
+        } catch (error) {
+            console.error("Error fetching coin data:", error);
+            return 0;
+        }
+    }
+
+
+
+    onMount(async () => {
+        try {
+            const response = await fetch(`http://localhost:9000/holding/${userID}/group/${assetGroupIndex}`);
+            const jsonData = await response.json();
+            let data = jsonData;
+            name = data.groupName;
+
+            coins = await Promise.all(data.tokens.map(async (coin) => {
+                const response = await fetch(`http://localhost:9000/token/${coin}`);
+                const jsonData = await response.json();
+                let dat = jsonData;
+
+                let tokenAddress = dat.address;
+                let decimal = dat.decimal;
+                let logo = dat.logo;
+
+                let holdingValue = await fetchCoinData(tokenAddress, decimal);
+
+                let currentPrice=await fetch(`http://localhost:9000/market/${coin}`)
+                currentPrice = await currentPrice.json();
+                console.log(currentPrice.currentPrice);
+
+
+                return {
+                    name : dat.name,
+                    code : coin.toUpperCase(),
+                    amount : parseFloat(holdingValue.toFixed(7)),
+                    usd : parseFloat((holdingValue*currentPrice.currentPrice).toFixed(7)),
+                    change : 0.5,
+                    logo: logo
+                };
+            }));
+        } catch (error) {
+            console.error("Error fetching token data:", error);
+        }
+
+    });
+
+    
 </script>
 
-<body class="gradient" style="height: 100vh;">
-    <main>
-        <h1 style="font-family: 'Inter', sans-serif; text-align: left">{name}</h1>
+<div class="gradient" style="min-height: 100vh;">
+
+    <Navbar/>
+    <h1 style="font-family: 'Inter', sans-serif; text-align: left; margin-left: 2%;">{name}</h1>
+    <div class="container">
         <div class="card-container">
             {#each coins as coin }
-              <div class="card">
+              <div class="card" style="background-image: url({coin.logo}); background-size: 30%; background-position: bottom right; background-repeat: no-repeat;">
                 <div class="card_text_container">
                     <h2>{coin.name} - {coin.code}</h2>
                     <p style="text-align: right;"><span style="text-align: right;" class="{coin.change >= 0 ? 'positive' : 'negative'}">{coin.change}%</span></p>
@@ -92,25 +167,34 @@
                 <p>{coin.usd} USD</p>
               </div>
             {/each}
-          </div>
-    </main>
-</body>
+        </div>
+        <div class="chart-container">
+            {#if coins.length > 0}
+            <PieChart {coins} />
+            {:else}
+            <p>Loading...</p>
+            {/if}
+        </div>
+    </div>
 
+</div>
+    
 <style>
-    main {
-		border: 0px;
-		text-align: center;
-		padding: 1em;
-	}
-
-	@media (min-width: 640px) {
-		main {
-			max-width: none;
-		}
-	}
 
     .gradient {
 	background: linear-gradient(to bottom, #7fedec, #f0f0f0);
+    }
+
+    .container{
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+    }
+
+    .chart-container {
+        width: 40%;
+        align-self: right;
+        align-items: center;
     }
 
     .card-container {

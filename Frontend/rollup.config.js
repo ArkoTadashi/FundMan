@@ -35,7 +35,11 @@ export default {
 		sourcemap: true,
 		format: 'iife',
 		name: 'app',
-		file: 'public/build/bundle.js'
+		file: 'public/build/bundle.js',
+		globals: {
+			'chart.js': 'Chart', // Specify global variable name for chart.js
+			'svelte-chartjs': 'svelteChartjs' // Specify global variable name for svelte-chartjs
+		}
 	},
 	plugins: [
 		svelte({
