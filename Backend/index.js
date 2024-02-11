@@ -295,7 +295,7 @@ app.get("/market",(req,res)=>{
     let holdings=[]
 
     database.collection('market')
-    .find() //cursor
+    .find({},{projection: {token: 1, circulatingSupply: 1, currentPrice: 1}}) //cursor
     .forEach(entry=>holdings.push(entry))  //toArray
     .then(()=>{
         res.status(200).json(holdings)
