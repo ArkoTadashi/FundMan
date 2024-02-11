@@ -1,12 +1,15 @@
 <script>
   import { onMount } from 'svelte';
   import Navbar from './Navbar.svelte';
+  import { push } from 'svelte-spa-router';
 
   let amount = 0;
   let selectedPercentage="5%"
   let selectedTime='Short term holding'
   let preview=false
   let panelMemberUsername=sessionStorage.getItem('panelMemberUsername')
+  let panelID=sessionStorage.getItem('panelID')
+  let userID=sessionStorage.getItem('userID')
   
   //fetch from db: panelMember
   let panelMember
@@ -16,12 +19,52 @@
         // console.log(panelMember)
     });
  
-  function submitForm() {
+  async function submitForm() {
     // Process the form submission here
     console.log('Amount:', amount);
     console.log('Percentage:', selectedPercentage);
-    console.log('Time:', selectedTime);
     console.log('Panel Member Name:', panelMember.name);
+    //pmem
+    let data = {
+            "userID": userID,
+            "total":amount,
+            "starting": parseInt(Date.now()/1000),
+            "ending": parseInt(Date.now()/1000+30*24*60*60)
+          }
+    console.log("----data",data)
+
+    let response = await fetch(`http://localhost:9000/management/${panelID}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    });
+      
+    console.log(response.status)
+
+    //user
+    data = {
+          "panelID": panelID,
+          "total":amount,
+          "starting": parseInt(Date.now()/1000),
+          "ending": parseInt(Date.now()/1000+30*24*60*60)
+        }
+
+    response = await fetch(`http://localhost:9000/umanagement/${userID}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    });
+    
+    console.log(response.status)
+
+    //go back
+    sessionStorage.setItem('panelMemberUsername', '');
+    sessionStorage.setItem('panelID', 0);
+    push('/FundManage')
   }
 
   function prevw(){

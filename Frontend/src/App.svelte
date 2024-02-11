@@ -38,5 +38,5 @@
     '/SignUp': SignUp,
     '/FundManageRequest': FundManageRequest,
     '/UManagementOverview': UManagementOverview,
-    '/Management' : Management
+    '/Management': Management
 }} />

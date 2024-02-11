@@ -30,12 +30,12 @@
     }
 
     onMount(async () => {
-        const response = await fetch(`http://localhost:9000/umanagement/${userId}`);
+        const response = await fetch(`http://localhost:9000/management/${panelId}`);
         const jsonData = await response.json();
         let data = jsonData;
 
         requests = await Promise.all(data.funds.map(async fund => ({
-            panelId: await getManager(fund.panelID),
+            userID: await getManager(fund.userID),
             total: fund.total,
             starting: getTime(fund.starting),
             ending: getTime(fund.ending),
@@ -43,6 +43,12 @@
             status:getStatus(fund.starting,fund.ending)
         })));
     });
+
+    function sendMoney(id) {
+      requests = requests.map(request =>
+        request.userID === id ? { ...request, status: 'sent' } : request
+      );
+    }
 
     
     // function setClient(id){
@@ -68,10 +74,10 @@
         <h1>Requests Details</h1>
         {#each requests as request,index}
           <div class="request" key={index} on:mouseenter={()=>{
-            setClient(request.panelId)
+            setClient(request.userID)
             }}>
             <div class="info">
-                <p><strong>Manager:</strong> {request.panelId}</p>
+                <p><strong>Client:</strong> {request.userID}</p>
                 <p><strong>Amount:</strong> {request.total}</p>
                 <p><strong>Starting Time:</strong>  {request.starting}</p>
                 <p><strong>Ending Time:</strong>  {request.ending}</p>
@@ -79,16 +85,15 @@
                 <p><strong>Status:</strong>  {request.status}</p>
             </div>
             
-            <!-- <div class="status">
-                {#if !request.status}
-                  <button class="accept" on:click={() => acceptRequest(request.id)}>Accept</button>
-                  <button class="reject" on:click={() => rejectRequest(request.id)}>Reject</button>
-                {:else if request.status === 'accepted'}
-                  <p class="message accepted">This request has been accepted.</p>
-                {:else if request.status === 'rejected'}
-                  <p class="message rejected">This request has been rejected.</p>
+            <div class="status">
+                {#if request.time<=0 && request.status != 'sent'}
+                    <button class="send" on:click={() => sendMoney(request.userID)}>Send</button>
+                {:else if request.time > 0 }
+                    <button class="bsend" >Send</button>
+                {:else if request.status === 'sent'}
+                  <p class="message send">Money has been sent to client.</p>
                 {/if}
-            </div> -->
+            </div>
           </div>
         {/each}
       </div>
@@ -191,11 +196,16 @@
       cursor: pointer;
     }
   
-    button.accept {
+    button.send {
       background-color: #4CAF50;
       color: white;
     }
   
+    button.bsend {
+      background-color: #377038;
+      color: white;
+    }
+
     button.reject {
       background-color: #f44336;
       color: white;
@@ -206,8 +216,12 @@
       font-weight: bold;
     }
   
-    .accepted {
+    .send {
       color: #4CAF50;
+    }
+  
+    .bsend {
+      color: #377038;
     }
   
     .rejected {
