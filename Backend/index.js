@@ -73,7 +73,7 @@ setInterval(async () => {
 
     
 
-}, 3600000);
+}, 360000);
 
 
 
@@ -227,7 +227,7 @@ app.get("/market",(req,res)=>{
 
     database.collection('market')
     .find() //cursor
-    .forEach(entry=>holdings.push(entry))  
+    .forEach(entry=>holdings.push(entry))  //toArray
     .then(()=>{
         res.status(200).json(holdings)
     })  
