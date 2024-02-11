@@ -13,6 +13,7 @@
 
         console.log(data)
         panel = data.map(panelMember => ({
+            id:panelMember._id.toString(),
             username: panelMember.username,
             name: panelMember.name,
             rating: panelMember.rating,
@@ -21,8 +22,9 @@
         }));
     });
 
-    function goToNext(username){
+    function goToNext(username,id){
         sessionStorage.setItem('panelMemberUsername', username);
+        sessionStorage.setItem('panelID', id);
         push('/FundManageRequest')
     }
     
@@ -34,7 +36,7 @@
         <h1 style="font-family: 'Inter', sans-serif; text-align: left">Fund Manage</h1>
         <div class="card-container">
             {#each panel as panelMember, index}
-                <div class="card" key={index} on:click={() => {goToNext(panelMember.username)}} on:keypress={() => {goToNext(panelMember.username)}}>
+                <div class="card" key={index} on:click={() => {goToNext(panelMember.username,panelMember.id)}} on:keypress={() => {goToNext(panelMember.username,panelMember.id)}}>
                     <img class="img" src='./pic/person.png' alt={panelMember.name} />
                     <h2>{panelMember.name.toUpperCase()}</h2>
                     <h4>Rating: {panelMember.rating}</h4>

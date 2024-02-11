@@ -7,7 +7,8 @@
 		{ name: 'Academy', link: 'https://www.google.com', id: 2}, 
 		{ name: 'News', link: 'https://www.google.com', id: 3}, 
 		{ name: 'Pricing', link: 'https://www.google.com', id: 4},
-    { name: 'Fund Manage', link: '/#/Fundmanage', id: 5}
+    { name: 'Fund Manage', link: '/#/Fundmanage', id: 5},
+    { name: 'Management Overview', link: '/#/Umanagementoverview', id: 6}
 	];
 
     let isLoggedIn=false, userName;   
