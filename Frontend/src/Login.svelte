@@ -19,9 +19,13 @@
   }
 </script>
 
-<main class="gradient" style="height: 100vh;">
+<div class="gradient" style="height: 100%; width:100%">
   <Navbar isLoggedIn={isLoggedIn}/>
-  <div>
+  <div  class="container">
+    <div class="image-wrapper">
+      <img src="images/heroart.png" alt="Your Image"/>
+    </div>
+    <div class="text-container">
       <h2>Login</h2>
       <form on:submit|preventDefault={handleLogin}>
         <label for="username">Username:</label>
@@ -35,23 +39,16 @@
         <button type="submit">Login</button>
       </form>
     </div>
-</main>
+  </div>
+  
+</div>
 
 <style>
-  main {
-  border: 0px;
-  text-align: center;
-  padding: 1em;
-}
-
-@media (min-width: 640px) {
-  main {
-    max-width: none;
-  }
-}
 
   .gradient {
-background: linear-gradient(to bottom, #7fedec, #f0f0f0);
+    background: linear-gradient(to bottom, #7fedec, #f0f0f0);
+    margin: 0px;
+    padding: 0px;
   }
 
   form {
@@ -74,4 +71,39 @@ input {
   color: red;
   margin-bottom: 10px;
 }
+
+.container {
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: flex-end;
+        align-items: center;
+        height: 100vh; /* Adjust as needed */
+        padding-right: 0px; /* Adjust as needed */
+    }
+
+    .image-wrapper {
+        position: absolute;
+        top: 75px;
+        right: 0;
+        width: 40%; /* Adjust size as needed */
+        height: auto; /* Adjust size as needed */
+        overflow: hidden;
+        border-radius: 50%;
+        margin-left: 0vw; /* Adjust as needed */
+    }
+
+    .image-wrapper img {
+        width: 100%;
+        height: auto;
+        border-radius: 50%;
+    }
+
+    .text-container {
+        position: absolute;
+        left: 10%;
+        width: 30%;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+    }
 </style>

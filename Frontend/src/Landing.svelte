@@ -25,16 +25,13 @@
     }
 </script>
 
-<!-- <Router>
-  <Route path="/holding" component={Holding} />
-</Router> -->
 
-<body class="gradient" style="height: 800px;">
-<main>
+<div class="gradient" style="height: 800px; width: 100%; border:0px">
+
 	<Navbar isLoggedIn={isLoggedIn} userID=1/>
 	<div class="container">
     <div class="image-wrapper">
-        <img src="images/heroart.png" alt="Your Image" href="/#"/>
+        <img src="images/heroart.png" alt="Your Image"/>
     </div>
     <div class="text-container" style="width: 30%; Height: auto;">
         <div class="title">Your Personal</div>
@@ -44,15 +41,14 @@
             <button class="register-btn" on:click={handleRegisterClick}>Register</button>
         </div>
     </div>
+  </div>
+
 </div>
-</main>
-</body>
 <body class="solid" style="height: 500px;"></body>
 <style>
 	main {
 		border: 0px;
 		text-align: center;
-		padding: 1em;
 	}
 
 	@media (min-width: 640px) {
@@ -64,7 +60,9 @@
 	
 
   .gradient {
-	background: linear-gradient(to right, #7fedec, #f0f0f0);
+	  background: linear-gradient(to right, #7fedec, #f0f0f0);
+    margin: 0px;
+    padding: 0px;
   }
 
   .solid {
@@ -84,7 +82,7 @@
         position: absolute;
         top: 75px;
         right: 0;
-        width: 50%; /* Adjust size as needed */
+        width: 40%; /* Adjust size as needed */
         height: auto; /* Adjust size as needed */
         overflow: hidden;
         border-radius: 50%;

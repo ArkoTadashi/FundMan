@@ -10,8 +10,8 @@
     export let userID = 0;
 </script>
 
-<div class="navbar" height="500px" style="gradient">
-    <div class="nav-buttons">
+<div class="navbar">
+    <div class="nav-buttons" style="margin-left: 2%; margin-top: 15px;">
       <a href="/#">
         <img src="path/to/your/logo.png" alt="Logo" class="logo" />
       </a>
@@ -25,9 +25,9 @@
             user {userID} logged in
         </div>
     {:else}
-        <div>
+        <div style="margin-right: 2%; margin-top: 15px;">
         <a href="/#/Login" class="login-button">Login</a>
-        <a href="/#/Signup" class="signup-button">Sign Up</a>
+        <a href="/#/SignUp" class="signup-button">Sign Up</a>
         </div>
     {/if}
 </div>
@@ -81,7 +81,4 @@
     margin-left: 10px;
   }
 
-  .gradient {
-	background: linear-gradient(to right, #7fedec, #f0f0f0);
-  }
 </style>
