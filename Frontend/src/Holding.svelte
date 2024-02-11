@@ -30,7 +30,7 @@
         const jsonData = await response.json();
         data = jsonData;
 
-        let walletAddress = getWalletAddress();
+        let walletAddress = await getWalletAddress();
         sessionStorage.setItem('walletAddress', walletAddress);
 
         assets = data.assets.map(asset => ({

@@ -2,7 +2,6 @@
 
     import { onMount } from 'svelte';
     import Navbar from './Navbar.svelte';
-    import { cpus } from 'os';
 
     // let data = [];
     // let name = '';
@@ -109,16 +108,18 @@
             const jsonData = await response.json();
             let data = jsonData;
             name = data.groupName;
+            console.log(data);
 
-            coins = data.tokens.map(async (coin) => {
+            coins = await Promise.all(data.tokens.map(async (coin) => {
                 const response = await fetch(`http://localhost:9000/token/${coin}`);
                 const jsonData = await response.json();
                 let dat = jsonData;
+                console.log(dat);
 
                 let tokenAddress = dat.address;
                 let decimal = dat.decimal;
 
-                let holdingValue = fetchCoinData(tokenAddress, decimal);
+                let holdingValue = await fetchCoinData(tokenAddress, decimal);
 
                 let currentPrice=await fetch(`http://localhost:9000/market/${coin}`)
                 currentPrice = await currentPrice.json();
@@ -132,7 +133,7 @@
                     usd : holdingValue*currentPrice.currentPrice,
                     change : 0.5
                 };
-            });
+            }));
         } catch (error) {
             console.error("Error fetching token data:", error);
         }
