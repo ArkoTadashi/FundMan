@@ -340,6 +340,14 @@ app.post("/signup",async (req, res) => {
                 assets:[]
             }
             await database.collection('holding').insertOne(hdentry)
+
+            hdentry={
+                userID:user._id.toString(),
+                funds:[]
+            }
+            await database.collection('umanagement').insertOne(hdentry)
+
+
             res.status(200).json({ success: true, userId:user._id.toString() });
         }
     } catch (err) {
@@ -464,7 +472,7 @@ app.get('/panel/:pname',(req,res)=>{
 //management
 app.patch('/management/:pid',(req,res)=>{
     const entry=req.body //front theke json create korte hobe(tokens:[])
-    console.log(entry)
+    console.log("mmmmmmmmm",entry)
 
     database.collection('management')
     .updateOne(
@@ -496,7 +504,7 @@ app.get('/management/:pid',(req,res)=>{
 //management
 app.patch('/umanagement/:pid',(req,res)=>{
     const entry=req.body //front theke json create korte hobe(tokens:[])
-    console.log(entry)
+    console.log("uuuuuuuuu",entry)
 
     database.collection('umanagement')
     .updateOne(
