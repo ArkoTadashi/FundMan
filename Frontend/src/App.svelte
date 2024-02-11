@@ -10,6 +10,7 @@
 	import Market from './Market.svelte';
 	import Request from './Request.svelte';
 	import SignUp from './SignUp.svelte';
+    import PanelLogin from './PanelLogin.svelte';
 
   let emailOrMobile = "";
 
@@ -34,5 +35,6 @@
     '/Request': Request,
     '/Login': Login,
     '/SignUp': SignUp,
-    '/FundManageRequest': FundManageRequest
+    '/FundManageRequest': FundManageRequest,
+    '/PanelLogin': PanelLogin
 }} />
