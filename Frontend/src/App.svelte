@@ -7,6 +7,7 @@
 	import Assign from './Assign.svelte';
     import Request from './Request.svelte';
     import Login from './Login.svelte';
+    import SignUp from './SignUp.svelte';
 
   let emailOrMobile = "";
 
@@ -28,5 +29,6 @@
     '/Market': Market,
     '/Assign': Assign,
     '/Request': Request,
-    '/Login': Login
+    '/Login': Login,
+    '/SignUp': SignUp
 }} />

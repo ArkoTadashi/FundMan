@@ -1,5 +1,12 @@
 <script>
-    import { onMount } from 'svelte';
+
+    import { getRoute } from 'svelte-spa-router';
+    import Navbar from './Navbar.svelte';
+    let isLoggedIn=false, userID=0;
+
+    const { params } = getRoute();
+
+    console.log(params);
 
     let data = [];
     let assets = [];
@@ -15,15 +22,21 @@
             change: 20
         }));
     });
+
+    function expandAsset(){
+        console.log('card pressed');
+    }
     
 </script>
 
-<body class="gradient" style="height: 100vh;">
+
+<div class="gradient" style="height: 100vh;">
+    <Navbar isLoggedIn={isLoggedIn} />
     <main>
         <h1 style="font-family: 'Inter', sans-serif; text-align: left">My Assets</h1>
         <div class="card-container">
             {#each assets as asset, index}
-                <div class="card" key={index}>
+                <div class="card" key={index} on:click={expandAsset} on:keypress={expandAsset}>
                     <h2>{asset.name}</h2>
                     <p>${asset.total} (<span class="{asset.change >= 0 ? 'positive' : 'negative'}">{asset.change}</span>)</p>
                 </div>
@@ -31,7 +44,7 @@
 
           </div>
     </main>
-</body>
+</div>
 
 <style>
     main {
