@@ -4,6 +4,7 @@ const MongoClient=require("mongodb").MongoClient
 const cors=require("cors")
 const multer=require("multer")
 const SHA3 = require('crypto-js/sha3');
+const { ObjectId } = require('mongodb');
 
 
 
@@ -26,6 +27,59 @@ connectToDb((err)=>{
     }
 })
 
+// setInterval(async () => {
+//     let tokens = []
+
+//     database.collection('token')
+//     .find() //cursor
+//     .forEach(entry=>tokens.push(entry))  //toArray
+//     .then(async ()=>{
+//         console.log("123");
+//         for (let entry of tokens) {
+//             let address = entry.address;
+//             let _res = await fetch(`https://api.coingecko.com/api/v3/coins/polygon-pos/contract/${address}`);
+//             let res = await _res.json();
+
+//             database.collection('market')
+//             .updateOne(
+//                 { "token":  entry.token},
+//                 { $push: { "dailyPrice": res.market_data.current_price.usd } }
+//             )
+//             .then(result => {
+//                 console.log(`Matched ${result.matchedCount} document(s) and modified ${result.modifiedCount} document(s)`);
+//             })
+//             .catch(error => {
+//                 console.error('Error updating document:', error);
+//             });
+//             database.collection('market')
+//             .updateOne(
+//                 { "token":  entry.token},
+//                 { $pop: { "dailyPrice": -1 } }
+//             )
+//             .then(result => {
+//                 console.log(`Matched ${result.matchedCount} document(s) and modified ${result.modifiedCount} document(s)`);
+//             })
+//             .catch(error => {
+//                 console.error('Error updating document:', error);
+//             });
+//             database.collection('market')
+//             .updateOne(
+//                 { "token":  entry.token},
+//                 { $set: { "circulatingSupply": res.market_data.circulating_supply } }
+//             )
+//             .then(result => {
+//                 console.log(`Matched ${result.matchedCount} document(s) and modified ${result.modifiedCount} document(s)`);
+//             })
+//             .catch(error => {
+//                 console.error('Error updating document:', error);
+//             });
+
+//             await new Promise(resolve => setTimeout(resolve, 5000));
+//         }
+        
+//     })
+    
+// }, 30000);
 
 setInterval(async () => {
     var res = await fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=200&page=1&sparkline=false&locale=en&x_cg_demo_api_key=CG-DXyth2fs4WGhHT5LZUu18m41`);
@@ -33,13 +87,28 @@ setInterval(async () => {
 
 
     _res.forEach(obj => {
-        console.log(obj.symbol.toUpperCase());
         database.collection('market')
         .updateOne(
             { "token":  obj.symbol},
             { $push: { "dailyPrice": obj.current_price } }
         )
         .then(result => {
+            if(result.matchedCount)
+                console.log(obj.symbol)
+            console.log(`Matched ${result.matchedCount} document(s) and modified ${result.modifiedCount} document(s)`);
+        })
+        .catch(error => {
+            console.error('Error updating document:', error);
+        });
+
+        database.collection('market')
+        .updateOne(
+            { "token":  obj.symbol},
+            { $set: { "currentPrice": obj.current_price } }
+        )
+        .then(result => {
+            if(result.matchedCount)
+                console.log(obj.symbol)
             console.log(`Matched ${result.matchedCount} document(s) and modified ${result.modifiedCount} document(s)`);
         })
         .catch(error => {
@@ -226,10 +295,23 @@ app.get("/market",(req,res)=>{
     let holdings=[]
 
     database.collection('market')
-    .find() //cursor
+    .find({},{projection: {token: 1, circulatingSupply: 1, currentPrice: 1}}) //cursor
     .forEach(entry=>holdings.push(entry))  //toArray
     .then(()=>{
         res.status(200).json(holdings)
+    })  
+    .catch(()=>{
+        res.status(500).json({err:'Market collection fetching err'})
+    })
+})
+
+app.get("/market/:token",(req,res)=>{
+
+    database.collection('market')
+    .findOne({token: req.params.token}, {projection: {currentPrice: 1, _id: 0}}) //cursor
+    .then((entry)=>{
+        console.log(entry)
+        res.status(200).json(entry)
     })  
     .catch(()=>{
         res.status(500).json({err:'Market collection fetching err'})
@@ -258,6 +340,14 @@ app.post("/signup",async (req, res) => {
                 assets:[]
             }
             await database.collection('holding').insertOne(hdentry)
+
+            hdentry={
+                userID:user._id.toString(),
+                funds:[]
+            }
+            await database.collection('umanagement').insertOne(hdentry)
+
+
             res.status(200).json({ success: true, userId:user._id.toString() });
         }
     } catch (err) {
@@ -293,6 +383,31 @@ app.post("/login",async (req, res) => {
     }
 })
 
+//login
+app.post("/panelLogin",async (req, res) => {
+    const entry = req.body;
+
+    try {
+        const existingUser = await database.collection('panel').findOne({ username: req.body.username });
+
+        if (existingUser) {
+            const sha3=SHA3(req.body.password, { outputLength: 256 }).toString()
+            if(existingUser.password==sha3){
+                //send uid to front
+                console.log(existingUser)
+                res.status(200).json(existingUser);
+            }
+            else{
+                res.status(400).json({err: "Incorrect pass"});
+            }
+        } else {            
+            res.status(400).json({ err: "User does not exist" });
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ err: 'Signup error' });
+    }
+})
 
 
 app.get("/token/:tname",(req,res)=>{
@@ -304,6 +419,118 @@ app.get("/token/:tname",(req,res)=>{
     .catch(()=>{
         res.status(500).json({err:'Token fetching err'})
     })
+})
+
+
+//panel
+app.get('/panel',(req,res)=>{
+    let panel=[]
+    database.collection('panel')
+    .find()
+    .forEach(entry=>panel.push(entry)) 
+    .then(()=>{
+        res.status(200).json(panel)
+    })  
+    .catch(()=>{
+        res.status(500).json({err:'Panel collection fetching err'})
+    })
+})
+
+app.get('/panel/:pname',(req,res)=>{
+    database.collection('panel')
+    .findOne({username : req.params.pname}) 
+    .then((panel)=>{
+        res.status(200).json(panel)
+    })  
+    .catch(()=>{
+        res.status(500).json({err:'Panel collection fetching err'})
+    })
+})
+
+
+//id not solved
+// app.get('/panel/id/:pid', (req, res) => {
+//     let pid = req.params.pid; // Assuming req.params.pid is a valid ObjectId string
+//     let p=new ObjectId(pid);
+//     console.log("-----",p)
+//     database.collection('panel')
+//         .findOne({ _id: p })
+//         .then((panel) => {
+//             if (panel) {
+//                 res.status(200).json(panel);
+//             } else {
+//                 res.status(404).json({ error: 'Panel not found' });
+//             }
+//         })
+//         .catch(() => {
+//             res.status(500).json({ error: 'Panel collection fetching error' });
+//         });
+// });
+
+
+
+//management
+app.patch('/management/:pid',(req,res)=>{
+    const entry=req.body //front theke json create korte hobe(tokens:[])
+    console.log("mmmmmmmmm",entry)
+
+    database.collection('management')
+    .updateOne(
+        { "panelID": req.params.pid },
+        { $push: { "funds": entry } }
+    )
+    .then(result => {
+        res.status(200).json({success:"patched"})
+        console.log(`Matched ${result.matchedCount} document(s) and modified ${result.modifiedCount} document(s)`);
+    })
+    .catch(error => {
+        console.error('Error updating management:', error);
+    });
+})
+
+app.get('/management/:pid',(req,res)=>{   
+    database.collection('management')
+    .findOne(
+        { "panelID": req.params.pid }
+    )
+    .then(result => {
+        res.status(200).json(result)
+    })
+    .catch(error => {
+        console.error('Error fetching management:', error);
+    });
+})
+
+//management
+app.patch('/umanagement/:pid',(req,res)=>{
+    const entry=req.body //front theke json create korte hobe(tokens:[])
+    console.log("uuuuuuuuu",entry)
+
+    database.collection('umanagement')
+    .updateOne(
+        { "userID": req.params.pid },
+        { $push: { "funds": entry } }
+    )
+    .then(result => {
+        res.status(200).json({success:"patched"})
+        console.log(`Matched ${result.matchedCount} document(s) and modified ${result.modifiedCount} document(s)`);
+    })
+    .catch(error => {
+        console.error('Error updating umanagement:', error);
+    });
+})
+
+app.get('/umanagement/:pid',(req,res)=>{   
+    database.collection('umanagement')
+    .findOne(
+        { "userID": req.params.pid }
+    )
+    .then(result => {
+        res.status(200).json(result)
+    })
+    .catch(error => {
+        console.error('Error fetching umanagement:', error);
+    });
 })
 
 //-------------------------------------------------------------------------------------------------------
