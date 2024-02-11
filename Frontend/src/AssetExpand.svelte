@@ -1,6 +1,7 @@
 <script>
 
     import { onMount } from 'svelte';
+    import Navbar from './Navbar.svelte';
 
     // let data = [];
     // let name = '';
@@ -83,7 +84,7 @@
         try {
             const response = await fetch(`http://localhost:9000/holding/${userID}/group/${assetGroupIndex}`);
             const jsonData = await response.json();
-            data = jsonData;
+            let data = jsonData;
             name = data.groupName;
 
             coins = data.tokens.map(coin => ({
@@ -99,8 +100,9 @@
     });
 </script>
 
-<body class="gradient" style="height: 100vh;">
+<div class="gradient" style="height: 100vh;">
     <main>
+    <Navbar/>
         <h1 style="font-family: 'Inter', sans-serif; text-align: left">{name}</h1>
         <div class="card-container">
             {#each coins as coin }
@@ -115,8 +117,8 @@
             {/each}
           </div>
     </main>
-</body>
-
+</div>
+    
 <style>
     main {
 		border: 0px;
