@@ -1,5 +1,5 @@
 <script>
-  import { push } from 'svelte-spa-router';
+  import { userID } from "./stores"
   import Navbar from "./Navbar.svelte";
   let isLoggedIn = false;
 
@@ -31,12 +31,10 @@
       console.log(variable._id)
 
       if (response.status == 200) {
-        let data = {
-          userID: variable._id,
-          isLoggedIn: true
-        }
+        userID = variable._id;
         
-        push('/holding', data);
+        
+        push('/holding');
         console.log('Data sent successfully');
       } else {
         // Handle error
