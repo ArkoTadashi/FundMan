@@ -1,6 +1,6 @@
 <script>
 
-    import { getRoute } from 'svelte-spa-router';
+    import { onMount } from 'svelte';
     import Navbar from './Navbar.svelte';
     let isLoggedIn=false, userID=0;
 

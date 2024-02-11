@@ -1,6 +1,6 @@
 <script>
 
-    // import { onMount } from 'svelte';
+    import { onMount } from 'svelte';
 
     // let data = [];
     // let name = '';
@@ -71,11 +71,32 @@
     //     }
     // });
 
-    let name = 'HODL';
+    let name = '';
     let coins = [
-        {name: "Bitcoin", code: "BTC", amount: 0.8531, usd: 29471.02,change:0.41, id: 1},
-        {name: "Ethereum", code: "ETH", amount: 3.28353, usd: 5965.91,change:-1.21, id: 2},
     ];
+
+    let userID = sessionStorage.getItem('userID');
+    let assetGroupIndex = sessionStorage.getItem('assetGroupIndex');
+
+
+    onMount(async () => {
+        try {
+            const response = await fetch(`http://localhost:9000/holding/${userID}/group/${assetGroupIndex}`);
+            const jsonData = await response.json();
+            data = jsonData;
+            name = data.groupName;
+
+            coins = data.tokens.map(coin => ({
+                name : coin.token,
+                code : coin.token,
+                amount : coin.amount,
+                usd : 2000,
+                change : 0.5
+            }));
+        } catch (error) {
+            console.error("Error fetching token data:", error);
+        }
+    });
 </script>
 
 <body class="gradient" style="height: 100vh;">
