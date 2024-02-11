@@ -13,7 +13,7 @@
   onMount(async () => {
         const response = await fetch(`http://localhost:9000/panel/${panelMemberUsername}`);
         panelMember = await response.json();
-        console.log(panelMember)
+        // console.log(panelMember)
     });
  
   function submitForm() {
