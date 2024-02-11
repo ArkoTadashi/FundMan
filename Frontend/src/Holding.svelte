@@ -33,10 +33,10 @@
 </script>
 
 
-<div class="gradient" style="height: 100vh;">
+<div class="gradient" style="min-height: 100vh;">
     <Navbar />
-    <main>
-        <h1 style="font-family: 'Inter', sans-serif; text-align: left">My Assets</h1>
+
+        <h1 style="font-family: 'Inter', sans-serif; text-align: left; margin-left: 2%">My Assets</h1>
         <div class="card-container">
             {#each assets as asset, index}
                 <div class="card" key={index} on:click={() => expandAsset(index)} on:keypress={() => expandAsset(index)}>
@@ -46,7 +46,7 @@
             {/each}
 
           </div>
-    </main>
+
 </div>
 
 <style>

@@ -100,10 +100,10 @@
     });
 </script>
 
-<div class="gradient" style="height: 100vh;">
-    <main>
+<div class="gradient" style="min-height: 100vh;">
+
     <Navbar/>
-        <h1 style="font-family: 'Inter', sans-serif; text-align: left">{name}</h1>
+        <h1 style="font-family: 'Inter', sans-serif; text-align: left; margin-left: 2%;">{name}</h1>
         <div class="card-container">
             {#each coins as coin }
               <div class="card">
@@ -116,21 +116,10 @@
               </div>
             {/each}
           </div>
-    </main>
+
 </div>
     
 <style>
-    main {
-		border: 0px;
-		text-align: center;
-		padding: 1em;
-	}
-
-	@media (min-width: 640px) {
-		main {
-			max-width: none;
-		}
-	}
 
     .gradient {
 	background: linear-gradient(to bottom, #7fedec, #f0f0f0);
