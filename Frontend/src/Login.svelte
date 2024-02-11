@@ -1,4 +1,5 @@
 <script>
+  import { push } from 'svelte-spa-router';
   import Navbar from "./Navbar.svelte";
   let isLoggedIn = false;
 
@@ -6,15 +7,43 @@
   let password = '';
   let errorMessage = '';
 
-  function handleLogin() {
-    // You can add authentication logic here
-    // For simplicity, let's just check if username and password are not empty
-    if (username.trim() === '' || password.trim() === '') {
-      errorMessage = 'Please enter both username and password.';
-    } else {
-      // Successful login logic goes here
-      errorMessage = ''; // Clear any previous error message
-      console.log('Login successful!');
+  async function sendData() {
+    const data = {
+      username: username,
+      password: password
+    };
+
+    try {
+      console.log(data.username);
+      console.log(data.password)
+      const response = await fetch('http://localhost:9000/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+      
+      console.log(response.status)
+      let variable = await response.json()
+
+      console.log(variable.username)
+      console.log(variable._id)
+
+      if (response.status == 200) {
+        let data = {
+          userID: variable._id,
+          isLoggedIn: true
+        }
+        
+        push('/holding', data);
+        console.log('Data sent successfully');
+      } else {
+        // Handle error
+        console.error('Error sending data');
+      }
+    } catch (error) {
+      console.error('Error:', error);
     }
   }
 </script>
@@ -27,7 +56,7 @@
     </div>
     <div class="text-container">
       <h2>Login</h2>
-      <form on:submit|preventDefault={handleLogin}>
+      <form on:submit|preventDefault={sendData}>
         <label for="username">Username:</label>
         <input type="text" id="username" bind:value={username} />
     
