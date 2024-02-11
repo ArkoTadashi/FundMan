@@ -26,6 +26,59 @@ connectToDb((err)=>{
     }
 })
 
+// setInterval(async () => {
+//     let tokens = []
+
+//     database.collection('token')
+//     .find() //cursor
+//     .forEach(entry=>tokens.push(entry))  //toArray
+//     .then(async ()=>{
+//         console.log("123");
+//         for (let entry of tokens) {
+//             let address = entry.address;
+//             let _res = await fetch(`https://api.coingecko.com/api/v3/coins/polygon-pos/contract/${address}`);
+//             let res = await _res.json();
+
+//             database.collection('market')
+//             .updateOne(
+//                 { "token":  entry.token},
+//                 { $push: { "dailyPrice": res.market_data.current_price.usd } }
+//             )
+//             .then(result => {
+//                 console.log(`Matched ${result.matchedCount} document(s) and modified ${result.modifiedCount} document(s)`);
+//             })
+//             .catch(error => {
+//                 console.error('Error updating document:', error);
+//             });
+//             database.collection('market')
+//             .updateOne(
+//                 { "token":  entry.token},
+//                 { $pop: { "dailyPrice": -1 } }
+//             )
+//             .then(result => {
+//                 console.log(`Matched ${result.matchedCount} document(s) and modified ${result.modifiedCount} document(s)`);
+//             })
+//             .catch(error => {
+//                 console.error('Error updating document:', error);
+//             });
+//             database.collection('market')
+//             .updateOne(
+//                 { "token":  entry.token},
+//                 { $set: { "circulatingSupply": res.market_data.circulating_supply } }
+//             )
+//             .then(result => {
+//                 console.log(`Matched ${result.matchedCount} document(s) and modified ${result.modifiedCount} document(s)`);
+//             })
+//             .catch(error => {
+//                 console.error('Error updating document:', error);
+//             });
+
+//             await new Promise(resolve => setTimeout(resolve, 5000));
+//         }
+        
+//     })
+    
+// }, 30000);
 
 setInterval(async () => {
     var res = await fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=200&page=1&sparkline=false&locale=en&x_cg_demo_api_key=CG-DXyth2fs4WGhHT5LZUu18m41`);
@@ -236,6 +289,19 @@ app.get("/market",(req,res)=>{
     })
 })
 
+app.get("/market/:token",(req,res)=>{
+
+    database.collection('market')
+    .findOne({token: req.params.token}, {projection: {currentPrice: 1, _id: 0}}) //cursor
+    .then((entry)=>{
+        console.log(entry)
+        res.status(200).json(entry)
+    })  
+    .catch(()=>{
+        res.status(500).json({err:'Market collection fetching err'})
+    })
+})
+
 //signup
 app.post("/signup",async (req, res) => {
     const entry = req.body;
@@ -303,6 +369,21 @@ app.get("/token/:tname",(req,res)=>{
     })  
     .catch(()=>{
         res.status(500).json({err:'Token fetching err'})
+    })
+})
+
+
+//panel
+app.get('/panel',(req,res)=>{
+    let panel=[]
+    database.collection('panel')
+    .find()
+    .forEach(entry=>panel.push(entry)) 
+    .then(()=>{
+        res.status(200).json(panel)
+    })  
+    .catch(()=>{
+        res.status(500).json({err:'Panel collection fetching err'})
     })
 })
 
