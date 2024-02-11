@@ -9,7 +9,7 @@
 		{ name: 'Forum', link: 'https://www.google.com', id: 4}, 
 		{ name: 'News', link: 'https://www.google.com', id: 5}, 
 		{ name: 'Pricing', link: 'https://www.google.com', id: 6},
-		{ name: 'Assign', link: '/#/Assign', id: 7},
+		{ name: 'Fund Manage', link: '/#/Fundmanage', id: 7},
 		{ name: 'Request', link: '/#/Request', id: 8},
 	];
 	
