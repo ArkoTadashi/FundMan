@@ -136,7 +136,7 @@
                 return {
                     name : dat.name,
                     code : coin.toUpperCase(),
-                    amount : parseFloat(holdingValue).toFixed(7),
+                    amount : parseFloat(holdingValue.toFixed(7)),
                     usd : parseFloat((holdingValue*currentPrice.currentPrice).toFixed(7)),
                     change : 0.5,
                     logo: logo
