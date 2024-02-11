@@ -2,6 +2,7 @@
 
     import { onMount } from 'svelte';
     import Navbar from './Navbar.svelte';
+    import PieChart from './PieChart.svelte';
 
     // let data = [];
     // let name = '';
@@ -74,6 +75,13 @@
 
     let name = '';
     let coins = [
+        
+    ];
+
+    let hardCoins = [
+        { name: 'Bitcoin', usd: 5 },
+        { name: 'Ethereum', usd: 8 },
+        { name: 'Litecoin', usd: 3 }
     ];
 
     let userID = sessionStorage.getItem('userID');
@@ -108,13 +116,11 @@
             const jsonData = await response.json();
             let data = jsonData;
             name = data.groupName;
-            console.log(data);
 
             coins = await Promise.all(data.tokens.map(async (coin) => {
                 const response = await fetch(`http://localhost:9000/token/${coin}`);
                 const jsonData = await response.json();
                 let dat = jsonData;
-                console.log(dat);
 
                 let tokenAddress = dat.address;
                 let decimal = dat.decimal;
@@ -123,7 +129,7 @@
 
                 let currentPrice=await fetch(`http://localhost:9000/market/${coin}`)
                 currentPrice = await currentPrice.json();
-                
+                console.log(currentPrice.currentPrice);
 
 
                 return {
@@ -137,13 +143,17 @@
         } catch (error) {
             console.error("Error fetching token data:", error);
         }
+
     });
+
+    
 </script>
 
 <div class="gradient" style="min-height: 100vh;">
 
     <Navbar/>
-        <h1 style="font-family: 'Inter', sans-serif; text-align: left; margin-left: 2%;">{name}</h1>
+    <h1 style="font-family: 'Inter', sans-serif; text-align: left; margin-left: 2%;">{name}</h1>
+    <div class="container">
         <div class="card-container">
             {#each coins as coin }
               <div class="card">
@@ -155,7 +165,15 @@
                 <p>{coin.usd} USD</p>
               </div>
             {/each}
-          </div>
+        </div>
+        <div class="chart-container">
+            {#if coins.length > 0}
+            <PieChart {coins} />
+            {:else}
+            <p>Loading...</p>
+            {/if}
+        </div>
+    </div>
 
 </div>
     
@@ -163,6 +181,18 @@
 
     .gradient {
 	background: linear-gradient(to bottom, #7fedec, #f0f0f0);
+    }
+
+    .container{
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+    }
+
+    .chart-container {
+        width: 40%;
+        align-self: right;
+        align-items: center;
     }
 
     .card-container {
