@@ -86,13 +86,14 @@ setInterval(async () => {
 
 
     _res.forEach(obj => {
-        console.log(obj.symbol.toUpperCase());
         database.collection('market')
         .updateOne(
             { "token":  obj.symbol},
             { $push: { "dailyPrice": obj.current_price } }
         )
         .then(result => {
+            if(result.matchedCount)
+                console.log(obj.symbol)
             console.log(`Matched ${result.matchedCount} document(s) and modified ${result.modifiedCount} document(s)`);
         })
         .catch(error => {
@@ -396,6 +397,70 @@ app.get('/panel/:pname',(req,res)=>{
     .catch(()=>{
         res.status(500).json({err:'Panel collection fetching err'})
     })
+})
+
+//management
+app.patch('/management/:pid',(req,res)=>{
+    const entry=req.body //front theke json create korte hobe(tokens:[])
+    console.log(entry)
+
+    database.collection('management')
+    .updateOne(
+        { "panelID": req.params.pid },
+        { $push: { "funds": entry } }
+    )
+    .then(result => {
+        res.status(200).json({success:"patched"})
+        console.log(`Matched ${result.matchedCount} document(s) and modified ${result.modifiedCount} document(s)`);
+    })
+    .catch(error => {
+        console.error('Error updating management:', error);
+    });
+})
+
+app.get('/management/:pid',(req,res)=>{   
+    database.collection('management')
+    .findOne(
+        { "panelID": req.params.pid }
+    )
+    .then(result => {
+        res.status(200).json(result)
+    })
+    .catch(error => {
+        console.error('Error fetching management:', error);
+    });
+})
+
+//management
+app.patch('/umanagement/:pid',(req,res)=>{
+    const entry=req.body //front theke json create korte hobe(tokens:[])
+    console.log(entry)
+
+    database.collection('umanagement')
+    .updateOne(
+        { "userID": req.params.pid },
+        { $push: { "funds": entry } }
+    )
+    .then(result => {
+        res.status(200).json({success:"patched"})
+        console.log(`Matched ${result.matchedCount} document(s) and modified ${result.modifiedCount} document(s)`);
+    })
+    .catch(error => {
+        console.error('Error updating umanagement:', error);
+    });
+})
+
+app.get('/umanagement/:pid',(req,res)=>{   
+    database.collection('umanagement')
+    .findOne(
+        { "userID": req.params.pid }
+    )
+    .then(result => {
+        res.status(200).json(result)
+    })
+    .catch(error => {
+        console.error('Error fetching umanagement:', error);
+    });
 })
 
 //-------------------------------------------------------------------------------------------------------
