@@ -3,13 +3,13 @@
     let isLoggedIn = false;
 
 	let pages = [
-    { name: 'Holding', link: '/#/Holding', id: 1},
+        { name: 'Holding', link: '/#/Holding', id: 1},
 		{ name: 'Market', link: "/#/Market", id: 2}, 
 		{ name: 'Academy', link: 'https://www.google.com', id: 3}, 
 		{ name: 'Forum', link: 'https://www.google.com', id: 4}, 
 		{ name: 'News', link: 'https://www.google.com', id: 5}, 
 		{ name: 'Pricing', link: 'https://www.google.com', id: 6},
-		{ name: 'Assign', link: '/#/Assign', id: 7},
+		{ name: 'Fund Manage', link: '/#/Fundmanage', id: 7},
 		{ name: 'Request', link: '/#/Request', id: 8},
 	];
 	

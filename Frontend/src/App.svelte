@@ -1,13 +1,15 @@
 <script>
 	import Router from 'svelte-spa-router';
 	import AssetExpand from './AssetExpand.svelte';
+	import Assign from './Assign.svelte';
+	import FundManage from './FundManage.svelte';
+	import FundManageRequest from './FundManageRequest.svelte';
 	import Holding from './Holding.svelte';
 	import Landing from './Landing.svelte';
+	import Login from './Login.svelte';
 	import Market from './Market.svelte';
-	import Assign from './Assign.svelte';
-    import Request from './Request.svelte';
-    import Login from './Login.svelte';
-    import SignUp from './SignUp.svelte';
+	import Request from './Request.svelte';
+	import SignUp from './SignUp.svelte';
 
   let emailOrMobile = "";
 
@@ -27,8 +29,10 @@
 	'/Holding': Holding,
     '/AssetExpand': AssetExpand,
     '/Market': Market,
+    '/Fundmanage': FundManage,
     '/Assign': Assign,
     '/Request': Request,
     '/Login': Login,
-    '/SignUp': SignUp
+    '/SignUp': SignUp,
+    '/FundManageRequest': FundManageRequest
 }} />
