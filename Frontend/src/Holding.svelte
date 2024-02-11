@@ -1,18 +1,20 @@
 <script>
-
+    import { push } from 'svelte-spa-router';
     import { onMount } from 'svelte';
     import Navbar from './Navbar.svelte';
-    let isLoggedIn=false, userID=0;
+    let isLoggedIn=false, userID=0, userName='';
 
-    const { params } = getRoute();
+    userID = sessionStorage.getItem('userID');
+    isLoggedIn = sessionStorage.getItem('isLoggedIn');
+    userName = sessionStorage.getItem('userName');
 
-    console.log(params);
+    console.log(userID);
 
     let data = [];
     let assets = [];
     
     onMount(async () => {
-        const response = await fetch('http://localhost:9000/holding/1');
+        const response = await fetch(`http://localhost:9000/holding/${userID}`);
         const jsonData = await response.json();
         data = jsonData;
 
@@ -23,20 +25,21 @@
         }));
     });
 
-    function expandAsset(){
-        console.log('card pressed');
+    function expandAsset(index){
+        sessionStorage.setItem('assetGroupIndex', index);
+        push('/AssetExpand');
     }
     
 </script>
 
 
 <div class="gradient" style="height: 100vh;">
-    <Navbar isLoggedIn={isLoggedIn} />
+    <Navbar />
     <main>
         <h1 style="font-family: 'Inter', sans-serif; text-align: left">My Assets</h1>
         <div class="card-container">
             {#each assets as asset, index}
-                <div class="card" key={index} on:click={expandAsset} on:keypress={expandAsset}>
+                <div class="card" key={index} on:click={() => expandAsset(index)} on:keypress={() => expandAsset(index)}>
                     <h2>{asset.name}</h2>
                     <p>${asset.total} (<span class="{asset.change >= 0 ? 'positive' : 'negative'}">{asset.change}</span>)</p>
                 </div>

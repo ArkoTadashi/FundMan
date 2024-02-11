@@ -28,7 +28,7 @@
 
 <div class="gradient" style="height: 800px; width: 100%; border:0px">
 
-	<Navbar isLoggedIn={isLoggedIn} userID=1/>
+	<Navbar/>
 	<div class="container">
     <div class="image-wrapper">
         <img src="images/heroart.png" alt="Your Image"/>
