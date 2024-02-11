@@ -6,8 +6,10 @@
 		{ name: 'Pricing', link: 'https://www.google.com', id: 4}
 	];
 
-    export let isLoggedIn = false;
-    export let userID = 0;
+    let isLoggedIn = sessionStorage.getItem('isLoggedIn');
+    let userName = sessionStorage.getItem('userName');
+
+
 </script>
 
 <div class="navbar">
@@ -21,8 +23,8 @@
       {/each}
     </div>
     {#if isLoggedIn}
-        <div>
-            user {userID} logged in
+        <div style="margin-right: 2%;">
+            user {userName} logged in
         </div>
     {:else}
         <div style="margin-right: 2%; margin-top: 15px;">
