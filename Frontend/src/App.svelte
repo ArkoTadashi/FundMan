@@ -6,6 +6,8 @@
 	import Market from './Market.svelte';
 	import Assign from './Assign.svelte';
     import Request from './Request.svelte';
+    import Login from './Login.svelte';
+
   let emailOrMobile = "";
 
     function handleInputChange(event) {
@@ -25,5 +27,6 @@
     '/AssetExpand': AssetExpand,
     '/Market': Market,
     '/Assign': Assign,
-    '/Request': Request
+    '/Request': Request,
+    '/Login': Login
 }} />
