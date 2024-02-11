@@ -124,6 +124,7 @@
 
                 let tokenAddress = dat.address;
                 let decimal = dat.decimal;
+                let logo = dat.logo;
 
                 let holdingValue = await fetchCoinData(tokenAddress, decimal);
 
@@ -134,10 +135,11 @@
 
                 return {
                     name : dat.name,
-                    code : coin,
-                    amount : holdingValue,
-                    usd : holdingValue*currentPrice.currentPrice,
-                    change : 0.5
+                    code : coin.toUpperCase(),
+                    amount : parseFloat(holdingValue).toFixed(7),
+                    usd : parseFloat((holdingValue*currentPrice.currentPrice).toFixed(7)),
+                    change : 0.5,
+                    logo: logo
                 };
             }));
         } catch (error) {
@@ -156,7 +158,7 @@
     <div class="container">
         <div class="card-container">
             {#each coins as coin }
-              <div class="card">
+              <div class="card" style="background-image: url({coin.logo}); background-size: 30%; background-position: bottom right; background-repeat: no-repeat;">
                 <div class="card_text_container">
                     <h2>{coin.name} - {coin.code}</h2>
                     <p style="text-align: right;"><span style="text-align: right;" class="{coin.change >= 0 ? 'positive' : 'negative'}">{coin.change}%</span></p>
