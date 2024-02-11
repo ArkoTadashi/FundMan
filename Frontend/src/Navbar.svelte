@@ -6,7 +6,8 @@
 		{ name: 'Market', link: "/#/Market", id: 1}, 
 		{ name: 'Academy', link: 'https://www.google.com', id: 2}, 
 		{ name: 'News', link: 'https://www.google.com', id: 3}, 
-		{ name: 'Pricing', link: 'https://www.google.com', id: 4}
+		{ name: 'Pricing', link: 'https://www.google.com', id: 4},
+    { name: 'Fund Manage', link: '/#/Fundmanage', id: 5}
 	];
 
     let isLoggedIn=false, userName;   

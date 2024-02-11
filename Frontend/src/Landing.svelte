@@ -3,7 +3,7 @@
     let isLoggedIn = false;
 
 	let pages = [
-    { name: 'Holding', link: '/#/Holding', id: 1},
+        { name: 'Holding', link: '/#/Holding', id: 1},
 		{ name: 'Market', link: "/#/Market", id: 2}, 
 		{ name: 'Academy', link: 'https://www.google.com', id: 3}, 
 		{ name: 'Forum', link: 'https://www.google.com', id: 4}, 
