@@ -103,6 +103,20 @@ setInterval(async () => {
         database.collection('market')
         .updateOne(
             { "token":  obj.symbol},
+            { $set: { "currentPrice": obj.current_price } }
+        )
+        .then(result => {
+            if(result.matchedCount)
+                console.log(obj.symbol)
+            console.log(`Matched ${result.matchedCount} document(s) and modified ${result.modifiedCount} document(s)`);
+        })
+        .catch(error => {
+            console.error('Error updating document:', error);
+        });
+
+        database.collection('market')
+        .updateOne(
+            { "token":  obj.symbol},
             { $pop: { "dailyPrice": -1 } }
         )
         .then(result => {
