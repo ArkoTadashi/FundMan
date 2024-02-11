@@ -4,6 +4,7 @@
 	import Holding from './Holding.svelte';
 	import Landing from './Landing.svelte';
 	import Market from './Market.svelte';
+    import FundManage from './FundManage.svelte';
 	import Assign from './Assign.svelte';
     import Request from './Request.svelte';
   let emailOrMobile = "";
@@ -24,6 +25,7 @@
 	'/Holding': Holding,
     '/AssetExpand': AssetExpand,
     '/Market': Market,
+    '/Fundmanage': FundManage,
     '/Assign': Assign,
     '/Request': Request
 }} />
