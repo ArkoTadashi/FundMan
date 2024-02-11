@@ -1,216 +1,167 @@
 <script>
-    let requests = [
-      { id: 1, uid:1, from: "John Doe", token:"Bitcoin", amount: 120, percent:"5%", status: null },
-      { id: 2, uid:2, from: "Alice Smith", token:"Etherium", amount: 20, percent:"15%", status: null },
-      { id: 3, uid:3, from: "Bob Johnson", token:"Sol", amount: 12, percent:"10%", status: null }
-    ];
+  import { onMount } from 'svelte';
+  import Navbar from './Navbar.svelte';
+
+  let amount = 0;
+  let selectedPercentage="5%"
+  let selectedTime='Short term holding'
+  let preview=false
+  let panelMemberUsername=sessionStorage.getItem('panelMemberUsername')
   
-    let token=''
-    let tokenInfo={}
-    let client=''
-    let clientInfo={}
-    function acceptRequest(id) {
-      requests = requests.map(request =>
-        request.id === id ? { ...request, status: 'accepted' } : request
-      );
-    }
-  
-    function rejectRequest(id) {
-      requests = requests.map(request =>
-        request.id === id ? { ...request, status: 'rejected' } : request
-      );
-    }
+  //fetch from db: panelMember
+  let panelMember
+  onMount(async () => {
+        const response = await fetch(`http://localhost:9000/panel/${panelMemberUsername}`);
+        panelMember = await response.json();
+        console.log(panelMember)
+    });
+ 
+  function submitForm() {
+    // Process the form submission here
+    console.log('Amount:', amount);
+    console.log('Percentage:', selectedPercentage);
+    console.log('Time:', selectedTime);
+    console.log('Panel Member Name:', panelMember.name);
+  }
 
-    function setToken(t){
-        token=t
-    }
+  function prevw(){
+      preview=!preview
+  }
 
-    function getTokenInfo(tname){
-        //fetch from db
-        let info = {
-            'Bitcoin':{name:'Bitcoin',price:230},
-            'Etherium':{name:'Etherium',price:222},
-            'Sol':{name:'Sol',price:21}
-        }
-        return info[tname]
-    }
+</script>
+<Navbar />
+<div class="page">
+<div class="top">
+  <div class="assign">
+      <h3>Assign token to Expert panel member</h3>
+    
+      <label for="amount">Amount(Money):</label>
+      <input type="number" id="amount" min=0 bind:value={amount} />
+      
+      <label>Percentage:</label>
+      <div>
+        <label for="percentage1"><input type="radio" id="percentage1" name="percentage" value="5%" bind:group={selectedPercentage} /> Less than 5%</label>
+        <label for="percentage2"><input type="radio" id="percentage2" name="percentage" value="10%" bind:group={selectedPercentage} /> Less than 10%</label>
+        <label for="percentage3"><input type="radio" id="percentage3" name="percentage" value="15%" bind:group={selectedPercentage} /> Less than 15%</label>
+      </div>         
+  </div>
 
-    function setClient(id){
-        client=id
-    }
-
-    function getClientInfo(id){
-        //fetch from db
-        const info = {
-        1: { id:"1", name: 'John Doe', picture: './pic/person.png', info: 'John Doe is a fictional character.' },
-        2: { id:"3", name: 'Alice Smith', picture: './pic/person.png', info: 'Alice Johnson is a fictional character.' },
-        3: { id:"4", name: 'Bob Jhonson', picture: './pic/person.png', info: 'Bob Brown is a fictional character.' }
-        };
-        return info[id]
-    }
-
-    $: clientInfo=getClientInfo(client)
-    $: tokenInfo=getTokenInfo(token)
-
-  </script>
-
-<div class="top-container">
-    <div class="container">
-        <h1>Requests Details</h1>
-        {#each requests as request}
-          <div class="request" key={request.id} on:mouseenter={()=>{
-            setClient(request.uid)
-            setToken(request.token)
-            }}>
-            <div class="info">
-                <p><strong>Client:</strong> {request.from}</p>
-                <p><strong>Token:</strong> {request.token}</p>
-                <p><strong>Amount:</strong> {request.amount}</p>
-                <p><strong>Percentage:</strong> Less than {request.percent}</p>
-            </div>
-            
-            <div class="status">
-                {#if !request.status}
-                  <button class="accept" on:click={() => acceptRequest(request.id)}>Accept</button>
-                  <button class="reject" on:click={() => rejectRequest(request.id)}>Reject</button>
-                {:else if request.status === 'accepted'}
-                  <p class="message accepted">This request has been accepted.</p>
-                {:else if request.status === 'rejected'}
-                  <p class="message rejected">This request has been rejected.</p>
-                {/if}
-            </div>
+  <div class="details">  
+      <div class="panel-details">
+        {#if panelMember}
+          <div class="card">
+            <img class="img" src='./pic/person.png' alt={panelMember.name} />
+            <h2>{panelMember.name.toUpperCase()}</h2>
+            <h4>Rating: {panelMember.rating}</h4>
+            <h4>PnL: {panelMember.pnl}</h4>
+            <h4>Manage Count: {panelMember.manageCount}</h4>
           </div>
-        {/each}
+        {/if}
       </div>
+  </div>
+    
+     </div>
+     
+<div class="preview">
+  <div class="button">
+      <button id="p" on:click={prevw}>Preview</button>
+  </div>
 
-      <div class="container2">
-        {#if clientInfo}
-            <div class="card">
-                <h3>Client</h3>
-                <hr>
-                <h3>{clientInfo.name}</h3>
-                <img class="img" src={clientInfo.picture} alt={clientInfo.name} />
-                <p>{clientInfo.info}</p>
-            </div>
-        {/if}
+  {#if preview}
+  <div class="submit-info">
+      Amount: {amount} <br>
+      Percentage:Less than {selectedPercentage} <br>
+      {selectedTime} <br>
+      {#if panelMember}
+      Request to: {panelMember.name} <br>
+      {/if}
 
-        {#if tokenInfo}
-            <div class="card">
-                <h3>Token</h3>
-                <hr>
-                <h3>{tokenInfo.name}</h3>
-                <p>{tokenInfo.price}</p>
-            </div>
-        {/if}
-        </div>
-        
+  </div>
+
+  <div class="button">
+      {#if panelMember}
+      <button id="s" on:click={() => submitForm()}>Submit</button>
+      {:else}
+      <p style="color:brown; margin-left: auto; margin-right:auto;" >Select Everything Correctly to Submit</p>
+      {/if}
+    
+  </div>
+ 
+  {/if}
+ 
 </div>
 
+</div>
+     
+<style>
+  .card {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    margin-top: auto;
+  }
   
-  
-  <style>
-     .card {
-      margin: 10px 2px 2px 2px;
-      padding: 20px;
-      border: 1px solid #cfcfcf;
-      border-radius: 3px;
-      background-color: #cff0f3;
-    }
-    .card img {
-      width: 30%;
-      height: 30%;
-      border-radius: 2px;
-    }
+  .card img {
+    width: 20%;
+    height: 30%;
+    border-radius: 2px;
+  }
 
-    .top-container{
-        display: flex;
-    }
-    .container {
-      width: 70%;
-      margin: 2px auto;
-      padding: 20px;
-      /* border: 1px solid #ecebeb; */
-      /* border-radius: 3px; */
-      /* background-color: #fafafa; */
-    }
-
-    .container2 {
-      width: 30%;
-      margin: 55px auto;
-      padding: 20px;
-      /* border: 1px solid #ecebeb; */
-      border-radius: 3px;
-    }
-
-    .request {
+  .top{
       display: flex;
-      max-width: 100%;
-      margin: 2px 2px 2px 2px;
-      padding: 20px;
-      border: 1px solid #cfcfcf;
-      border-radius: 3px;
-      background-color: #ddf4f6;
-    }
+  }
 
-    .request:hover {
+  .assign{
+    align-content: center;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    padding: 10px;
+    margin-top: 2px;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 45%;
+    background-color: antiquewhite;
+  }
+
+  .details{
+    align-content: center;
+    height: auto;
+    max-width: 45%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .panel-details{
+      background-color: rgb(212, 238, 248);
+  }
+  .button{
       display: flex;
-      max-width: 100%;
-      margin: 2px 2px 2px 2px;
-      padding: 20px;
-      border: 2px solid #b9b9b9;
-      border-radius: 3px;
-      background-color: #c6ecf0;
-    }
+      margin-top: 10px;
+  }
 
-    .info{
-        width: 90%;
-        /* margin: auto; */
-        margin-bottom: 5px;
-    }
-    .status{
-        align-items: center;
-        margin: auto;
-        width: 20%;
-    }
-  
-    h1 {
-      font-size: 24px;
-      margin-bottom: 15px;
-    }
-  
-    p {
-      margin-bottom: 10px;
-    }
-  
-    button {
-      padding: 10px 20px;
-      margin-right: 10px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-  
-    button.accept {
-      background-color: #4CAF50;
-      color: white;
-    }
-  
-    button.reject {
-      background-color: #f44336;
-      color: white;
-    }
-  
-    .message {
-      margin-top: 20px;
-      font-weight: bold;
-    }
-  
-    .accepted {
-      color: #4CAF50;
-    }
-  
-    .rejected {
-      color: #f44336;
-    }
-  </style>
-  
+  #p{
+      margin-left: auto;
+      margin-right: auto;
+  }
+
+  #s{
+      margin-left: auto;
+      margin-right: auto;
+  }
+
+  .preview{
+      display: inline;
+      margin: auto;
+      margin-top: 5px;
+  }
+  .submit-info{
+      display: flex;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      margin-top: 2px;
+      margin-left: auto;
+      margin-right: auto;
+      padding: 10px;
+      width: 95%;
+      background-color: rgb(255, 252, 249);
+  }
+</style>

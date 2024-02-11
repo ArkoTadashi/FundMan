@@ -2,6 +2,7 @@
 
     import { onMount } from 'svelte';
     import Navbar from './Navbar.svelte';
+    import { cpus } from 'os';
 
     // let data = [];
     // let name = '';
@@ -79,6 +80,28 @@
     let userID = sessionStorage.getItem('userID');
     let assetGroupIndex = sessionStorage.getItem('assetGroupIndex');
 
+    
+    async function fetchCoinData(address, decimal) {
+        try {
+            const wallet = sessionStorage.getItem('walletAddress');
+            const bal = await ethereum.request({
+                method: 'eth_call',
+                params: [{
+                    to: address,
+                    data: "0x70a08231" + "000000000000000000000000" + wallet.substring(2),
+                },
+                'latest']
+            });
+
+            const value = parseInt(bal, 16) / (10 ** decimal);
+            return value;
+        } catch (error) {
+            console.error("Error fetching coin data:", error);
+            return 0;
+        }
+    }
+
+
 
     onMount(async () => {
         try {
@@ -87,13 +110,29 @@
             let data = jsonData;
             name = data.groupName;
 
-            coins = data.tokens.map(coin => ({
-                name : coin.token,
-                code : coin.token,
-                amount : coin.amount,
-                usd : 2000,
-                change : 0.5
-            }));
+            coins = data.tokens.map(async (coin) => {
+                const response = await fetch(`http://localhost:9000/token/${coin}`);
+                const jsonData = await response.json();
+                let dat = jsonData;
+
+                let tokenAddress = dat.address;
+                let decimal = dat.decimal;
+
+                let holdingValue = fetchCoinData(tokenAddress, decimal);
+
+                let currentPrice=await fetch(`http://localhost:9000/market/${coin}`)
+                currentPrice = await currentPrice.json();
+                
+
+
+                return {
+                    name : dat.name,
+                    code : coin,
+                    amount : holdingValue,
+                    usd : holdingValue*currentPrice.currentPrice,
+                    change : 0.5
+                };
+            });
         } catch (error) {
             console.error("Error fetching token data:", error);
         }
