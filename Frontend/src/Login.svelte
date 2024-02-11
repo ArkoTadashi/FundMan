@@ -31,12 +31,11 @@
       console.log(variable._id)
 
       if (response.status == 200) {
-        let data = {
-          userID: variable._id,
-          isLoggedIn: true
-        }
         
-        push('/holding', data);
+        sessionStorage.setItem('userID', variable._id);
+        sessionStorage.setItem('isLoggedIn', true);
+        
+        push('/holding');
         console.log('Data sent successfully');
       } else {
         // Handle error

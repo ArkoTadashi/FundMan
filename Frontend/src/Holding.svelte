@@ -1,12 +1,13 @@
 <script>
 
-    import { getRoute } from 'svelte-spa-router';
+    import { onMount } from 'svelte';
     import Navbar from './Navbar.svelte';
     let isLoggedIn=false, userID=0;
 
-    const { params } = getRoute();
+    userID = sessionStorage.getItem('userID');
+    isLoggedIn = sessionStorage.getItem('isLoggedIn');
 
-    console.log(params);
+    console.log(userID);
 
     let data = [];
     let assets = [];
@@ -31,7 +32,7 @@
 
 
 <div class="gradient" style="height: 100vh;">
-    <Navbar isLoggedIn={isLoggedIn} />
+    <Navbar isLoggedIn={isLoggedIn} userID={userID}/>
     <main>
         <h1 style="font-family: 'Inter', sans-serif; text-align: left">My Assets</h1>
         <div class="card-container">
