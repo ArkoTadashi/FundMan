@@ -1,4 +1,7 @@
 <script>
+    import { onMount } from "svelte";
+    import { push } from "svelte-spa-router";
+
     let pages = [
 		{ name: 'Market', link: "/#/Market", id: 1}, 
 		{ name: 'Academy', link: 'https://www.google.com', id: 2}, 
@@ -6,8 +9,23 @@
 		{ name: 'Pricing', link: 'https://www.google.com', id: 4}
 	];
 
-    let isLoggedIn = sessionStorage.getItem('isLoggedIn');
-    let userName = sessionStorage.getItem('userName');
+    let isLoggedIn=false, userName;   
+
+
+    function logout(){
+        sessionStorage.setItem('isLoggedIn', JSON.stringify(false));
+        sessionStorage.setItem('userID', 0);
+        sessionStorage.setItem('userName', '');
+        push('/Login');
+    }
+
+    onMount(
+        ()=> {
+            isLoggedIn = JSON.parse(sessionStorage.getItem('isLoggedIn'));
+            userName = sessionStorage.getItem('userName');
+            console.log(isLoggedIn);
+        }
+    );
 
 
 </script>
@@ -25,6 +43,7 @@
     {#if isLoggedIn}
         <div style="margin-right: 2%;">
             user {userName} logged in
+            <button class="login-button" on:click={logout}>Logout</button>
         </div>
     {:else}
         <div style="margin-right: 2%; margin-top: 15px;">
