@@ -1,4 +1,7 @@
 <script>
+    import Navbar from "./Navbar.svelte";
+    let isLoggedIn = false;
+
 	let pages = [
     { name: 'Holding', link: '/#/Holding', id: 1},
 		{ name: 'Market', link: "/#/Market", id: 2}, 
@@ -22,31 +25,15 @@
     }
 </script>
 
-<!-- <Router>
-  <Route path="/holding" component={Holding} />
-</Router> -->
 
-<body class="gradient" style="height: 800px;">
-<main>
-	<div class="navbar" height="500px" style="gradient">
-		<div class="nav-buttons">
-		  <img src="path/to/your/logo.png" alt="Logo" class="logo" />
-		  <div class="vertical-line"></div>
-		  {#each pages as page (page)}
-			<a href={page.link} class="nav-button">{page.name}</a>
-		  {/each}
-		</div>
-	  
-		<div>
-		  <a href="#" class="login-button">Login</a>
-		  <a href="#" class="signup-button">Sign Up</a>
-		</div>
-	</div>
+<div class="gradient" style="height: 800px; width: 100%; border:0px">
+
+	<Navbar/>
 	<div class="container">
     <div class="image-wrapper">
-        <img src="images/heroart.png" alt="Your Image" />
+        <img src="images/heroart.png" alt="Your Image"/>
     </div>
-    <div class="text-container">
+    <div class="text-container" style="width: 30%; Height: auto;">
         <div class="title">Your Personal</div>
         <div class="title">Crypto Tracking Platform</div>
         <div class="input-container">
@@ -54,15 +41,14 @@
             <button class="register-btn" on:click={handleRegisterClick}>Register</button>
         </div>
     </div>
+  </div>
+
 </div>
-</main>
-</body>
 <body class="solid" style="height: 500px;"></body>
 <style>
 	main {
 		border: 0px;
 		text-align: center;
-		padding: 1em;
 	}
 
 	@media (min-width: 640px) {
@@ -71,56 +57,12 @@
 		}
 	}
 
-	.navbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px;
-    background-color: transparent;
-    color: white;
-  }
-
-  .logo {
-    margin-right: 10px;
-  }
-
-  .vertical-line {
-    height: 30px;
-    border-left: 1px solid black;
-    margin: 0 10px;
-  }
-
-  .nav-buttons {
-    display: flex;
-    align-items: center;
-  }
-
-  .nav-button {
-    margin-right: 10px;
-    color: black;
-    text-decoration: none;
-    font-family: 'Inter', sans-serif;
-  }
-
-  .login-button,
-  .signup-button {
-    padding: 8px 12px;
-    border: 2px solid black;
-    background-color: transparent;
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
-    font-family: 'Inter', sans-serif;
-  }
-
-  .signup-button {
-    background-color: #7fedec; 
-    border-color: #7fedec; 
-    margin-left: 10px;
-  }
+	
 
   .gradient {
-	background: linear-gradient(to right, #7fedec, #f0f0f0);
+	  background: linear-gradient(to right, #7fedec, #f0f0f0);
+    margin: 0px;
+    padding: 0px;
   }
 
   .solid {
@@ -133,15 +75,18 @@
         justify-content: flex-end;
         align-items: center;
         height: 100vh; /* Adjust as needed */
-        padding-right: 20px; /* Adjust as needed */
+        padding-right: 0px; /* Adjust as needed */
     }
 
     .image-wrapper {
-        width: 750px; /* Adjust size as needed */
-        height: 750px; /* Adjust size as needed */
+        position: absolute;
+        top: 75px;
+        right: 0;
+        width: 40%; /* Adjust size as needed */
+        height: auto; /* Adjust size as needed */
         overflow: hidden;
         border-radius: 50%;
-        margin-left: 20vw; /* Adjust as needed */
+        margin-left: 0vw; /* Adjust as needed */
     }
 
     .image-wrapper img {
@@ -151,8 +96,11 @@
     }
 
     .text-container {
+        position: absolute;
+        left: 10%;
+        justify-content: center;
+        align-items: center;
         text-align: center;
-        margin-left: 10%;
     }
 
     .title {
@@ -162,8 +110,9 @@
     }
 
     .input-container {
-        display: flex;
-        align-items: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
     .register-btn {

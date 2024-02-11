@@ -7,6 +7,9 @@
     import FundManage from './FundManage.svelte';
 	import Assign from './Assign.svelte';
     import Request from './Request.svelte';
+    import Login from './Login.svelte';
+    import SignUp from './SignUp.svelte';
+
   let emailOrMobile = "";
 
     function handleInputChange(event) {
@@ -27,5 +30,7 @@
     '/Market': Market,
     '/Fundmanage': FundManage,
     '/Assign': Assign,
-    '/Request': Request
+    '/Request': Request,
+    '/Login': Login,
+    '/SignUp': SignUp
 }} />
