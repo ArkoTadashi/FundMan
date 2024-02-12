@@ -31,6 +31,22 @@
       }
   }
 
+  async function checkTransaction(txhash) {
+    let checkTransactionLoop = () => {
+      return ethereum.request({method: 'eth_getTransactionReceipt', params:[txhash]}).then(r => {
+        if (r != null) {
+          console.log(r.status);
+          return r;
+        }
+        else {
+          return checkTransactionLoop();
+        }
+      });
+    }
+
+    return checkTransactionLoop();
+    
+  }
  
   async function submitForm() {
     // Process the form submission here
@@ -45,26 +61,14 @@
     let transactionParam = {
       to: panelMember.wallet,
       from: walletAddress,
-      value: '0x' + (amount*1.01).toString(16)
+      value: '0x' + (amount*1.01*(10**18)).toString(16)
     };
 
-    function checkTransaction(txhash) {
-      let checkTransactionLoop = () => {
-        return ethereum.request({method: 'eth_getTransactionReceipt', params:{txhash}}).then(r => {
-          if (r != null) {
-            return r;
-          }
-          else {
-            return checkTransactionLoop();
-          }
-        });
-      }
-      
-    }
+    
 
     ethereum.request({method: 'eth_sendTransaction', params:[transactionParam]}).then(txhash => {
       checkTransaction(txhash).then(async (r) => {
-        if (r.status == 1) {
+        if (r.status == "0x1") {
           let data = {
             "userID": userID,
             "total":amount,
