@@ -69,7 +69,8 @@
             "userID": userID,
             "total":amount,
             "starting": parseInt(Date.now()/1000),
-            "ending": parseInt(Date.now()/1000+30*24*60*60)
+            "ending": parseInt(Date.now()/1000+30*24*60*60),
+            "wallet": walletAddress
           }
           console.log("----data",data)
 
@@ -90,7 +91,8 @@
                 "panelID": panelID,
                 "total":amount,
                 "starting": parseInt(Date.now()/1000),
-                "ending": parseInt(Date.now()/1000+30*24*60*60)
+                "ending": parseInt(Date.now()/1000+30*24*60*60),
+                "wallet": walletAddress
               }
 
           response = await fetch(`http://localhost:9000/umanagement/${userID}`, {
