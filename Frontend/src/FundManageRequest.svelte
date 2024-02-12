@@ -17,7 +17,20 @@
         const response = await fetch(`http://localhost:9000/panel/${panelMemberUsername}`);
         panelMember = await response.json();
         // console.log(panelMember)
-    });
+  });
+
+  async function getWalletAddress() {
+      try {
+          if (typeof window.ethereum !== 'undefined') {
+              const accs = await ethereum.request({ method: 'eth_requestAccounts' });
+              return accs[0];
+          }
+      } catch (error) {
+          console.error("Error fetching wallet address:", error);
+          return ''; // Return empty string in case of error
+      }
+  }
+
  
   async function submitForm() {
     // Process the form submission here
@@ -25,46 +38,84 @@
     console.log('Percentage:', selectedPercentage);
     console.log('Panel Member Name:', panelMember.name);
     //pmem
-    let data = {
+
+    let walletAddress = await getWalletAddress();
+    sessionStorage.setItem('walletAddress', walletAddress);
+
+    let transactionParam = {
+      to: panelMember.wallet,
+      from: walletAddress,
+      value: '0x' + (amount*1.01).toString(16)
+    };
+
+    function checkTransaction(txhash) {
+      let checkTransactionLoop = () => {
+        return ethereum.request({method: 'eth_getTransactionReceipt', params:{txhash}}).then(r => {
+          if (r != null) {
+            return r;
+          }
+          else {
+            return checkTransactionLoop();
+          }
+        });
+      }
+      
+    }
+
+    ethereum.request({method: 'eth_sendTransaction', params:[transactionParam]}).then(txhash => {
+      checkTransaction(txhash).then(async (r) => {
+        if (r.status == 1) {
+          let data = {
             "userID": userID,
             "total":amount,
             "starting": parseInt(Date.now()/1000),
             "ending": parseInt(Date.now()/1000+30*24*60*60)
           }
-    console.log("----data",data)
+          console.log("----data",data)
 
-    let response = await fetch(`http://localhost:9000/management/${panelID}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-    });
-      
-    console.log(response.status)
+          
 
-    //user
-    data = {
-          "panelID": panelID,
-          "total":amount,
-          "starting": parseInt(Date.now()/1000),
-          "ending": parseInt(Date.now()/1000+30*24*60*60)
+          let response = await fetch(`http://localhost:9000/management/${panelID}`, {
+              method: 'PATCH',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(data)
+          });
+            
+          console.log(response.status)
+
+          //user
+          data = {
+                "panelID": panelID,
+                "total":amount,
+                "starting": parseInt(Date.now()/1000),
+                "ending": parseInt(Date.now()/1000+30*24*60*60)
+              }
+
+          response = await fetch(`http://localhost:9000/umanagement/${userID}`, {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+          });
+          
+          console.log(response.status)
+
+          //go back
+          sessionStorage.setItem('panelMemberUsername', '');
+          sessionStorage.setItem('panelID', 0);
+          push('/FundManage')
         }
+        else {
+          alert("Transaction Failed");
+        }
+      });
+    })
 
-    response = await fetch(`http://localhost:9000/umanagement/${userID}`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data)
-    });
+
     
-    console.log(response.status)
-
-    //go back
-    sessionStorage.setItem('panelMemberUsername', '');
-    sessionStorage.setItem('panelID', 0);
-    push('/FundManage')
   }
 
   function prevw(){
