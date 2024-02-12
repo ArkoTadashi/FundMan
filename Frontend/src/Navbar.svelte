@@ -7,9 +7,12 @@
 		{ name: 'Academy', link: 'https://www.google.com', id: 2}, 
 		{ name: 'News', link: 'https://www.google.com', id: 3}, 
 		{ name: 'Pricing', link: 'https://www.google.com', id: 4},
-    { name: 'Fund Manage', link: '/#/Fundmanage', id: 5},
-    { name: 'Management Overview', link: '/#/Umanagementoverview', id: 6}
 	];
+
+    let loggedInPages = [
+        { name: 'Fund Manage', link: '/#/Fundmanage', id: 5},
+        { name: 'Management Overview', link: '/#/Umanagementoverview', id: 6}
+    ]
 
     let isLoggedIn=false, userName;   
 
@@ -41,9 +44,14 @@
       {#each pages as page (page)}
         <a href={page.link} class="nav-button">{page.name}</a>
       {/each}
+      {#if isLoggedIn}
+        {#each loggedInPages as page (page)}
+        <a href={page.link} class="nav-button">{page.name}</a>
+        {/each}
+      {/if}
     </div>
     {#if isLoggedIn}
-        <div style="margin-right: 2%;">
+        <div style="margin-right: 2%; margin-top: 15px;">
             user {userName} logged in
             <button class="login-button" on:click={logout}>Logout</button>
         </div>

@@ -30,10 +30,9 @@
     
 </script>
 
-<body class="gradient" style="height: 100vh;">
-    <main>
+<div class="gradient" style="height: 100vh;">
         <Navbar />
-        <h1 style="font-family: 'Inter', sans-serif; text-align: left">Fund Manage</h1>
+        <h1 style="font-family: 'Inter', sans-serif; text-align: left; margin-left: 2%;">Fund Manage</h1>
         <div class="card-container">
             {#each panel as panelMember, index}
                 <div class="card" key={index} on:click={() => {goToNext(panelMember.username,panelMember.id)}} on:keypress={() => {goToNext(panelMember.username,panelMember.id)}}>
@@ -45,8 +44,7 @@
                 </div>
             {/each}
           </div>
-    </main>
-</body>
+</div>
 
 <style>
     main {
