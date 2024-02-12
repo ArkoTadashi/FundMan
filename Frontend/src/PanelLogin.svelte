@@ -31,7 +31,7 @@
         if (response.status == 200) {
           
           sessionStorage.setItem('panelID', variable._id);
-          sessionStorage.setItem('isLoggedIn', JSON.stringify(true));
+          sessionStorage.setItem('panelLoggedIn', JSON.stringify(true));
           sessionStorage.setItem('panelMemberName', variable.username);
           
           push('/management');

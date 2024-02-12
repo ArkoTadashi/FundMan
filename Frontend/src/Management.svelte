@@ -1,6 +1,5 @@
 <script>
     import { onMount } from 'svelte';
-    import Navbar from './Navbar.svelte';
 
     let requests=[]
     let client=''
@@ -30,7 +29,7 @@
     }
 
     onMount(async () => {
-        const response = await fetch(`http://localhost:9000/umanagement/${userId}`);
+        const response = await fetch(`http://localhost:9000/umanagement/${panelId}`);
         const jsonData = await response.json();
         let data = jsonData;
 
