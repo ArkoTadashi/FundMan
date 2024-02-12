@@ -1,12 +1,15 @@
 <script>
   import { onMount } from 'svelte';
   import Navbar from './Navbar.svelte';
+  import { push } from 'svelte-spa-router';
 
   let amount = 0;
   let selectedPercentage="5%"
   let selectedTime='Short term holding'
   let preview=false
   let panelMemberUsername=sessionStorage.getItem('panelMemberUsername')
+  let panelID=sessionStorage.getItem('panelID')
+  let userID=sessionStorage.getItem('userID')
   
   //fetch from db: panelMember
   let panelMember
@@ -14,14 +17,107 @@
         const response = await fetch(`http://localhost:9000/panel/${panelMemberUsername}`);
         panelMember = await response.json();
         // console.log(panelMember)
-    });
+  });
+
+  async function getWalletAddress() {
+      try {
+          if (typeof window.ethereum !== 'undefined') {
+              const accs = await ethereum.request({ method: 'eth_requestAccounts' });
+              return accs[0];
+          }
+      } catch (error) {
+          console.error("Error fetching wallet address:", error);
+          return ''; // Return empty string in case of error
+      }
+  }
+
  
-  function submitForm() {
+  async function submitForm() {
     // Process the form submission here
     console.log('Amount:', amount);
     console.log('Percentage:', selectedPercentage);
-    console.log('Time:', selectedTime);
     console.log('Panel Member Name:', panelMember.name);
+    //pmem
+
+    let walletAddress = await getWalletAddress();
+    sessionStorage.setItem('walletAddress', walletAddress);
+
+    let transactionParam = {
+      to: panelMember.wallet,
+      from: walletAddress,
+      value: '0x' + (amount*1.01).toString(16)
+    };
+
+    function checkTransaction(txhash) {
+      let checkTransactionLoop = () => {
+        return ethereum.request({method: 'eth_getTransactionReceipt', params:{txhash}}).then(r => {
+          if (r != null) {
+            return r;
+          }
+          else {
+            return checkTransactionLoop();
+          }
+        });
+      }
+      
+    }
+
+    ethereum.request({method: 'eth_sendTransaction', params:[transactionParam]}).then(txhash => {
+      checkTransaction(txhash).then(async (r) => {
+        if (r.status == 1) {
+          let data = {
+            "userID": userID,
+            "total":amount,
+            "starting": parseInt(Date.now()/1000),
+            "ending": parseInt(Date.now()/1000+30*24*60*60),
+            "wallet": walletAddress
+          }
+          console.log("----data",data)
+
+          
+
+          let response = await fetch(`http://localhost:9000/management/${panelID}`, {
+              method: 'PATCH',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(data)
+          });
+            
+          console.log(response.status)
+
+          //user
+          data = {
+                "panelID": panelID,
+                "total":amount,
+                "starting": parseInt(Date.now()/1000),
+                "ending": parseInt(Date.now()/1000+30*24*60*60),
+                "wallet": walletAddress
+              }
+
+          response = await fetch(`http://localhost:9000/umanagement/${userID}`, {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+          });
+          
+          console.log(response.status)
+
+          //go back
+          sessionStorage.setItem('panelMemberUsername', '');
+          sessionStorage.setItem('panelID', 0);
+          push('/FundManage')
+        }
+        else {
+          alert("Transaction Failed");
+        }
+      });
+    })
+
+
+    
   }
 
   function prevw(){

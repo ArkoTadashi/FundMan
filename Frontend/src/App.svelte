@@ -40,5 +40,5 @@
     '/FundManageRequest': FundManageRequest,
     '/PanelLogin': PanelLogin,
     '/UManagementOverview': UManagementOverview,
-    '/Management' : Management
+    '/Management': Management
 }} />
