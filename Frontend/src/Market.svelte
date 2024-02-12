@@ -2,6 +2,7 @@
 
     import { onMount } from 'svelte';
     import Navbar from './Navbar.svelte';
+    import { push } from 'svelte-spa-router';
 
     let data = [];
     let coins = [];
@@ -27,11 +28,16 @@
         const marketCap = price*inCirc;
         return marketCap.toLocaleString();
     }
+
+    function showCoinInfo(coinName){
+        sessionStorage.setItem('expandCoin', coinName);
+        push('/CoinInfo');
+    }
 </script>
 
 <div class="gradient" style="min-height: 100vh;">
     <Navbar/>
-        <h1 style="font-family: 'Inter', sans-serif; text-align: left">Market</h1>
+        <h1 style="font-family: 'Inter', sans-serif; text-align: left; margin-left: 2%;">Market</h1>
         <div class="card-container">
             <table>
                 <thead>
@@ -47,7 +53,7 @@
                 </thead>
                 <tbody>
                     {#each coins as coin, index}
-                    <tr>
+                    <tr on:click={showCoinInfo(coin.name)}>
                         <td>{coin.name}</td>
                         <td>${coin.price.toLocaleString()}</td>
                         <td><span style="text-align: right;" class="{coin.change24h >= 0 ? 'positive' : 'negative'}">{coin.change24h}%</span></td>
@@ -91,5 +97,11 @@
 
     .negative {
         color: red;
+    }
+
+    tbody tr:hover{
+        cursor: pointer;
+        background-color: white;
+        border: 2px solid black;
     }
 </style>
