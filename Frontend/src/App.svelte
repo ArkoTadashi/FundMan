@@ -14,6 +14,7 @@
 	import UManagementOverview from './UManagementOverview.svelte';
     import Management from './Management.svelte';
     import FundRaiseUser from './FundRaiseUser.svelte';
+    import CoinInfo from './CoinInfo.svelte';
 
   let emailOrMobile = "";
 
@@ -42,5 +43,6 @@
     '/PanelLogin': PanelLogin,
     '/UManagementOverview': UManagementOverview,
     '/Management': Management,
-    '/FundRaiseUser':FundRaiseUser
+    '/FundRaiseUser':FundRaiseUser,
+    '/CoinInfo': CoinInfo
 }} />

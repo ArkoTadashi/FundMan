@@ -26,6 +26,10 @@
         push('/Login');
     }
 
+    function sendHolding(){
+        push('/holding');
+    }
+
     onMount(
         ()=> {
             isLoggedIn = JSON.parse(sessionStorage.getItem('isLoggedIn'));
@@ -54,7 +58,7 @@
     </div>
     {#if isLoggedIn}
         <div style="margin-right: 2%; margin-top: 15px;">
-            user {userName} logged in
+            <button class="login-button" on:click={sendHolding}>{userName}</button>
             <button class="login-button" on:click={logout}>Logout</button>
         </div>
     {:else}
@@ -95,6 +99,12 @@
     color: black;
     text-decoration: none;
     font-family: 'Inter', sans-serif;
+    padding: 10px;
+  }
+
+  .nav-button:hover{
+    border: 3px solid;
+    border-color: black;
   }
 
   .login-button,
