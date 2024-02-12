@@ -22,29 +22,40 @@
         }));
     });
 
-    function goToNext(username,id){
-        sessionStorage.setItem('panelMemberUsername', username);
-        sessionStorage.setItem('panelID', id);
-        push('/FundManageRequest')
+    let money=0
+    let pMember=''
+    function giveMoney(m,n){
+        money=m
+        pMember=n
     }
     
 </script>
 
-<div class="gradient" style="height: 100vh;">
+<body class="gradient" style="height: 100vh;">
+    <main>
         <Navbar />
-        <h1 style="font-family: 'Inter', sans-serif; text-align: left; margin-left: 2%;">Fund Manage</h1>
+        <h1 style="font-family: 'Inter', sans-serif; text-align: left">Fund Raise</h1>
         <div class="card-container">
             {#each panel as panelMember, index}
-                <div class="card" key={index} on:click={() => {goToNext(panelMember.username,panelMember.id)}} on:keypress={() => {goToNext(panelMember.username,panelMember.id)}}>
+                <div class="card" key={index}>
                     <img class="img" src='./pic/person.png' alt={panelMember.name} />
                     <h2>{panelMember.name.toUpperCase()}</h2>
                     <h4>Rating: {panelMember.rating}</h4>
                     <h4>PnL: {panelMember.pnl}</h4>
-                    <h4>Manage Count: {panelMember.manageCount}</h4>
+                    <h4>Target Amount $100</h4>
+                    <br>
+                    <button on:click={() => {giveMoney(100,panelMember.name)}} on:keypress={() => {giveMoney(100,panelMember.name)}} class="btn"> Give </button>
                 </div>
             {/each}
+
+            {#if money>0}
+            <div>
+                <h3>${money} is given to ${pMember}</h3>
+            </div>
+            {/if}
           </div>
-</div>
+    </main>
+</body>
 
 <style>
     main {
@@ -67,6 +78,7 @@
     display: flex;
     flex-wrap: wrap;
     width: 60%;
+    height: auto;
     }
 
     .card {
@@ -77,7 +89,9 @@
         padding: 16px;
         margin: 20px;
         width: 100%;
+        height: 100%;
         max-width: 300px;
+        max-height: 500px;
         cursor: pointer; /* Add a pointer cursor for indicating clickability */
         transition: transform 0.1s ease-in-out; /* Add a smooth transition effect */
     }
@@ -94,6 +108,15 @@
 
     .positive {
         color: green;
+    }
+
+    .btn:hover{
+        background-color: rgb(252, 218, 177);
+        transform: scale(1.01);
+    }
+
+    .btn{
+        background-color: blanchedalmond;
     }
 
     .negative {

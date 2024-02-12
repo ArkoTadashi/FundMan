@@ -61,8 +61,8 @@
 
   </script>
 
+<div class="gradient">
 <Navbar />
-
 <div class="top-container">
     <div class="container">
         <h1>Requests Details</h1>
@@ -106,10 +106,15 @@
         </div> -->
         
 </div>
+</div>
 
   
   
   <style>
+    .gradient {
+	    background: linear-gradient(to bottom, #7fedec, #f0f0f0);
+    }
+
      .card {
       margin: 10px 2px 2px 2px;
       padding: 20px;

@@ -13,6 +13,7 @@
     import PanelLogin from './PanelLogin.svelte';
 	import UManagementOverview from './UManagementOverview.svelte';
     import Management from './Management.svelte';
+    import FundRaiseUser from './FundRaiseUser.svelte';
 
   let emailOrMobile = "";
 
@@ -40,5 +41,6 @@
     '/FundManageRequest': FundManageRequest,
     '/PanelLogin': PanelLogin,
     '/UManagementOverview': UManagementOverview,
-    '/Management': Management
+    '/Management': Management,
+    '/FundRaiseUser':FundRaiseUser
 }} />

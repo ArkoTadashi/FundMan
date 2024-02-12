@@ -2,6 +2,7 @@
     import { push } from 'svelte-spa-router';
     import { onMount } from 'svelte';
     import Navbar from './Navbar.svelte';
+    import LineChart from './LineChart.svelte';
     let isLoggedIn=false, userID=0, userName='';
 
     userID = sessionStorage.getItem('userID');
@@ -43,6 +44,24 @@
 
         
     });
+
+    let pastMonthData = [ ];
+    let pastYearData = [
+  { dataPoint: 'January 23', usd: 1700.967928152589 },
+  { dataPoint: 'February 23', usd: 2361.272206870396 },
+  { dataPoint: 'March 23', usd: 1708.067513052469 },
+  { dataPoint: 'April 23', usd: 2129.711167174916 },
+  { dataPoint: 'May 23', usd: 2139.131016637231 },
+  { dataPoint: 'June 23', usd: 2301.579874949757 },
+  { dataPoint: 'July 23', usd: 1597.2840934082376 },
+  { dataPoint: 'August 23', usd: 1563.8760378487346 },
+  { dataPoint: 'September 23', usd: 1761.7362492082746 },
+  { dataPoint: 'October 23', usd: 2083.217028618584 },
+  { dataPoint: 'November 23', usd: 2391.590376081759 },
+  { dataPoint: 'December 23', usd: 1541.321214618991 },
+  { dataPoint: 'January 24', usd: 1853.515301079743 }
+]
+
 
     // let data = [];
     // let name = '';
@@ -123,8 +142,8 @@
 
 <div class="gradient" style="min-height: 100vh;">
     <Navbar />
-
-        <h1 style="font-family: 'Inter', sans-serif; text-align: left; margin-left: 2%">My Assets</h1>
+    <h1 style="font-family: 'Inter', sans-serif; text-align: left; margin-left: 2%">My Assets</h1>
+    <div class="container">
         <div class="card-container">
             {#each assets as asset, index}
                 <div class="card" key={index} on:click={() => expandAsset(index)} on:keypress={() => expandAsset(index)}>
@@ -132,23 +151,25 @@
                     <!-- <p>${asset.total} (<span class="{asset.change >= 0 ? 'positive' : 'negative'}">{asset.change}</span>)</p> -->
                 </div>
             {/each}
-
-          </div>
-
+        </div>
+        <div class="chart-container">
+            <LineChart {pastYearData} {pastMonthData}/>
+        </div>
+    </div>
 </div>
 
 <style>
-    main {
-		border: 0px;
-		text-align: center;
-		padding: 1em;
-	}
+    .container{
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+    }
 
-	@media (min-width: 640px) {
-		main {
-			max-width: none;
-		}
-	}
+    .chart-container {
+        width: 40%;
+        align-self: right;
+        align-items: center;
+    }
 
     .gradient {
 	background: linear-gradient(to bottom, #7fedec, #f0f0f0);
