@@ -41,6 +41,8 @@
           }
         }
       });
+      currentData = pastMonthData;
+      updateChart();
     });
   
     function generateLabels(length) {
@@ -57,13 +59,13 @@
     }
 
     function pastYear(){
-        chart.data.labels = pastYearData.map(entry => entry.dataPoint)
         currentData = pastYearData;
         activeButton = 'year';
         updateChart();
     }
   
     function updateChart() {
+      chart.data.labels = currentData.map(entry => entry.dataPoint)
       chart.data.datasets[0].data = currentData.map(entry => entry.usd);
       chart.data.datasets[0].borderColor = calculateChartColor();
       chart.update();
