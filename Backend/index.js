@@ -318,6 +318,34 @@ app.get("/market/:token",(req,res)=>{
     })
 })
 
+//monthly
+app.get("/market/:token/monthly",(req,res)=>{
+
+    database.collection('market')
+    .findOne({token: req.params.token}, {projection: {monthlyPrice: 1, _id: 0}}) //cursor
+    .then((entry)=>{
+        console.log(entry)
+        res.status(200).json(entry)
+    })  
+    .catch(()=>{
+        res.status(500).json({err:'Market collection fetching err'})
+    })
+})
+
+//yearly
+app.get("/market/:token/yearly",(req,res)=>{
+
+    database.collection('market')
+    .findOne({token: req.params.token}, {projection: {yearlyPrice: 1, _id: 0}}) //cursor
+    .then((entry)=>{
+        console.log(entry)
+        res.status(200).json(entry)
+    })  
+    .catch(()=>{
+        res.status(500).json({err:'Market collection fetching err'})
+    })
+})
+
 //signup
 app.post("/signup",async (req, res) => {
     const entry = req.body;
