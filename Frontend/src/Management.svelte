@@ -1,6 +1,6 @@
 <script>
     import { onMount } from 'svelte';
-    import Navbar from './Navbar.svelte';
+    import Navbar from './PNav.svelte';
 
     let requests=[]
     let clientInfo={username:"none"}
@@ -82,7 +82,7 @@
 
   </script>
 
-
+<Navbar />
 <div class="top-container">
     <div class="container">
         <h1>Requests Details</h1>
