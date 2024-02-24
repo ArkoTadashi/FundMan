@@ -13,7 +13,8 @@
     let loggedInPages = [
         { name: 'Fund Manage', link: '/#/Fundmanage', id: 5},
         { name: 'Management Overview', link: '/#/Umanagementoverview', id: 6},
-        { name: 'Fund Raise', link: '/#/FundRaiseUser', id: 7}
+        { name: 'Fund Raise', link: '/#/FundRaiseUser', id: 7},
+        { name: 'Fund Raise Request', link: '/#/FundRaiseRequest', id: 8}
     ]
 
     let isLoggedIn=false, userName;   
@@ -44,7 +45,7 @@
 <div class="navbar">
     <div class="nav-buttons" style="margin-left: 2%; margin-top: 15px;">
       <a href="/#">
-        <img src="path/to/your/logo.png" alt="Logo" class="logo" />
+        <img src="logo.webp" alt="Logo" class="logo" />
       </a>
       <div class="vertical-line"></div>
       {#each pages as page (page)}
@@ -81,6 +82,8 @@
 
   .logo {
     margin-right: 10px;
+    width: 30px;
+    height: 30px;
   }
 
   .vertical-line {
