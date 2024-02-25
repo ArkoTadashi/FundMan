@@ -318,6 +318,48 @@ app.get("/market/:token",(req,res)=>{
     })
 })
 
+//monthly
+app.get("/market/:token/monthly",(req,res)=>{
+
+    database.collection('market')
+    .findOne({token: req.params.token}, {projection: {monthlyPrice: 1, _id: 0}}) //cursor
+    .then((entry)=>{
+        console.log(entry)
+        res.status(200).json(entry)
+    })  
+    .catch(()=>{
+        res.status(500).json({err:'Market collection fetching err'})
+    })
+})
+
+//yearly
+app.get("/market/:token/yearly",(req,res)=>{
+
+    database.collection('market')
+    .findOne({token: req.params.token}, {projection: {yearlyPrice: 1, _id: 0}}) //cursor
+    .then((entry)=>{
+        console.log(entry)
+        res.status(200).json(entry)
+    })  
+    .catch(()=>{
+        res.status(500).json({err:'Market collection fetching err'})
+    })
+})
+
+//daily
+app.get("/market/:token/daily",(req,res)=>{
+
+    database.collection('market')
+    .findOne({token: req.params.token}, {projection: {dailyPrice: 1, _id: 0}}) //cursor
+    .then((entry)=>{
+        console.log(entry)
+        res.status(200).json(entry)
+    })  
+    .catch(()=>{
+        res.status(500).json({err:'Market collection fetching err'})
+    })
+})
+
 //signup
 app.post("/signup",async (req, res) => {
     const entry = req.body;
@@ -448,24 +490,24 @@ app.get('/panel/:pname',(req,res)=>{
 })
 
 
-//id not solved
-// app.get('/panel/id/:pid', (req, res) => {
-//     let pid = req.params.pid; // Assuming req.params.pid is a valid ObjectId string
-//     let p=new ObjectId(pid);
-//     console.log("-----",p)
-//     database.collection('panel')
-//         .findOne({ _id: p })
-//         .then((panel) => {
-//             if (panel) {
-//                 res.status(200).json(panel);
-//             } else {
-//                 res.status(404).json({ error: 'Panel not found' });
-//             }
-//         })
-//         .catch(() => {
-//             res.status(500).json({ error: 'Panel collection fetching error' });
-//         });
-// });
+app.get("/panel/id/:userid", async (req, res) => {
+    try {
+        const userId = req.params.userid;
+        if (!ObjectId.isValid(userId)) {
+            return res.status(400).json({ error: 'Invalid user ID' });
+        }
+        
+        const existingUser = await database.collection('panel').findOne({ '_id': new ObjectId(userId) },{projection:{username:1,name:1,manageCount:1,rating:1}});
+        if (existingUser) {
+            res.status(200).json(existingUser);
+        } else {
+            res.status(404).json({ error: 'User not found' });
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
 
 
 
@@ -533,25 +575,83 @@ app.get('/umanagement/:pid',(req,res)=>{
     });
 })
 
-//-------------------------------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------------------------------
-//check user debug
+//fundraise request
+//whole-admin
+app.get('/fundraiserequest',(req,res)=>{
+    let panel=[]
+    database.collection('fundraiserequest')
+    .find()
+    .forEach(entry=>panel.push(entry)) 
+    .then(()=>{
+        res.status(200).json(panel)
+    })  
+    .catch(()=>{
+        res.status(500).json({err:'Panel collection fetching err'})
+    })
+})
+
+app.get('/fundraiserequest/count', (req, res) => {
+    database.collection('fundraiserequest')
+        .countDocuments()
+        .then((count) => {
+            res.status(200).json({ count: count });
+        })
+        .catch((error) => {
+            console.error('Error fetching count:', error);
+            res.status(500).json({ error: 'Error fetching count' });
+        });
+});
+
+
+//user only
+app.get('/fundraiserequest/:userid',(req,res)=>{
+    let panel=[]
+    database.collection('fundraiserequest')
+    .find({"userID":req.params.userid})
+    .forEach(entry=>panel.push(entry)) 
+    .then(()=>{
+        res.status(200).json(panel)
+    })  
+    .catch(()=>{
+        res.status(500).json({err:'Panel collection fetching err'})
+    })
+})
+
+app.post('/fundraiserequest', async (req, res) => {
+    let entry = req.body;
+    try {
+        await database.collection('fundraiserequest').insertOne(entry);
+        res.status(200).json({ success: true }); 
+    } catch (err) {
+        console.error(err); 
+        res.status(500).json({ error: 'Request making error' }); 
+    }
+});
+
+
 app.get("/user/:userid", async (req, res) => {
     try {
-        // Use ObjectId to convert the userid parameter to a proper ObjectId
-        const existingUser = await database.collection('user').findOne({ userId: req.params.userid });
+        const userId = req.params.userid;
+        if (!ObjectId.isValid(userId)) {
+            return res.status(400).json({ error: 'Invalid user ID' });
+        }
         
+        const existingUser = await database.collection('user').findOne({ '_id': new ObjectId(userId) },{projection:{username:1,name:1,email:1}});
         if (existingUser) {
             res.status(200).json(existingUser);
         } else {
-            // If no user is found with the specified ID, return a 404 status
             res.status(404).json({ error: 'User not found' });
         }
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Internal server error' });
     }
-})
+});
+
+//-------------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------------
+
+
 
 //single object:objectid
 // app.get("/holding/:userid/:grpname",(req,res)=>{
