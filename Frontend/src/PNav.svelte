@@ -3,38 +3,31 @@
     import { push } from "svelte-spa-router";
 
     let pages = [
-		{ name: 'Market', link: "/#/Market", id: 1}, 
-		{ name: 'Academy', link: 'https://www.google.com', id: 2}, 
-		{ name: 'News', link: 'https://www.google.com', id: 3}, 
-		{ name: 'Pricing', link: 'https://www.google.com', id: 4},
-
+		
 	];
 
     let loggedInPages = [
-        { name: 'Fund Manage', link: '/#/Fundmanage', id: 5},
-        { name: 'Management Overview', link: '/#/Umanagementoverview', id: 6},
-        { name: 'Fund Raise', link: '/#/FundRaiseUser', id: 7},
-        { name: 'Fund Raise Request', link: '/#/FundRaiseRequest', id: 8}
+        { name: 'Management', link: "/#/Management", id: 1}
     ]
 
-    let isLoggedIn=false, userName;   
+    let isLoggedIn=false, panelMemberName;   
 
 
     function logout(){
         sessionStorage.setItem('isLoggedIn', JSON.stringify(false));
-        sessionStorage.setItem('userID', 0);
-        sessionStorage.setItem('userName', '');
-        push('/Login');
+        sessionStorage.setItem('panelID', 0);
+        sessionStorage.setItem('panelMemberName', '');
+        push('/PanelLogin');
     }
 
     function sendHolding(){
-        push('/holding');
+        push('/Management');
     }
 
     onMount(
         ()=> {
             isLoggedIn = JSON.parse(sessionStorage.getItem('isLoggedIn'));
-            userName = sessionStorage.getItem('userName');
+            panelMemberName = sessionStorage.getItem('panelMemberName');
             console.log(isLoggedIn);
         }
     );
@@ -44,7 +37,7 @@
 
 <div class="navbar">
     <div class="nav-buttons" style="margin-left: 2%; margin-top: 15px;">
-      <a href="/#">
+      <a href="/#/Management">
         <img src="logo.webp" alt="Logo" class="logo" />
       </a>
       <div class="vertical-line"></div>
@@ -59,7 +52,7 @@
     </div>
     {#if isLoggedIn}
         <div style="margin-right: 2%; margin-top: 15px;">
-            <button class="login-button" on:click={sendHolding}>{userName}</button>
+            <button class="login-button" on:click={sendHolding}>{panelMemberName}</button>
             <button class="login-button" on:click={logout}>Logout</button>
         </div>
     {:else}

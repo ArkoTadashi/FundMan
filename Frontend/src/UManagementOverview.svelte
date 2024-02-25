@@ -3,23 +3,31 @@
     import Navbar from './Navbar.svelte';
 
     let requests=[]
-    let client=''
-    let clientInfo={}
+    let managerInfo={username:"none"}
     let userId=sessionStorage.getItem('userID')
 
-    async function getManager(id) {
-        // let info = await fetch(`http://localhost:9000/panel/${id}`);
-        // info = await info.json();
-        // console.log(info[0])
-        return id;
-    }
-
     function getRemainingTime(s,e){
-        return (e-s)/(60*60*24)
+      // end-curr--fix
+      let curr=parseInt(Date.now()/1000)
+      let resultInSeconds=e-curr
+      let days = Math.floor(resultInSeconds / (60*60*24));
+      let remainingSeconds = resultInSeconds % (60*60*24);
+      let hours = Math.floor(remainingSeconds / 3600);
+      let minutes = Math.floor((remainingSeconds % 3600) / 60);
+      let seconds = remainingSeconds % 60;
+      seconds=seconds.toFixed(2)
+
+      let time={
+        "days": days,
+        "hours": hours,
+        "minutes": minutes,
+        "seconds": seconds
+      } 
+      return time
     }
 
-    function getStatus(s,e){
-        if ((e-s)>0)
+    function getStatus(t){ //upd
+        if (t.days>0 || t.hours>0 ||t.minutes>0 || t.seconds>0)
             return "On going"
         else
             return "Finished"
@@ -34,30 +42,32 @@
         const jsonData = await response.json();
         let data = jsonData;
 
-        requests = await Promise.all(data.funds.map(async fund => ({
-            panelId: await getManager(fund.panelID),
-            total: fund.total,
-            starting: getTime(fund.starting),
-            ending: getTime(fund.ending),
-            time:getRemainingTime(fund.starting,fund.ending),
-            status:getStatus(fund.starting,fund.ending)
+        requests = await Promise.all(data.funds.map(async fund => ({  
+          panel: await getManagerInfo(fund.panelID),
+          panelId: fund.panelID,
+          total: fund.total,
+          starting: getTime(fund.starting),
+          ending: getTime(fund.ending),
+          time:getRemainingTime(fund.starting,fund.ending),
+          status:getStatus(getRemainingTime(fund.starting,fund.ending))
         })));
     });
 
     
-    // function setClient(id){
-    //     client=id
-    // }
 
-    // async function getClientInfo(id){
-    //     //fetch from db
-    //     let info = await fetch(`http://localhost:9000/panel/${id}`);
-    //     info = await info.json()
-    //     console.log("name",id,info[0].name)
-    //     return info[0]
-    // }
+    async function getManagerInfo(id){
+        //fetch from db
+        let info = await fetch(`http://localhost:9000/panel/id/${id}`);
+        info = await info.json()
+        info={...info,name:info.name.toUpperCase()}
+        // console.log("name---------",info)
+        return info
+    }
 
-    // $: clientInfo=getClientInfo(client)
+    function setManager(p){
+      managerInfo=p
+    }
+
 
   </script>
 
@@ -68,42 +78,32 @@
         <h1>Requests Details</h1>
         {#each requests as request,index}
           <div class="request" key={index} on:mouseenter={()=>{
-            setClient(request.panelId)
+            setManager(request.panel)
             }}>
             <div class="info">
-                <p><strong>Manager:</strong> {request.panelId}</p>
+                <p><strong>Manager:</strong> {request.panel.name}</p>
                 <p><strong>Amount:</strong> {request.total}</p>
                 <p><strong>Starting Time:</strong>  {request.starting}</p>
                 <p><strong>Ending Time:</strong>  {request.ending}</p>
-                <p><strong>Remaining Time:</strong>  {request.time} days</p>
+                <p><strong>Remaining Time:</strong>  {request.time.days} days, {request.time.hours}:{request.time.minutes}:{request.time.seconds}</p>
                 <p><strong>Status:</strong>  {request.status}</p>
             </div>
-            
-            <!-- <div class="status">
-                {#if !request.status}
-                  <button class="accept" on:click={() => acceptRequest(request.id)}>Accept</button>
-                  <button class="reject" on:click={() => rejectRequest(request.id)}>Reject</button>
-                {:else if request.status === 'accepted'}
-                  <p class="message accepted">This request has been accepted.</p>
-                {:else if request.status === 'rejected'}
-                  <p class="message rejected">This request has been rejected.</p>
-                {/if}
-            </div> -->
           </div>
         {/each}
       </div>
 
-      <!-- <div class="container2">
-        {#if clientInfo}
+      <div class="container2">
+        {#if managerInfo.username!="none"}
             <div class="card">
-                <h3>Manager</h3>
+                <h3>Panel Member: {managerInfo.username}</h3>
                 <hr>
-                <h3>{clientInfo.name}</h3>
-                <img class="img" src={'./pic/person.png'} alt={clientInfo.name} />
-                <p>{clientInfo.pnl}</p>
+                <img class="img" src={'./pic/person.png'} alt={managerInfo.name} />
+                <h3>{managerInfo.name}</h3>
+                <p>Rating: {managerInfo.rating}</p>
+                <p>Manage Count: {managerInfo.manageCount}</p>
             </div>
         {/if}
-        </div> -->
+        </div>
         
 </div>
 </div>

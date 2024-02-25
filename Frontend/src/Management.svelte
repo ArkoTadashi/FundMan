@@ -1,25 +1,40 @@
 <script>
     import { onMount } from 'svelte';
-    import Navbar from './Navbar.svelte';
+    import Navbar from './PNav.svelte';
 
     let requests=[]
-    let client=''
-    let clientInfo={}
+    let clientInfo={username:"none"}
     let panelId=sessionStorage.getItem('panelID')
 
-    async function getManager(id) {
-        // let info = await fetch(`http://localhost:9000/panel/${id}`);
-        // info = await info.json();
-        // console.log(info[0])
-        return id;
-    }
-
     function getRemainingTime(s,e){
-        return (e-s)/(60*60*24)
+      // end-curr--fix
+      let days=0
+      let hours=0
+      let minutes=0
+      let seconds=0
+
+      let curr=parseInt(Date.now()/1000)
+      let resultInSeconds=e-curr
+      if(resultInSeconds>0){
+        days = Math.floor(resultInSeconds / (60*60*24));
+        let remainingSeconds = resultInSeconds % (60*60*24);
+        hours = Math.floor(remainingSeconds / 3600);
+        minutes = Math.floor((remainingSeconds % 3600) / 60);
+        seconds = remainingSeconds % 60;
+        seconds=seconds.toFixed(2)
+      }
+
+      let time={
+        "days": days,
+        "hours": hours,
+        "minutes": minutes,
+        "seconds": seconds
+      } 
+      return time
     }
 
-    function getStatus(s,e){
-        if ((e-s)>0)
+    function getStatus(t){
+        if (t.days>0 || t.hours>0 ||t.minutes>0 || t.seconds>0)
             return "On going"
         else
             return "Finished"
@@ -35,61 +50,61 @@
         let data = jsonData;
 
         requests = await Promise.all(data.funds.map(async fund => ({
-            userID: await getManager(fund.userID),
+            user: await getclientInfo(fund.userID),
+            userID: fund.userID,
             total: fund.total,
             starting: getTime(fund.starting),
             ending: getTime(fund.ending),
             time:getRemainingTime(fund.starting,fund.ending),
-            status:getStatus(fund.starting,fund.ending)
+            status:getStatus(getRemainingTime(fund.starting,fund.ending))
         })));
     });
 
     function sendMoney(id) {
+      // money send korte hobe
       requests = requests.map(request =>
-        request.userID === id ? { ...request, status: 'sent' } : request
+        request.userID === id ? { ...request, status: 'Sent' } : request
       );
     }
 
-    
-    // function setClient(id){
-    //     client=id
-    // }
+    async function getclientInfo(id){
+        //fetch from db
+        let info = await fetch(`http://localhost:9000/user/${id}`);
+        info = await info.json()
+        info={...info,name:info.name.toUpperCase()}
+        // console.log("name---------",info)
+        return info
+    }
 
-    // async function getClientInfo(id){
-    //     //fetch from db
-    //     let info = await fetch(`http://localhost:9000/panel/${id}`);
-    //     info = await info.json()
-    //     console.log("name",id,info[0].name)
-    //     return info[0]
-    // }
-
-    // $: clientInfo=getClientInfo(client)
+    function setClient(user){
+      clientInfo=user
+    }
 
   </script>
 
-
+<Navbar />
 <div class="top-container">
     <div class="container">
         <h1>Requests Details</h1>
         {#each requests as request,index}
           <div class="request" key={index} on:mouseenter={()=>{
-            setClient(request.userID)
+            setClient(request.user)
             }}>
             <div class="info">
-                <p><strong>Client:</strong> {request.userID}</p>
+                <p><strong>Client:</strong> {request.user.username}</p>
                 <p><strong>Amount:</strong> {request.total}</p>
                 <p><strong>Starting Time:</strong>  {request.starting}</p>
                 <p><strong>Ending Time:</strong>  {request.ending}</p>
-                <p><strong>Remaining Time:</strong>  {request.time} days</p>
+                <p><strong>Remaining Time:</strong>  {request.time.days} days, {request.time.hours}:{request.time.minutes}:{request.time.seconds}</p>
                 <p><strong>Status:</strong>  {request.status}</p>
             </div>
             
             <div class="status">
-                {#if request.time<=0 && request.status != 'sent'}
+                {#if request.status === 'Finished'}
                     <button class="send" on:click={() => sendMoney(request.userID)}>Send</button>
-                {:else if request.time > 0 }
+                {:else if request.status==='On going' }
                     <button class="bsend" >Send</button>
-                {:else if request.status === 'sent'}
+                {:else if request.status === 'Sent'}
                   <p class="message send">Money has been sent to client.</p>
                 {/if}
             </div>
@@ -97,17 +112,17 @@
         {/each}
       </div>
 
-      <!-- <div class="container2">
-        {#if clientInfo}
+      <div class="container2">
+        {#if clientInfo.username!="none"}
             <div class="card">
-                <h3>Manager</h3>
+                <h3>Client: {clientInfo.username}</h3>
                 <hr>
+                <img class="img" src={'./pic/person.png'} alt={clientInfo.username} />
                 <h3>{clientInfo.name}</h3>
-                <img class="img" src={'./pic/person.png'} alt={clientInfo.name} />
-                <p>{clientInfo.pnl}</p>
+                <p>Email: {clientInfo.email}</p>
             </div>
         {/if}
-        </div> -->
+        </div>
         
 </div>
 
@@ -196,12 +211,18 @@
     }
   
     button.send {
-      background-color: #4CAF50;
+      background-color: #00b799;
       color: white;
     }
   
+    button.send:hover{
+      border: 2px solid #192019;
+      background-color: #00d1ae;
+      color: white;
+    }
+
     button.bsend {
-      background-color: #377038;
+      background-color: #2c482c;
       color: white;
     }
 

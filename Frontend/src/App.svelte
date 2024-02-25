@@ -2,20 +2,21 @@
 	import Router from 'svelte-spa-router';
 	import AssetExpand from './AssetExpand.svelte';
 	import Assign from './Assign.svelte';
+	import CoinInfo from './CoinInfo.svelte';
 	import FundManage from './FundManage.svelte';
 	import FundManageRequest from './FundManageRequest.svelte';
+	import FundRaiseUser from './FundRaiseUser.svelte';
 	import Holding from './Holding.svelte';
 	import Landing from './Landing.svelte';
 	import Login from './Login.svelte';
+	import Management from './Management.svelte';
 	import Market from './Market.svelte';
+	import PanelLogin from './PanelLogin.svelte';
 	import Request from './Request.svelte';
 	import SignUp from './SignUp.svelte';
-    import PanelLogin from './PanelLogin.svelte';
 	import UManagementOverview from './UManagementOverview.svelte';
-    import Management from './Management.svelte';
-    import FundRaiseUser from './FundRaiseUser.svelte';
-    import CoinInfo from './CoinInfo.svelte';
-
+    import FundRaiseRequest from './FundRaiseRequest.svelte';
+    
   let emailOrMobile = "";
 
     function handleInputChange(event) {
@@ -44,5 +45,6 @@
     '/UManagementOverview': UManagementOverview,
     '/Management': Management,
     '/FundRaiseUser':FundRaiseUser,
-    '/CoinInfo': CoinInfo
+    '/CoinInfo': CoinInfo,
+    '/FundRaiseRequest':FundRaiseRequest
 }} />
