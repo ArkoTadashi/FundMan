@@ -1,50 +1,27 @@
+<!-- App.svelte -->
 <script>
-	import Router from 'svelte-spa-router';
-	import AssetExpand from './AssetExpand.svelte';
-	import Assign from './Assign.svelte';
-	import CoinInfo from './CoinInfo.svelte';
-	import FundManage from './FundManage.svelte';
-	import FundManageRequest from './FundManageRequest.svelte';
-	import FundRaiseUser from './FundRaiseUser.svelte';
-	import Holding from './Holding.svelte';
-	import Landing from './Landing.svelte';
-	import Login from './Login.svelte';
-	import Management from './Management.svelte';
-	import Market from './Market.svelte';
-	import PanelLogin from './PanelLogin.svelte';
-	import Request from './Request.svelte';
-	import SignUp from './SignUp.svelte';
-	import UManagementOverview from './UManagementOverview.svelte';
-    import FundRaiseRequest from './FundRaiseRequest.svelte';
-    
-  let emailOrMobile = "";
+  import { Router, Route } from "svelte-routing";
 
-    function handleInputChange(event) {
-        emailOrMobile = event.target.value;
-    }
+  // Admin Layout
+  import Admin from "./layouts/Admin.svelte";
+  // Auth Layout
+  import Auth from "./layouts/Auth.svelte";
 
-    function handleRegisterClick() {
-      
-    }
+  // No Layout Pages
+  import Index from "./views/Index.svelte";
+  import Landing from "./views/Landing.svelte";
+  import Profile from "./views/Profile.svelte";
 
-
+  export let url = "";
 </script>
 
-<Router routes={{
-	'/': Landing,
-	'/Holding': Holding,
-    '/AssetExpand': AssetExpand,
-    '/Market': Market,
-    '/Fundmanage': FundManage,
-    '/Assign': Assign,
-    '/Request': Request,
-    '/Login': Login,
-    '/SignUp': SignUp,
-    '/FundManageRequest': FundManageRequest,
-    '/PanelLogin': PanelLogin,
-    '/UManagementOverview': UManagementOverview,
-    '/Management': Management,
-    '/FundRaiseUser':FundRaiseUser,
-    '/CoinInfo': CoinInfo,
-    '/FundRaiseRequest':FundRaiseRequest
-}} />
+<Router url="{url}">
+  <!-- admin layout -->
+  <Route path="admin/*admin" component="{Admin}" />
+  <!-- auth layout -->
+  <Route path="auth/*auth" component="{Auth}" />
+  <!-- no layout pages -->
+  <Route path="landing" component="{Landing}" />
+  <Route path="profile" component="{Profile}" />
+  <Route path="/" component="{Index}" />
+</Router>

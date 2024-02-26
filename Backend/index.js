@@ -138,9 +138,119 @@ setInterval(async () => {
         .catch(error => {
             console.error('Error updating document:', error);
         });
+
+        database.collection('market')
+        .updateOne(
+            { "token":  obj.symbol},
+            { $set: { "change24h": obj.price_change_percentage_24h } }
+        )
+        .then(result => {
+            console.log(`Matched ${result.matchedCount} document(s) and modified ${result.modifiedCount} document(s)`);
+        })
+        .catch(error => {
+            console.error('Error updating document:', error);
+        });
+
+        database.collection('market')
+        .updateOne(
+            { "token":  obj.symbol},
+            { $set: { "volume": obj.total_volume } }
+        )
+        .then(result => {
+            console.log(`Matched ${result.matchedCount} document(s) and modified ${result.modifiedCount} document(s)`);
+        })
+        .catch(error => {
+            console.error('Error updating document:', error);
+        });
     })
 
     
+
+}, 360000);
+
+
+setInterval(async () => {
+    var res = await fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=200&page=1&sparkline=false&locale=en&x_cg_demo_api_key=CG-DXyth2fs4WGhHT5LZUu18m41`);
+    var _res = await res.json();
+
+
+    _res.forEach(obj => {
+        database.collection('market')
+        .updateOne(
+            { "token":  obj.symbol},
+            { $push: { "dailyPrice": obj.current_price } }
+        )
+        .then(result => {
+            if(result.matchedCount)
+                console.log(obj.symbol)
+            console.log(`Matched ${result.matchedCount} document(s) and modified ${result.modifiedCount} document(s)`);
+        })
+        .catch(error => {
+            console.error('Error updating document:', error);
+        });
+
+        database.collection('market')
+        .updateOne(
+            { "token":  obj.symbol},
+            { $set: { "currentPrice": obj.current_price } }
+        )
+        .then(result => {
+            if(result.matchedCount)
+                console.log(obj.symbol)
+            console.log(`Matched ${result.matchedCount} document(s) and modified ${result.modifiedCount} document(s)`);
+        })
+        .catch(error => {
+            console.error('Error updating document:', error);
+        });
+
+        database.collection('market')
+        .updateOne(
+            { "token":  obj.symbol},
+            { $pop: { "dailyPrice": -1 } }
+        )
+        .then(result => {
+            console.log(`Matched ${result.matchedCount} document(s) and modified ${result.modifiedCount} document(s)`);
+        })
+        .catch(error => {
+            console.error('Error updating document:', error);
+        });
+
+        database.collection('market')
+        .updateOne(
+            { "token":  obj.symbol},
+            { $set: { "circulatingSupply": obj.circulating_supply } }
+        )
+        .then(result => {
+            console.log(`Matched ${result.matchedCount} document(s) and modified ${result.modifiedCount} document(s)`);
+        })
+        .catch(error => {
+            console.error('Error updating document:', error);
+        });
+
+        database.collection('market')
+        .updateOne(
+            { "token":  obj.symbol},
+            { $set: { "change24h": obj.price_change_percentage_24h } }
+        )
+        .then(result => {
+            console.log(`Matched ${result.matchedCount} document(s) and modified ${result.modifiedCount} document(s)`);
+        })
+        .catch(error => {
+            console.error('Error updating document:', error);
+        });
+
+        database.collection('market')
+        .updateOne(
+            { "token":  obj.symbol},
+            { $set: { "volume": obj.total_volume } }
+        )
+        .then(result => {
+            console.log(`Matched ${result.matchedCount} document(s) and modified ${result.modifiedCount} document(s)`);
+        })
+        .catch(error => {
+            console.error('Error updating document:', error);
+        });
+    })
 
 }, 360000);
 
@@ -295,7 +405,7 @@ app.get("/market",(req,res)=>{
     let holdings=[]
 
     database.collection('market')
-    .find({},{projection: {token: 1, circulatingSupply: 1, currentPrice: 1}}) //cursor
+    .find({},{projection: {token: 1, circulatingSupply: 1, currentPrice: 1, change24h: 1, volume: 1}}) //cursor
     .forEach(entry=>holdings.push(entry))  //toArray
     .then(()=>{
         res.status(200).json(holdings)
