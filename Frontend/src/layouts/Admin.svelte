@@ -12,6 +12,7 @@
   import Settings from "views/admin/Settings.svelte";
   import Tables from "views/admin/Tables.svelte";
   import Maps from "views/admin/Maps.svelte";
+  import AI from "views/admin/AI.svelte";
 
   export let location;
   export let admin = "";
@@ -28,6 +29,7 @@
         <Route path="settings" component="{Settings}" />
         <Route path="tables" component="{Tables}" />
         <Route path="maps" component="{Maps}" />
+        <Route path="ai" component="{AI}" />
       </Router>
       <FooterAdmin />
     </div>
