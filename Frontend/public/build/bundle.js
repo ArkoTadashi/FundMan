@@ -25,6 +25,14 @@ var app = (function () {
     function safe_not_equal(a, b) {
         return a != a ? b == b : a !== b || ((a && typeof a === 'object') || typeof a === 'function');
     }
+    let src_url_equal_anchor;
+    function src_url_equal(element_src, url) {
+        if (!src_url_equal_anchor) {
+            src_url_equal_anchor = document.createElement('a');
+        }
+        src_url_equal_anchor.href = url;
+        return element_src === src_url_equal_anchor.href;
+    }
     function is_empty(obj) {
         return Object.keys(obj).length === 0;
     }
@@ -67,12 +75,22 @@ var app = (function () {
         }
         return $$scope.dirty;
     }
-    function update_slot(slot, slot_definition, ctx, $$scope, dirty, get_slot_changes_fn, get_slot_context_fn) {
-        const slot_changes = get_slot_changes(slot_definition, $$scope, dirty, get_slot_changes_fn);
+    function update_slot_base(slot, slot_definition, ctx, $$scope, slot_changes, get_slot_context_fn) {
         if (slot_changes) {
             const slot_context = get_slot_context(slot_definition, ctx, $$scope, get_slot_context_fn);
             slot.p(slot_context, slot_changes);
         }
+    }
+    function get_all_dirty_from_scope($$scope) {
+        if ($$scope.ctx.length > 32) {
+            const dirty = [];
+            const length = $$scope.ctx.length / 32;
+            for (let i = 0; i < length; i++) {
+                dirty[i] = -1;
+            }
+            return dirty;
+        }
+        return -1;
     }
     function exclude_internal_props(props) {
         const result = {};
@@ -84,7 +102,6 @@ var app = (function () {
     function action_destroyer(action_result) {
         return action_result && is_function(action_result.destroy) ? action_result.destroy : noop$1;
     }
-
     function append(target, node) {
         target.appendChild(node);
     }
@@ -92,7 +109,9 @@ var app = (function () {
         target.insertBefore(node, anchor || null);
     }
     function detach(node) {
-        node.parentNode.removeChild(node);
+        if (node.parentNode) {
+            node.parentNode.removeChild(node);
+        }
     }
     function destroy_each(iterations, detaching) {
         for (let i = 0; i < iterations.length; i += 1) {
@@ -127,14 +146,23 @@ var app = (function () {
     }
     function set_data(text, data) {
         data = '' + data;
-        if (text.wholeText !== data)
-            text.data = data;
+        if (text.data === data)
+            return;
+        text.data = data;
     }
     function set_input_value(input, value) {
         input.value = value == null ? '' : value;
     }
     function set_style(node, key, value, important) {
-        node.style.setProperty(key, value, important ? 'important' : '');
+        if (value == null) {
+            node.style.removeProperty(key);
+        }
+        else {
+            node.style.setProperty(key, value, important ? 'important' : '');
+        }
+    }
+    function construct_svelte_component(component, props) {
+        return new component(props);
     }
 
     let current_component;
@@ -146,24 +174,57 @@ var app = (function () {
             throw new Error('Function called outside component initialization');
         return current_component;
     }
+    /**
+     * The `onMount` function schedules a callback to run as soon as the component has been mounted to the DOM.
+     * It must be called during the component's initialisation (but doesn't need to live *inside* the component;
+     * it can be called from an external module).
+     *
+     * `onMount` does not run inside a [server-side component](/docs#run-time-server-side-component-api).
+     *
+     * https://svelte.dev/docs#run-time-svelte-onmount
+     */
     function onMount(fn) {
         get_current_component().$$.on_mount.push(fn);
     }
+    /**
+     * Schedules a callback to run immediately before the component is unmounted.
+     *
+     * Out of `onMount`, `beforeUpdate`, `afterUpdate` and `onDestroy`, this is the
+     * only one that runs inside a server-side component.
+     *
+     * https://svelte.dev/docs#run-time-svelte-ondestroy
+     */
     function onDestroy(fn) {
         get_current_component().$$.on_destroy.push(fn);
     }
+    /**
+     * Associates an arbitrary `context` object with the current component and the specified `key`
+     * and returns that object. The context is then available to children of the component
+     * (including slotted content) with `getContext`.
+     *
+     * Like lifecycle functions, this must be called during component initialisation.
+     *
+     * https://svelte.dev/docs#run-time-svelte-setcontext
+     */
     function setContext(key, context) {
         get_current_component().$$.context.set(key, context);
+        return context;
     }
+    /**
+     * Retrieves the context that belongs to the closest parent component with the specified `key`.
+     * Must be called during component initialisation.
+     *
+     * https://svelte.dev/docs#run-time-svelte-getcontext
+     */
     function getContext(key) {
         return get_current_component().$$.context.get(key);
     }
 
     const dirty_components = [];
     const binding_callbacks = [];
-    const render_callbacks = [];
+    let render_callbacks = [];
     const flush_callbacks = [];
-    const resolved_promise = Promise.resolve();
+    const resolved_promise = /* @__PURE__ */ Promise.resolve();
     let update_scheduled = false;
     function schedule_update() {
         if (!update_scheduled) {
@@ -174,22 +235,54 @@ var app = (function () {
     function add_render_callback(fn) {
         render_callbacks.push(fn);
     }
-    let flushing = false;
+    // flush() calls callbacks in this order:
+    // 1. All beforeUpdate callbacks, in order: parents before children
+    // 2. All bind:this callbacks, in reverse order: children before parents.
+    // 3. All afterUpdate callbacks, in order: parents before children. EXCEPT
+    //    for afterUpdates called during the initial onMount, which are called in
+    //    reverse order: children before parents.
+    // Since callbacks might update component values, which could trigger another
+    // call to flush(), the following steps guard against this:
+    // 1. During beforeUpdate, any updated components will be added to the
+    //    dirty_components array and will cause a reentrant call to flush(). Because
+    //    the flush index is kept outside the function, the reentrant call will pick
+    //    up where the earlier call left off and go through all dirty components. The
+    //    current_component value is saved and restored so that the reentrant call will
+    //    not interfere with the "parent" flush() call.
+    // 2. bind:this callbacks cannot trigger new flush() calls.
+    // 3. During afterUpdate, any updated components will NOT have their afterUpdate
+    //    callback called a second time; the seen_callbacks set, outside the flush()
+    //    function, guarantees this behavior.
     const seen_callbacks = new Set();
+    let flushidx = 0; // Do *not* move this inside the flush() function
     function flush() {
-        if (flushing)
+        // Do not reenter flush while dirty components are updated, as this can
+        // result in an infinite loop. Instead, let the inner flush handle it.
+        // Reentrancy is ok afterwards for bindings etc.
+        if (flushidx !== 0) {
             return;
-        flushing = true;
+        }
+        const saved_component = current_component;
         do {
             // first, call beforeUpdate functions
             // and update components
-            for (let i = 0; i < dirty_components.length; i += 1) {
-                const component = dirty_components[i];
-                set_current_component(component);
-                update(component.$$);
+            try {
+                while (flushidx < dirty_components.length) {
+                    const component = dirty_components[flushidx];
+                    flushidx++;
+                    set_current_component(component);
+                    update(component.$$);
+                }
+            }
+            catch (e) {
+                // reset dirty state to not end up in a deadlocked state and then rethrow
+                dirty_components.length = 0;
+                flushidx = 0;
+                throw e;
             }
             set_current_component(null);
             dirty_components.length = 0;
+            flushidx = 0;
             while (binding_callbacks.length)
                 binding_callbacks.pop()();
             // then, once components are updated, call
@@ -209,8 +302,8 @@ var app = (function () {
             flush_callbacks.pop()();
         }
         update_scheduled = false;
-        flushing = false;
         seen_callbacks.clear();
+        set_current_component(saved_component);
     }
     function update($$) {
         if ($$.fragment !== null) {
@@ -221,6 +314,16 @@ var app = (function () {
             $$.fragment && $$.fragment.p($$.ctx, dirty);
             $$.after_update.forEach(add_render_callback);
         }
+    }
+    /**
+     * Useful for example to execute remaining `afterUpdate` callbacks before executing `destroy`.
+     */
+    function flush_render_callbacks(fns) {
+        const filtered = [];
+        const targets = [];
+        render_callbacks.forEach((c) => fns.indexOf(c) === -1 ? filtered.push(c) : targets.push(c));
+        targets.forEach((c) => c());
+        render_callbacks = filtered;
     }
     const outroing = new Set();
     let outros;
@@ -257,6 +360,9 @@ var app = (function () {
                 }
             });
             block.o(local);
+        }
+        else if (callback) {
+            callback();
         }
     }
 
@@ -300,14 +406,17 @@ var app = (function () {
         block && block.c();
     }
     function mount_component(component, target, anchor, customElement) {
-        const { fragment, on_mount, on_destroy, after_update } = component.$$;
+        const { fragment, after_update } = component.$$;
         fragment && fragment.m(target, anchor);
         if (!customElement) {
             // onMount happens before the initial afterUpdate
             add_render_callback(() => {
-                const new_on_destroy = on_mount.map(run).filter(is_function);
-                if (on_destroy) {
-                    on_destroy.push(...new_on_destroy);
+                const new_on_destroy = component.$$.on_mount.map(run).filter(is_function);
+                // if the component was destroyed immediately
+                // it will update the `$$.on_destroy` reference to `null`.
+                // the destructured on_destroy may still reference to the old array
+                if (component.$$.on_destroy) {
+                    component.$$.on_destroy.push(...new_on_destroy);
                 }
                 else {
                     // Edge case - component was destroyed immediately,
@@ -322,6 +431,7 @@ var app = (function () {
     function destroy_component(component, detaching) {
         const $$ = component.$$;
         if ($$.fragment !== null) {
+            flush_render_callbacks($$.after_update);
             run_all($$.on_destroy);
             $$.fragment && $$.fragment.d(detaching);
             // TODO null out other refs, including component.$$ (but need to
@@ -338,12 +448,12 @@ var app = (function () {
         }
         component.$$.dirty[(i / 31) | 0] |= (1 << (i % 31));
     }
-    function init(component, options, instance, create_fragment, not_equal, props, dirty = [-1]) {
+    function init(component, options, instance, create_fragment, not_equal, props, append_styles, dirty = [-1]) {
         const parent_component = current_component;
         set_current_component(component);
         const $$ = component.$$ = {
             fragment: null,
-            ctx: null,
+            ctx: [],
             // state
             props,
             update: noop$1,
@@ -355,12 +465,14 @@ var app = (function () {
             on_disconnect: [],
             before_update: [],
             after_update: [],
-            context: new Map(parent_component ? parent_component.$$.context : []),
+            context: new Map(options.context || (parent_component ? parent_component.$$.context : [])),
             // everything else
             callbacks: blank_object(),
             dirty,
-            skip_bound: false
+            skip_bound: false,
+            root: options.target || parent_component.$$.root
         };
+        append_styles && append_styles($$.root);
         let ready = false;
         $$.ctx = instance
             ? instance(component, options.props || {}, (i, ret, ...rest) => {
@@ -406,6 +518,9 @@ var app = (function () {
             this.$destroy = noop$1;
         }
         $on(type, callback) {
+            if (!is_function(callback)) {
+                return noop$1;
+            }
             const callbacks = (this.$$.callbacks[type] || (this.$$.callbacks[type] = []));
             callbacks.push(callback);
             return () => {
@@ -427,7 +542,7 @@ var app = (function () {
     /**
      * Creates a `Readable` store that allows reading by subscription.
      * @param value initial value
-     * @param {StartStopNotifier}start start and stop notifications for subscriptions
+     * @param {StartStopNotifier} [start]
      */
     function readable(value, start) {
         return {
@@ -437,20 +552,19 @@ var app = (function () {
     /**
      * Create a `Writable` store that allows both updating and reading by subscription.
      * @param {*=}value initial value
-     * @param {StartStopNotifier=}start start and stop notifications for subscriptions
+     * @param {StartStopNotifier=} start
      */
     function writable(value, start = noop$1) {
         let stop;
-        const subscribers = [];
+        const subscribers = new Set();
         function set(new_value) {
             if (safe_not_equal(value, new_value)) {
                 value = new_value;
                 if (stop) { // store is ready
                     const run_queue = !subscriber_queue.length;
-                    for (let i = 0; i < subscribers.length; i += 1) {
-                        const s = subscribers[i];
-                        s[1]();
-                        subscriber_queue.push(s, value);
+                    for (const subscriber of subscribers) {
+                        subscriber[1]();
+                        subscriber_queue.push(subscriber, value);
                     }
                     if (run_queue) {
                         for (let i = 0; i < subscriber_queue.length; i += 2) {
@@ -466,17 +580,14 @@ var app = (function () {
         }
         function subscribe(run, invalidate = noop$1) {
             const subscriber = [run, invalidate];
-            subscribers.push(subscriber);
-            if (subscribers.length === 1) {
+            subscribers.add(subscriber);
+            if (subscribers.size === 1) {
                 stop = start(set) || noop$1;
             }
             run(value);
             return () => {
-                const index = subscribers.indexOf(subscriber);
-                if (index !== -1) {
-                    subscribers.splice(index, 1);
-                }
-                if (subscribers.length === 0) {
+                subscribers.delete(subscriber);
+                if (subscribers.size === 0 && stop) {
                     stop();
                     stop = null;
                 }
@@ -491,7 +602,7 @@ var app = (function () {
             : stores;
         const auto = fn.length < 2;
         return readable(initial_value, (set) => {
-            let inited = false;
+            let started = false;
             const values = [];
             let pending = 0;
             let cleanup = noop$1;
@@ -511,17 +622,21 @@ var app = (function () {
             const unsubscribers = stores_array.map((store, i) => subscribe(store, (value) => {
                 values[i] = value;
                 pending &= ~(1 << i);
-                if (inited) {
+                if (started) {
                     sync();
                 }
             }, () => {
                 pending |= (1 << i);
             }));
-            inited = true;
+            started = true;
             sync();
             return function stop() {
                 run_all(unsubscribers);
                 cleanup();
+                // We need to set this to false because callbacks can still happen despite having unsubscribed:
+                // Callbacks might already be placed in the queue which doesn't know it should no longer
+                // invoke this derived store.
+                started = false;
             };
         });
     }
@@ -888,7 +1003,7 @@ var app = (function () {
       )
     }
 
-    /* node_modules\svelte-routing\src\Router.svelte generated by Svelte v3.35.0 */
+    /* node_modules\svelte-routing\src\Router.svelte generated by Svelte v3.59.2 */
 
     function create_fragment$v(ctx) {
     	let current;
@@ -908,8 +1023,17 @@ var app = (function () {
     		},
     		p(ctx, [dirty]) {
     			if (default_slot) {
-    				if (default_slot.p && dirty & /*$$scope*/ 256) {
-    					update_slot(default_slot, default_slot_template, ctx, /*$$scope*/ ctx[8], dirty, null, null);
+    				if (default_slot.p && (!current || dirty & /*$$scope*/ 256)) {
+    					update_slot_base(
+    						default_slot,
+    						default_slot_template,
+    						ctx,
+    						/*$$scope*/ ctx[8],
+    						!current
+    						? get_all_dirty_from_scope(/*$$scope*/ ctx[8])
+    						: get_slot_changes(default_slot_template, /*$$scope*/ ctx[8], dirty, null),
+    						null
+    					);
     				}
     			}
     		},
@@ -929,16 +1053,16 @@ var app = (function () {
     }
 
     function instance$t($$self, $$props, $$invalidate) {
-    	let $base;
     	let $location;
     	let $routes;
+    	let $base;
     	let { $$slots: slots = {}, $$scope } = $$props;
     	let { basepath = "/" } = $$props;
     	let { url = null } = $$props;
     	const locationContext = getContext(LOCATION);
     	const routerContext = getContext(ROUTER);
     	const routes = writable([]);
-    	component_subscribe($$self, routes, value => $$invalidate(7, $routes = value));
+    	component_subscribe($$self, routes, value => $$invalidate(6, $routes = value));
     	const activeRoute = writable(null);
     	let hasActiveRoute = false; // Used in SSR to synchronously set that a Route is active.
 
@@ -946,7 +1070,7 @@ var app = (function () {
     	// If the `url` prop is given we force the location to it.
     	const location = locationContext || writable(url ? { pathname: url } : globalHistory.location);
 
-    	component_subscribe($$self, location, value => $$invalidate(6, $location = value));
+    	component_subscribe($$self, location, value => $$invalidate(5, $location = value));
 
     	// If routerContext is set, the routerBase of the parent Router
     	// will be the base for this Router's descendants.
@@ -956,7 +1080,7 @@ var app = (function () {
     	? routerContext.routerBase
     	: writable({ path: basepath, uri: basepath });
 
-    	component_subscribe($$self, base, value => $$invalidate(5, $base = value));
+    	component_subscribe($$self, base, value => $$invalidate(7, $base = value));
 
     	const routerBase = derived([base, activeRoute], ([base, activeRoute]) => {
     		// If there is no activeRoute, the routerBase will be identical to the base.
@@ -1040,13 +1164,13 @@ var app = (function () {
     	});
 
     	$$self.$$set = $$props => {
-    		if ("basepath" in $$props) $$invalidate(3, basepath = $$props.basepath);
-    		if ("url" in $$props) $$invalidate(4, url = $$props.url);
-    		if ("$$scope" in $$props) $$invalidate(8, $$scope = $$props.$$scope);
+    		if ('basepath' in $$props) $$invalidate(3, basepath = $$props.basepath);
+    		if ('url' in $$props) $$invalidate(4, url = $$props.url);
+    		if ('$$scope' in $$props) $$invalidate(8, $$scope = $$props.$$scope);
     	};
 
     	$$self.$$.update = () => {
-    		if ($$self.$$.dirty & /*$base*/ 32) {
+    		if ($$self.$$.dirty & /*$base*/ 128) {
     			// This reactive statement will update all the Routes' path when
     			// the basepath changes.
     			{
@@ -1059,7 +1183,7 @@ var app = (function () {
     			}
     		}
 
-    		if ($$self.$$.dirty & /*$routes, $location*/ 192) {
+    		if ($$self.$$.dirty & /*$routes, $location*/ 96) {
     			// This reactive statement will be run when the Router is created
     			// when there are no Routes and then again the following tick, so it
     			// will not find an active Route in SSR and in the browser it will only
@@ -1077,9 +1201,9 @@ var app = (function () {
     		base,
     		basepath,
     		url,
-    		$base,
     		$location,
     		$routes,
+    		$base,
     		$$scope,
     		slots
     	];
@@ -1092,7 +1216,7 @@ var app = (function () {
     	}
     }
 
-    /* node_modules\svelte-routing\src\Route.svelte generated by Svelte v3.35.0 */
+    /* node_modules\svelte-routing\src\Route.svelte generated by Svelte v3.59.2 */
 
     const get_default_slot_changes = dirty => ({
     	params: dirty & /*routeParams*/ 4,
@@ -1193,8 +1317,17 @@ var app = (function () {
     		},
     		p(ctx, dirty) {
     			if (default_slot) {
-    				if (default_slot.p && dirty & /*$$scope, routeParams, $location*/ 532) {
-    					update_slot(default_slot, default_slot_template, ctx, /*$$scope*/ ctx[9], dirty, get_default_slot_changes, get_default_slot_context);
+    				if (default_slot.p && (!current || dirty & /*$$scope, routeParams, $location*/ 532)) {
+    					update_slot_base(
+    						default_slot,
+    						default_slot_template,
+    						ctx,
+    						/*$$scope*/ ctx[9],
+    						!current
+    						? get_all_dirty_from_scope(/*$$scope*/ ctx[9])
+    						: get_slot_changes(default_slot_template, /*$$scope*/ ctx[9], dirty, get_default_slot_changes),
+    						get_default_slot_context
+    					);
     				}
     			}
     		},
@@ -1238,7 +1371,7 @@ var app = (function () {
     	}
 
     	if (switch_value) {
-    		switch_instance = new switch_value(switch_props());
+    		switch_instance = construct_svelte_component(switch_value, switch_props());
     	}
 
     	return {
@@ -1247,10 +1380,7 @@ var app = (function () {
     			switch_instance_anchor = empty();
     		},
     		m(target, anchor) {
-    			if (switch_instance) {
-    				mount_component(switch_instance, target, anchor);
-    			}
-
+    			if (switch_instance) mount_component(switch_instance, target, anchor);
     			insert(target, switch_instance_anchor, anchor);
     			current = true;
     		},
@@ -1263,7 +1393,7 @@ var app = (function () {
     				])
     			: {};
 
-    			if (switch_value !== (switch_value = /*component*/ ctx[0])) {
+    			if (dirty & /*component*/ 1 && switch_value !== (switch_value = /*component*/ ctx[0])) {
     				if (switch_instance) {
     					group_outros();
     					const old_component = switch_instance;
@@ -1276,7 +1406,7 @@ var app = (function () {
     				}
 
     				if (switch_value) {
-    					switch_instance = new switch_value(switch_props());
+    					switch_instance = construct_svelte_component(switch_value, switch_props());
     					create_component(switch_instance.$$.fragment);
     					transition_in(switch_instance.$$.fragment, 1);
     					mount_component(switch_instance, switch_instance_anchor.parentNode, switch_instance_anchor);
@@ -1390,9 +1520,9 @@ var app = (function () {
 
     	$$self.$$set = $$new_props => {
     		$$invalidate(13, $$props = assign(assign({}, $$props), exclude_internal_props($$new_props)));
-    		if ("path" in $$new_props) $$invalidate(8, path = $$new_props.path);
-    		if ("component" in $$new_props) $$invalidate(0, component = $$new_props.component);
-    		if ("$$scope" in $$new_props) $$invalidate(9, $$scope = $$new_props.$$scope);
+    		if ('path' in $$new_props) $$invalidate(8, path = $$new_props.path);
+    		if ('component' in $$new_props) $$invalidate(0, component = $$new_props.component);
+    		if ('$$scope' in $$new_props) $$invalidate(9, $$scope = $$new_props.$$scope);
     	};
 
     	$$self.$$.update = () => {
@@ -3330,7 +3460,7 @@ var app = (function () {
       defaultModifiers: defaultModifiers
     }); // eslint-disable-next-line import/no-unused-modules
 
-    /* src\components\Dropdowns\UserDropdown.svelte generated by Svelte v3.35.0 */
+    /* src\components\Dropdowns\UserDropdown.svelte generated by Svelte v3.59.2 */
 
     function create_fragment$t(ctx) {
     	let div3;
@@ -3378,7 +3508,7 @@ var app = (function () {
     			a4.textContent = "Seprated link";
     			attr(img, "alt", "...");
     			attr(img, "class", "w-full rounded-full align-middle border-none shadow-lg");
-    			if (img.src !== (img_src_value = image)) attr(img, "src", img_src_value);
+    			if (!src_url_equal(img.src, img_src_value = image)) attr(img, "src", img_src_value);
     			attr(span, "class", "w-12 h-12 text-sm text-white bg-blueGray-200 inline-flex items-center justify-center rounded-full");
     			attr(div0, "class", "items-center flex");
     			attr(a0, "class", "text-blueGray-500 block");
@@ -3392,7 +3522,7 @@ var app = (function () {
     			attr(div1, "class", "h-0 my-2 border border-solid border-blueGray-100");
     			attr(a4, "href", "#pablo");
     			attr(a4, "class", "text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700");
-    			attr(div2, "class", div2_class_value = "bg-white text-base z-50 float-left py-2 list-none text-left rounded shadow-lg min-w-48 " + (/*dropdownPopoverShow*/ ctx[0] ? "block" : "hidden"));
+    			attr(div2, "class", div2_class_value = "bg-white text-base z-50 float-left py-2 list-none text-left rounded shadow-lg min-w-48 " + (/*dropdownPopoverShow*/ ctx[0] ? 'block' : 'hidden'));
     		},
     		m(target, anchor) {
     			insert(target, div3, anchor);
@@ -3427,7 +3557,7 @@ var app = (function () {
     			}
     		},
     		p(ctx, [dirty]) {
-    			if (dirty & /*dropdownPopoverShow*/ 1 && div2_class_value !== (div2_class_value = "bg-white text-base z-50 float-left py-2 list-none text-left rounded shadow-lg min-w-48 " + (/*dropdownPopoverShow*/ ctx[0] ? "block" : "hidden"))) {
+    			if (dirty & /*dropdownPopoverShow*/ 1 && div2_class_value !== (div2_class_value = "bg-white text-base z-50 float-left py-2 list-none text-left rounded shadow-lg min-w-48 " + (/*dropdownPopoverShow*/ ctx[0] ? 'block' : 'hidden'))) {
     				attr(div2, "class", div2_class_value);
     			}
     		},
@@ -3466,14 +3596,14 @@ var app = (function () {
     	};
 
     	function a0_binding($$value) {
-    		binding_callbacks[$$value ? "unshift" : "push"](() => {
+    		binding_callbacks[$$value ? 'unshift' : 'push'](() => {
     			btnDropdownRef = $$value;
     			$$invalidate(1, btnDropdownRef);
     		});
     	}
 
     	function div2_binding($$value) {
-    		binding_callbacks[$$value ? "unshift" : "push"](() => {
+    		binding_callbacks[$$value ? 'unshift' : 'push'](() => {
     			popoverDropdownRef = $$value;
     			$$invalidate(2, popoverDropdownRef);
     		});
@@ -3496,7 +3626,7 @@ var app = (function () {
     	}
     }
 
-    /* src\components\Navbars\AdminNavbar.svelte generated by Svelte v3.35.0 */
+    /* src\components\Navbars\AdminNavbar.svelte generated by Svelte v3.59.2 */
 
     function create_fragment$s(ctx) {
     	let nav;
@@ -3578,7 +3708,7 @@ var app = (function () {
     	}
     }
 
-    /* src\components\Dropdowns\NotificationDropdown.svelte generated by Svelte v3.35.0 */
+    /* src\components\Dropdowns\NotificationDropdown.svelte generated by Svelte v3.59.2 */
 
     function create_fragment$r(ctx) {
     	let div2;
@@ -3629,7 +3759,7 @@ var app = (function () {
     			attr(div0, "class", "h-0 my-2 border border-solid border-blueGray-100");
     			attr(a4, "href", "#pablo");
     			attr(a4, "class", "text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700");
-    			attr(div1, "class", div1_class_value = "bg-white text-base z-50 float-left py-2 list-none text-left rounded shadow-lg min-w-48 " + (/*dropdownPopoverShow*/ ctx[0] ? "block" : "hidden"));
+    			attr(div1, "class", div1_class_value = "bg-white text-base z-50 float-left py-2 list-none text-left rounded shadow-lg min-w-48 " + (/*dropdownPopoverShow*/ ctx[0] ? 'block' : 'hidden'));
     		},
     		m(target, anchor) {
     			insert(target, div2, anchor);
@@ -3661,7 +3791,7 @@ var app = (function () {
     			}
     		},
     		p(ctx, [dirty]) {
-    			if (dirty & /*dropdownPopoverShow*/ 1 && div1_class_value !== (div1_class_value = "bg-white text-base z-50 float-left py-2 list-none text-left rounded shadow-lg min-w-48 " + (/*dropdownPopoverShow*/ ctx[0] ? "block" : "hidden"))) {
+    			if (dirty & /*dropdownPopoverShow*/ 1 && div1_class_value !== (div1_class_value = "bg-white text-base z-50 float-left py-2 list-none text-left rounded shadow-lg min-w-48 " + (/*dropdownPopoverShow*/ ctx[0] ? 'block' : 'hidden'))) {
     				attr(div1, "class", div1_class_value);
     			}
     		},
@@ -3699,14 +3829,14 @@ var app = (function () {
     	};
 
     	function a0_binding($$value) {
-    		binding_callbacks[$$value ? "unshift" : "push"](() => {
+    		binding_callbacks[$$value ? 'unshift' : 'push'](() => {
     			btnDropdownRef = $$value;
     			$$invalidate(1, btnDropdownRef);
     		});
     	}
 
     	function div1_binding($$value) {
-    		binding_callbacks[$$value ? "unshift" : "push"](() => {
+    		binding_callbacks[$$value ? 'unshift' : 'push'](() => {
     			popoverDropdownRef = $$value;
     			$$invalidate(2, popoverDropdownRef);
     		});
@@ -3729,7 +3859,7 @@ var app = (function () {
     	}
     }
 
-    /* src\components\Sidebar\Sidebar.svelte generated by Svelte v3.35.0 */
+    /* src\components\Sidebar\Sidebar.svelte generated by Svelte v3.59.2 */
 
     function create_fragment$q(ctx) {
     	let nav;
@@ -3823,6 +3953,13 @@ var app = (function () {
     	let i10_class_value;
     	let t28;
     	let a10_class_value;
+    	let t29;
+    	let li11;
+    	let a11;
+    	let i11;
+    	let i11_class_value;
+    	let t30;
+    	let a11_class_value;
     	let div5_class_value;
     	let current;
     	let mounted;
@@ -3910,7 +4047,12 @@ var app = (function () {
     			li10 = element("li");
     			a10 = element("a");
     			i10 = element("i");
-    			t28 = text("\r\n            Profile Settings");
+    			t28 = text("\r\n            Academy");
+    			t29 = space();
+    			li11 = element("li");
+    			a11 = element("a");
+    			i11 = element("i");
+    			t30 = text("\r\n            Profile Settings");
     			attr(button0, "class", "cursor-pointer text-black opacity-50 md:hidden px-3 py-1 text-xl leading-none bg-transparent rounded border border-solid border-transparent");
     			attr(button0, "type", "button");
     			attr(a0, "class", "md:block text-left md:pb-2 text-blueGray-600 mr-0 inline-block whitespace-nowrap text-sm uppercase font-bold p-4 px-0");
@@ -3930,113 +4072,125 @@ var app = (function () {
     			attr(hr, "class", "my-4 md:min-w-full");
     			attr(h6, "class", "md:min-w-full text-blueGray-500 text-xs uppercase font-bold block pt-1 pb-4 no-underline");
 
-    			attr(i2, "class", i2_class_value = "fas fa-tv mr-2 text-sm " + (/*location*/ ctx[0].href.indexOf("/admin/dashboard") !== -1
-    			? "opacity-75"
-    			: "text-blueGray-300"));
+    			attr(i2, "class", i2_class_value = "fas fa-tv mr-2 text-sm " + (/*location*/ ctx[0].href.indexOf('/admin/dashboard') !== -1
+    			? 'opacity-75'
+    			: 'text-blueGray-300'));
 
     			attr(a2, "href", "/admin/dashboard");
 
-    			attr(a2, "class", a2_class_value = "text-xs uppercase py-3 font-bold block " + (/*location*/ ctx[0].href.indexOf("/admin/dashboard") !== -1
-    			? "text-red-500 hover:text-red-600"
-    			: "text-blueGray-700 hover:text-blueGray-500"));
+    			attr(a2, "class", a2_class_value = "text-xs uppercase py-3 font-bold block " + (/*location*/ ctx[0].href.indexOf('/admin/dashboard') !== -1
+    			? 'text-red-500 hover:text-red-600'
+    			: 'text-blueGray-700 hover:text-blueGray-500'));
 
     			attr(li2, "class", "items-center");
 
-    			attr(i3, "class", i3_class_value = "fas fa-table mr-2 text-sm " + (/*location*/ ctx[0].href.indexOf("/admin/tables") !== -1
-    			? "opacity-75"
-    			: "text-blueGray-300"));
+    			attr(i3, "class", i3_class_value = "fas fa-table mr-2 text-sm " + (/*location*/ ctx[0].href.indexOf('/admin/tables') !== -1
+    			? 'opacity-75'
+    			: 'text-blueGray-300'));
 
     			attr(a3, "href", "/admin/tables");
 
-    			attr(a3, "class", a3_class_value = "text-xs uppercase py-3 font-bold block " + (/*location*/ ctx[0].href.indexOf("/admin/tables") !== -1
-    			? "text-red-500 hover:text-red-600"
-    			: "text-blueGray-700 hover:text-blueGray-500"));
+    			attr(a3, "class", a3_class_value = "text-xs uppercase py-3 font-bold block " + (/*location*/ ctx[0].href.indexOf('/admin/tables') !== -1
+    			? 'text-red-500 hover:text-red-600'
+    			: 'text-blueGray-700 hover:text-blueGray-500'));
 
     			attr(li3, "class", "items-center");
 
-    			attr(i4, "class", i4_class_value = "fas fa-map-marked mr-2 text-sm " + (/*location*/ ctx[0].href.indexOf("/admin/maps") !== -1
-    			? "opacity-75"
-    			: "text-blueGray-300"));
+    			attr(i4, "class", i4_class_value = "fas fa-map-marked mr-2 text-sm " + (/*location*/ ctx[0].href.indexOf('/admin/maps') !== -1
+    			? 'opacity-75'
+    			: 'text-blueGray-300'));
 
     			attr(a4, "href", "/admin/maps");
 
-    			attr(a4, "class", a4_class_value = "text-xs uppercase py-3 font-bold block " + (/*location*/ ctx[0].href.indexOf("/admin/maps") !== -1
-    			? "text-red-500 hover:text-red-600"
-    			: "text-blueGray-700 hover:text-blueGray-500"));
+    			attr(a4, "class", a4_class_value = "text-xs uppercase py-3 font-bold block " + (/*location*/ ctx[0].href.indexOf('/admin/maps') !== -1
+    			? 'text-red-500 hover:text-red-600'
+    			: 'text-blueGray-700 hover:text-blueGray-500'));
 
     			attr(li4, "class", "items-center");
 
-    			attr(i5, "class", i5_class_value = "fas fa-map-marked mr-2 text-sm " + (/*location*/ ctx[0].href.indexOf("/admin/maps") !== -1
-    			? "opacity-75"
-    			: "text-blueGray-300"));
+    			attr(i5, "class", i5_class_value = "fas fa-map-marked mr-2 text-sm " + (/*location*/ ctx[0].href.indexOf('/admin/maps') !== -1
+    			? 'opacity-75'
+    			: 'text-blueGray-300'));
 
     			attr(a5, "href", "/admin/maps");
 
-    			attr(a5, "class", a5_class_value = "text-xs uppercase py-3 font-bold block " + (/*location*/ ctx[0].href.indexOf("/admin/maps") !== -1
-    			? "text-red-500 hover:text-red-600"
-    			: "text-blueGray-700 hover:text-blueGray-500"));
+    			attr(a5, "class", a5_class_value = "text-xs uppercase py-3 font-bold block " + (/*location*/ ctx[0].href.indexOf('/admin/maps') !== -1
+    			? 'text-red-500 hover:text-red-600'
+    			: 'text-blueGray-700 hover:text-blueGray-500'));
 
     			attr(li5, "class", "items-center");
 
-    			attr(i6, "class", i6_class_value = "fas fa-map-marked mr-2 text-sm " + (/*location*/ ctx[0].href.indexOf("/admin/maps") !== -1
-    			? "opacity-75"
-    			: "text-blueGray-300"));
+    			attr(i6, "class", i6_class_value = "fas fa-map-marked mr-2 text-sm " + (/*location*/ ctx[0].href.indexOf('/admin/maps') !== -1
+    			? 'opacity-75'
+    			: 'text-blueGray-300'));
 
     			attr(a6, "href", "/admin/maps");
 
-    			attr(a6, "class", a6_class_value = "text-xs uppercase py-3 font-bold block " + (/*location*/ ctx[0].href.indexOf("/admin/maps") !== -1
-    			? "text-red-500 hover:text-red-600"
-    			: "text-blueGray-700 hover:text-blueGray-500"));
+    			attr(a6, "class", a6_class_value = "text-xs uppercase py-3 font-bold block " + (/*location*/ ctx[0].href.indexOf('/admin/maps') !== -1
+    			? 'text-red-500 hover:text-red-600'
+    			: 'text-blueGray-700 hover:text-blueGray-500'));
 
     			attr(li6, "class", "items-center");
 
-    			attr(i7, "class", i7_class_value = "fas fa-map-marked mr-2 text-sm " + (/*location*/ ctx[0].href.indexOf("/admin/maps") !== -1
-    			? "opacity-75"
-    			: "text-blueGray-300"));
+    			attr(i7, "class", i7_class_value = "fas fa-map-marked mr-2 text-sm " + (/*location*/ ctx[0].href.indexOf('/admin/maps') !== -1
+    			? 'opacity-75'
+    			: 'text-blueGray-300'));
 
     			attr(a7, "href", "/admin/maps");
 
-    			attr(a7, "class", a7_class_value = "text-xs uppercase py-3 font-bold block " + (/*location*/ ctx[0].href.indexOf("/admin/maps") !== -1
-    			? "text-red-500 hover:text-red-600"
-    			: "text-blueGray-700 hover:text-blueGray-500"));
+    			attr(a7, "class", a7_class_value = "text-xs uppercase py-3 font-bold block " + (/*location*/ ctx[0].href.indexOf('/admin/maps') !== -1
+    			? 'text-red-500 hover:text-red-600'
+    			: 'text-blueGray-700 hover:text-blueGray-500'));
 
     			attr(li7, "class", "items-center");
 
-    			attr(i8, "class", i8_class_value = "fas fa-map-marked mr-2 text-sm " + (/*location*/ ctx[0].href.indexOf("/admin/maps") !== -1
-    			? "opacity-75"
-    			: "text-blueGray-300"));
+    			attr(i8, "class", i8_class_value = "fas fa-map-marked mr-2 text-sm " + (/*location*/ ctx[0].href.indexOf('/admin/maps') !== -1
+    			? 'opacity-75'
+    			: 'text-blueGray-300'));
 
     			attr(a8, "href", "/admin/maps");
 
-    			attr(a8, "class", a8_class_value = "text-xs uppercase py-3 font-bold block " + (/*location*/ ctx[0].href.indexOf("/admin/maps") !== -1
-    			? "text-red-500 hover:text-red-600"
-    			: "text-blueGray-700 hover:text-blueGray-500"));
+    			attr(a8, "class", a8_class_value = "text-xs uppercase py-3 font-bold block " + (/*location*/ ctx[0].href.indexOf('/admin/maps') !== -1
+    			? 'text-red-500 hover:text-red-600'
+    			: 'text-blueGray-700 hover:text-blueGray-500'));
 
     			attr(li8, "class", "items-center");
 
-    			attr(i9, "class", i9_class_value = "fas fa-map-marked mr-2 text-sm " + (/*location*/ ctx[0].href.indexOf("/admin/maps") !== -1
-    			? "opacity-75"
-    			: "text-blueGray-300"));
+    			attr(i9, "class", i9_class_value = "fas fa-map-marked mr-2 text-sm " + (/*location*/ ctx[0].href.indexOf('/admin/maps') !== -1
+    			? 'opacity-75'
+    			: 'text-blueGray-300'));
 
     			attr(a9, "href", "/admin/maps");
 
-    			attr(a9, "class", a9_class_value = "text-xs uppercase py-3 font-bold block " + (/*location*/ ctx[0].href.indexOf("/admin/maps") !== -1
-    			? "text-red-500 hover:text-red-600"
-    			: "text-blueGray-700 hover:text-blueGray-500"));
+    			attr(a9, "class", a9_class_value = "text-xs uppercase py-3 font-bold block " + (/*location*/ ctx[0].href.indexOf('/admin/maps') !== -1
+    			? 'text-red-500 hover:text-red-600'
+    			: 'text-blueGray-700 hover:text-blueGray-500'));
 
     			attr(li9, "class", "items-center");
 
-    			attr(i10, "class", i10_class_value = "fas fa-tools mr-2 text-sm " + (/*location*/ ctx[0].href.indexOf("/admin/settings") !== -1
-    			? "opacity-75"
-    			: "text-blueGray-300"));
+    			attr(i10, "class", i10_class_value = "fas fa-tools mr-2 text-sm " + (/*location*/ ctx[0].href.indexOf('/admin/academy') !== -1
+    			? 'opacity-75'
+    			: 'text-blueGray-300'));
 
-    			attr(a10, "href", "/admin/settings");
+    			attr(a10, "href", "/admin/academy");
 
-    			attr(a10, "class", a10_class_value = "text-xs uppercase py-3 font-bold block " + (/*location*/ ctx[0].href.indexOf("/admin/settings") !== -1
-    			? "text-red-500 hover:text-red-600"
-    			: "text-blueGray-700 hover:text-blueGray-500"));
+    			attr(a10, "class", a10_class_value = "text-xs uppercase py-3 font-bold block " + (/*location*/ ctx[0].href.indexOf('/admin/academy') !== -1
+    			? 'text-red-500 hover:text-red-600'
+    			: 'text-blueGray-700 hover:text-blueGray-500'));
 
     			attr(li10, "class", "items-center");
+
+    			attr(i11, "class", i11_class_value = "fas fa-tools mr-2 text-sm " + (/*location*/ ctx[0].href.indexOf('/admin/settings') !== -1
+    			? 'opacity-75'
+    			: 'text-blueGray-300'));
+
+    			attr(a11, "href", "/admin/settings");
+
+    			attr(a11, "class", a11_class_value = "text-xs uppercase py-3 font-bold block " + (/*location*/ ctx[0].href.indexOf('/admin/settings') !== -1
+    			? 'text-red-500 hover:text-red-600'
+    			: 'text-blueGray-700 hover:text-blueGray-500'));
+
+    			attr(li11, "class", "items-center");
     			attr(ul1, "class", "md:flex-col md:min-w-full flex flex-col list-none");
     			attr(div5, "class", div5_class_value = "md:flex md:flex-col md:items-stretch md:opacity-100 md:relative md:mt-4 md:shadow-none shadow absolute top-0 left-0 right-0 z-40 overflow-y-auto overflow-x-hidden h-auto items-center flex-1 rounded " + /*collapseShow*/ ctx[1]);
     			attr(div6, "class", "md:flex-col md:items-stretch md:min-h-full md:flex-nowrap px-0 flex flex-wrap items-center justify-between w-full mx-auto");
@@ -4116,6 +4270,11 @@ var app = (function () {
     			append(li10, a10);
     			append(a10, i10);
     			append(a10, t28);
+    			append(ul1, t29);
+    			append(ul1, li11);
+    			append(li11, a11);
+    			append(a11, i11);
+    			append(a11, t30);
     			current = true;
 
     			if (!mounted) {
@@ -4132,119 +4291,132 @@ var app = (function () {
     					action_destroyer(link.call(null, a7)),
     					action_destroyer(link.call(null, a8)),
     					action_destroyer(link.call(null, a9)),
-    					action_destroyer(link.call(null, a10))
+    					action_destroyer(link.call(null, a10)),
+    					action_destroyer(link.call(null, a11))
     				];
 
     				mounted = true;
     			}
     		},
     		p(ctx, [dirty]) {
-    			if (!current || dirty & /*location*/ 1 && i2_class_value !== (i2_class_value = "fas fa-tv mr-2 text-sm " + (/*location*/ ctx[0].href.indexOf("/admin/dashboard") !== -1
-    			? "opacity-75"
-    			: "text-blueGray-300"))) {
+    			if (!current || dirty & /*location*/ 1 && i2_class_value !== (i2_class_value = "fas fa-tv mr-2 text-sm " + (/*location*/ ctx[0].href.indexOf('/admin/dashboard') !== -1
+    			? 'opacity-75'
+    			: 'text-blueGray-300'))) {
     				attr(i2, "class", i2_class_value);
     			}
 
-    			if (!current || dirty & /*location*/ 1 && a2_class_value !== (a2_class_value = "text-xs uppercase py-3 font-bold block " + (/*location*/ ctx[0].href.indexOf("/admin/dashboard") !== -1
-    			? "text-red-500 hover:text-red-600"
-    			: "text-blueGray-700 hover:text-blueGray-500"))) {
+    			if (!current || dirty & /*location*/ 1 && a2_class_value !== (a2_class_value = "text-xs uppercase py-3 font-bold block " + (/*location*/ ctx[0].href.indexOf('/admin/dashboard') !== -1
+    			? 'text-red-500 hover:text-red-600'
+    			: 'text-blueGray-700 hover:text-blueGray-500'))) {
     				attr(a2, "class", a2_class_value);
     			}
 
-    			if (!current || dirty & /*location*/ 1 && i3_class_value !== (i3_class_value = "fas fa-table mr-2 text-sm " + (/*location*/ ctx[0].href.indexOf("/admin/tables") !== -1
-    			? "opacity-75"
-    			: "text-blueGray-300"))) {
+    			if (!current || dirty & /*location*/ 1 && i3_class_value !== (i3_class_value = "fas fa-table mr-2 text-sm " + (/*location*/ ctx[0].href.indexOf('/admin/tables') !== -1
+    			? 'opacity-75'
+    			: 'text-blueGray-300'))) {
     				attr(i3, "class", i3_class_value);
     			}
 
-    			if (!current || dirty & /*location*/ 1 && a3_class_value !== (a3_class_value = "text-xs uppercase py-3 font-bold block " + (/*location*/ ctx[0].href.indexOf("/admin/tables") !== -1
-    			? "text-red-500 hover:text-red-600"
-    			: "text-blueGray-700 hover:text-blueGray-500"))) {
+    			if (!current || dirty & /*location*/ 1 && a3_class_value !== (a3_class_value = "text-xs uppercase py-3 font-bold block " + (/*location*/ ctx[0].href.indexOf('/admin/tables') !== -1
+    			? 'text-red-500 hover:text-red-600'
+    			: 'text-blueGray-700 hover:text-blueGray-500'))) {
     				attr(a3, "class", a3_class_value);
     			}
 
-    			if (!current || dirty & /*location*/ 1 && i4_class_value !== (i4_class_value = "fas fa-map-marked mr-2 text-sm " + (/*location*/ ctx[0].href.indexOf("/admin/maps") !== -1
-    			? "opacity-75"
-    			: "text-blueGray-300"))) {
+    			if (!current || dirty & /*location*/ 1 && i4_class_value !== (i4_class_value = "fas fa-map-marked mr-2 text-sm " + (/*location*/ ctx[0].href.indexOf('/admin/maps') !== -1
+    			? 'opacity-75'
+    			: 'text-blueGray-300'))) {
     				attr(i4, "class", i4_class_value);
     			}
 
-    			if (!current || dirty & /*location*/ 1 && a4_class_value !== (a4_class_value = "text-xs uppercase py-3 font-bold block " + (/*location*/ ctx[0].href.indexOf("/admin/maps") !== -1
-    			? "text-red-500 hover:text-red-600"
-    			: "text-blueGray-700 hover:text-blueGray-500"))) {
+    			if (!current || dirty & /*location*/ 1 && a4_class_value !== (a4_class_value = "text-xs uppercase py-3 font-bold block " + (/*location*/ ctx[0].href.indexOf('/admin/maps') !== -1
+    			? 'text-red-500 hover:text-red-600'
+    			: 'text-blueGray-700 hover:text-blueGray-500'))) {
     				attr(a4, "class", a4_class_value);
     			}
 
-    			if (!current || dirty & /*location*/ 1 && i5_class_value !== (i5_class_value = "fas fa-map-marked mr-2 text-sm " + (/*location*/ ctx[0].href.indexOf("/admin/maps") !== -1
-    			? "opacity-75"
-    			: "text-blueGray-300"))) {
+    			if (!current || dirty & /*location*/ 1 && i5_class_value !== (i5_class_value = "fas fa-map-marked mr-2 text-sm " + (/*location*/ ctx[0].href.indexOf('/admin/maps') !== -1
+    			? 'opacity-75'
+    			: 'text-blueGray-300'))) {
     				attr(i5, "class", i5_class_value);
     			}
 
-    			if (!current || dirty & /*location*/ 1 && a5_class_value !== (a5_class_value = "text-xs uppercase py-3 font-bold block " + (/*location*/ ctx[0].href.indexOf("/admin/maps") !== -1
-    			? "text-red-500 hover:text-red-600"
-    			: "text-blueGray-700 hover:text-blueGray-500"))) {
+    			if (!current || dirty & /*location*/ 1 && a5_class_value !== (a5_class_value = "text-xs uppercase py-3 font-bold block " + (/*location*/ ctx[0].href.indexOf('/admin/maps') !== -1
+    			? 'text-red-500 hover:text-red-600'
+    			: 'text-blueGray-700 hover:text-blueGray-500'))) {
     				attr(a5, "class", a5_class_value);
     			}
 
-    			if (!current || dirty & /*location*/ 1 && i6_class_value !== (i6_class_value = "fas fa-map-marked mr-2 text-sm " + (/*location*/ ctx[0].href.indexOf("/admin/maps") !== -1
-    			? "opacity-75"
-    			: "text-blueGray-300"))) {
+    			if (!current || dirty & /*location*/ 1 && i6_class_value !== (i6_class_value = "fas fa-map-marked mr-2 text-sm " + (/*location*/ ctx[0].href.indexOf('/admin/maps') !== -1
+    			? 'opacity-75'
+    			: 'text-blueGray-300'))) {
     				attr(i6, "class", i6_class_value);
     			}
 
-    			if (!current || dirty & /*location*/ 1 && a6_class_value !== (a6_class_value = "text-xs uppercase py-3 font-bold block " + (/*location*/ ctx[0].href.indexOf("/admin/maps") !== -1
-    			? "text-red-500 hover:text-red-600"
-    			: "text-blueGray-700 hover:text-blueGray-500"))) {
+    			if (!current || dirty & /*location*/ 1 && a6_class_value !== (a6_class_value = "text-xs uppercase py-3 font-bold block " + (/*location*/ ctx[0].href.indexOf('/admin/maps') !== -1
+    			? 'text-red-500 hover:text-red-600'
+    			: 'text-blueGray-700 hover:text-blueGray-500'))) {
     				attr(a6, "class", a6_class_value);
     			}
 
-    			if (!current || dirty & /*location*/ 1 && i7_class_value !== (i7_class_value = "fas fa-map-marked mr-2 text-sm " + (/*location*/ ctx[0].href.indexOf("/admin/maps") !== -1
-    			? "opacity-75"
-    			: "text-blueGray-300"))) {
+    			if (!current || dirty & /*location*/ 1 && i7_class_value !== (i7_class_value = "fas fa-map-marked mr-2 text-sm " + (/*location*/ ctx[0].href.indexOf('/admin/maps') !== -1
+    			? 'opacity-75'
+    			: 'text-blueGray-300'))) {
     				attr(i7, "class", i7_class_value);
     			}
 
-    			if (!current || dirty & /*location*/ 1 && a7_class_value !== (a7_class_value = "text-xs uppercase py-3 font-bold block " + (/*location*/ ctx[0].href.indexOf("/admin/maps") !== -1
-    			? "text-red-500 hover:text-red-600"
-    			: "text-blueGray-700 hover:text-blueGray-500"))) {
+    			if (!current || dirty & /*location*/ 1 && a7_class_value !== (a7_class_value = "text-xs uppercase py-3 font-bold block " + (/*location*/ ctx[0].href.indexOf('/admin/maps') !== -1
+    			? 'text-red-500 hover:text-red-600'
+    			: 'text-blueGray-700 hover:text-blueGray-500'))) {
     				attr(a7, "class", a7_class_value);
     			}
 
-    			if (!current || dirty & /*location*/ 1 && i8_class_value !== (i8_class_value = "fas fa-map-marked mr-2 text-sm " + (/*location*/ ctx[0].href.indexOf("/admin/maps") !== -1
-    			? "opacity-75"
-    			: "text-blueGray-300"))) {
+    			if (!current || dirty & /*location*/ 1 && i8_class_value !== (i8_class_value = "fas fa-map-marked mr-2 text-sm " + (/*location*/ ctx[0].href.indexOf('/admin/maps') !== -1
+    			? 'opacity-75'
+    			: 'text-blueGray-300'))) {
     				attr(i8, "class", i8_class_value);
     			}
 
-    			if (!current || dirty & /*location*/ 1 && a8_class_value !== (a8_class_value = "text-xs uppercase py-3 font-bold block " + (/*location*/ ctx[0].href.indexOf("/admin/maps") !== -1
-    			? "text-red-500 hover:text-red-600"
-    			: "text-blueGray-700 hover:text-blueGray-500"))) {
+    			if (!current || dirty & /*location*/ 1 && a8_class_value !== (a8_class_value = "text-xs uppercase py-3 font-bold block " + (/*location*/ ctx[0].href.indexOf('/admin/maps') !== -1
+    			? 'text-red-500 hover:text-red-600'
+    			: 'text-blueGray-700 hover:text-blueGray-500'))) {
     				attr(a8, "class", a8_class_value);
     			}
 
-    			if (!current || dirty & /*location*/ 1 && i9_class_value !== (i9_class_value = "fas fa-map-marked mr-2 text-sm " + (/*location*/ ctx[0].href.indexOf("/admin/maps") !== -1
-    			? "opacity-75"
-    			: "text-blueGray-300"))) {
+    			if (!current || dirty & /*location*/ 1 && i9_class_value !== (i9_class_value = "fas fa-map-marked mr-2 text-sm " + (/*location*/ ctx[0].href.indexOf('/admin/maps') !== -1
+    			? 'opacity-75'
+    			: 'text-blueGray-300'))) {
     				attr(i9, "class", i9_class_value);
     			}
 
-    			if (!current || dirty & /*location*/ 1 && a9_class_value !== (a9_class_value = "text-xs uppercase py-3 font-bold block " + (/*location*/ ctx[0].href.indexOf("/admin/maps") !== -1
-    			? "text-red-500 hover:text-red-600"
-    			: "text-blueGray-700 hover:text-blueGray-500"))) {
+    			if (!current || dirty & /*location*/ 1 && a9_class_value !== (a9_class_value = "text-xs uppercase py-3 font-bold block " + (/*location*/ ctx[0].href.indexOf('/admin/maps') !== -1
+    			? 'text-red-500 hover:text-red-600'
+    			: 'text-blueGray-700 hover:text-blueGray-500'))) {
     				attr(a9, "class", a9_class_value);
     			}
 
-    			if (!current || dirty & /*location*/ 1 && i10_class_value !== (i10_class_value = "fas fa-tools mr-2 text-sm " + (/*location*/ ctx[0].href.indexOf("/admin/settings") !== -1
-    			? "opacity-75"
-    			: "text-blueGray-300"))) {
+    			if (!current || dirty & /*location*/ 1 && i10_class_value !== (i10_class_value = "fas fa-tools mr-2 text-sm " + (/*location*/ ctx[0].href.indexOf('/admin/academy') !== -1
+    			? 'opacity-75'
+    			: 'text-blueGray-300'))) {
     				attr(i10, "class", i10_class_value);
     			}
 
-    			if (!current || dirty & /*location*/ 1 && a10_class_value !== (a10_class_value = "text-xs uppercase py-3 font-bold block " + (/*location*/ ctx[0].href.indexOf("/admin/settings") !== -1
-    			? "text-red-500 hover:text-red-600"
-    			: "text-blueGray-700 hover:text-blueGray-500"))) {
+    			if (!current || dirty & /*location*/ 1 && a10_class_value !== (a10_class_value = "text-xs uppercase py-3 font-bold block " + (/*location*/ ctx[0].href.indexOf('/admin/academy') !== -1
+    			? 'text-red-500 hover:text-red-600'
+    			: 'text-blueGray-700 hover:text-blueGray-500'))) {
     				attr(a10, "class", a10_class_value);
+    			}
+
+    			if (!current || dirty & /*location*/ 1 && i11_class_value !== (i11_class_value = "fas fa-tools mr-2 text-sm " + (/*location*/ ctx[0].href.indexOf('/admin/settings') !== -1
+    			? 'opacity-75'
+    			: 'text-blueGray-300'))) {
+    				attr(i11, "class", i11_class_value);
+    			}
+
+    			if (!current || dirty & /*location*/ 1 && a11_class_value !== (a11_class_value = "text-xs uppercase py-3 font-bold block " + (/*location*/ ctx[0].href.indexOf('/admin/settings') !== -1
+    			? 'text-red-500 hover:text-red-600'
+    			: 'text-blueGray-700 hover:text-blueGray-500'))) {
+    				attr(a11, "class", a11_class_value);
     			}
 
     			if (!current || dirty & /*collapseShow*/ 2 && div5_class_value !== (div5_class_value = "md:flex md:flex-col md:items-stretch md:opacity-100 md:relative md:mt-4 md:shadow-none shadow absolute top-0 left-0 right-0 z-40 overflow-y-auto overflow-x-hidden h-auto items-center flex-1 rounded " + /*collapseShow*/ ctx[1])) {
@@ -4280,11 +4452,11 @@ var app = (function () {
     	}
 
     	let { location } = $$props;
-    	const click_handler = () => toggleCollapseShow("bg-white m-2 py-3 px-6");
-    	const click_handler_1 = () => toggleCollapseShow("hidden");
+    	const click_handler = () => toggleCollapseShow('bg-white m-2 py-3 px-6');
+    	const click_handler_1 = () => toggleCollapseShow('hidden');
 
     	$$self.$$set = $$props => {
-    		if ("location" in $$props) $$invalidate(0, location = $$props.location);
+    		if ('location' in $$props) $$invalidate(0, location = $$props.location);
     	};
 
     	return [location, collapseShow, toggleCollapseShow, click_handler, click_handler_1];
@@ -4297,7 +4469,7 @@ var app = (function () {
     	}
     }
 
-    /* src\components\Cards\CardStats.svelte generated by Svelte v3.35.0 */
+    /* src\components\Cards\CardStats.svelte generated by Svelte v3.59.2 */
 
     function create_fragment$p(ctx) {
     	let div5;
@@ -4360,9 +4532,9 @@ var app = (function () {
     			attr(div2, "class", "relative w-auto pl-4 flex-initial");
     			attr(div3, "class", "flex flex-wrap");
 
-    			attr(i1, "class", i1_class_value = /*statArrow*/ ctx[2] === "up"
-    			? "fas fa-arrow-up"
-    			: "fas fa-arrow-down");
+    			attr(i1, "class", i1_class_value = /*statArrow*/ ctx[2] === 'up'
+    			? 'fas fa-arrow-up'
+    			: 'fas fa-arrow-down');
 
     			attr(span1, "class", span1_class_value = "mr-2 " + /*statPercentColor*/ ctx[4]);
     			attr(span2, "class", "whitespace-nowrap");
@@ -4407,9 +4579,9 @@ var app = (function () {
     				attr(div1, "class", div1_class_value);
     			}
 
-    			if (dirty & /*statArrow*/ 4 && i1_class_value !== (i1_class_value = /*statArrow*/ ctx[2] === "up"
-    			? "fas fa-arrow-up"
-    			: "fas fa-arrow-down")) {
+    			if (dirty & /*statArrow*/ 4 && i1_class_value !== (i1_class_value = /*statArrow*/ ctx[2] === 'up'
+    			? 'fas fa-arrow-up'
+    			: 'fas fa-arrow-down')) {
     				attr(i1, "class", i1_class_value);
     			}
 
@@ -4440,14 +4612,14 @@ var app = (function () {
     	let { statIconColor = "bg-red-500" } = $$props;
 
     	$$self.$$set = $$props => {
-    		if ("statSubtitle" in $$props) $$invalidate(0, statSubtitle = $$props.statSubtitle);
-    		if ("statTitle" in $$props) $$invalidate(1, statTitle = $$props.statTitle);
-    		if ("statArrow" in $$props) $$invalidate(2, statArrow = $$props.statArrow);
-    		if ("statPercent" in $$props) $$invalidate(3, statPercent = $$props.statPercent);
-    		if ("statPercentColor" in $$props) $$invalidate(4, statPercentColor = $$props.statPercentColor);
-    		if ("statDescripiron" in $$props) $$invalidate(5, statDescripiron = $$props.statDescripiron);
-    		if ("statIconName" in $$props) $$invalidate(6, statIconName = $$props.statIconName);
-    		if ("statIconColor" in $$props) $$invalidate(7, statIconColor = $$props.statIconColor);
+    		if ('statSubtitle' in $$props) $$invalidate(0, statSubtitle = $$props.statSubtitle);
+    		if ('statTitle' in $$props) $$invalidate(1, statTitle = $$props.statTitle);
+    		if ('statArrow' in $$props) $$invalidate(2, statArrow = $$props.statArrow);
+    		if ('statPercent' in $$props) $$invalidate(3, statPercent = $$props.statPercent);
+    		if ('statPercentColor' in $$props) $$invalidate(4, statPercentColor = $$props.statPercentColor);
+    		if ('statDescripiron' in $$props) $$invalidate(5, statDescripiron = $$props.statDescripiron);
+    		if ('statIconName' in $$props) $$invalidate(6, statIconName = $$props.statIconName);
+    		if ('statIconColor' in $$props) $$invalidate(7, statIconColor = $$props.statIconColor);
     	};
 
     	return [
@@ -4479,7 +4651,7 @@ var app = (function () {
     	}
     }
 
-    /* src\components\Headers\HeaderStats.svelte generated by Svelte v3.35.0 */
+    /* src\components\Headers\HeaderStats.svelte generated by Svelte v3.59.2 */
 
     function create_fragment$o(ctx) {
     	let div7;
@@ -4626,16 +4798,16 @@ var app = (function () {
 
     async function fetchCoinData(address, decimal) {
     	try {
-    		const wallet = sessionStorage.getItem("walletAddress");
+    		const wallet = sessionStorage.getItem('walletAddress');
 
     		const bal = await ethereum.request({
-    			method: "eth_call",
+    			method: 'eth_call',
     			params: [
     				{
     					to: address,
     					data: "0x70a08231" + "000000000000000000000000" + wallet.substring(2)
     				},
-    				"latest"
+    				'latest'
     			]
     		});
 
@@ -4653,7 +4825,7 @@ var app = (function () {
 
     	onMount(async () => {
     		try {
-    			let response = await fetch("http://localhost:9000/market");
+    			let response = await fetch('http://localhost:9000/market');
     			let jsonData = await response.json();
     			let data = jsonData;
 
@@ -4686,8 +4858,8 @@ var app = (function () {
     			let valueUpdate = { value: totalAssetValue.toFixed(2) };
 
     			response = await fetch(`http://localhost:9000/holding/${userID}/asset`, {
-    				method: "PATCH",
-    				headers: { "Content-Type": "application/json" },
+    				method: 'PATCH',
+    				headers: { 'Content-Type': 'application/json' },
     				body: JSON.stringify(valueUpdate)
     			});
 
@@ -4711,7 +4883,7 @@ var app = (function () {
     	}
     }
 
-    /* src\components\Footers\FooterAdmin.svelte generated by Svelte v3.35.0 */
+    /* src\components\Footers\FooterAdmin.svelte generated by Svelte v3.59.2 */
 
     function create_fragment$n(ctx) {
     	let footer;
@@ -18329,7 +18501,7 @@ var app = (function () {
     }));
     });
 
-    /* src\components\Cards\CardLineChart.svelte generated by Svelte v3.35.0 */
+    /* src\components\Cards\CardLineChart.svelte generated by Svelte v3.59.2 */
 
     function create_fragment$m(ctx) {
     	let div5;
@@ -18470,7 +18642,7 @@ var app = (function () {
     	}
     }
 
-    /* src\components\Cards\CardBarChart.svelte generated by Svelte v3.35.0 */
+    /* src\components\Cards\CardBarChart.svelte generated by Svelte v3.59.2 */
 
     function create_fragment$l(ctx) {
     	let div5;
@@ -18581,7 +18753,7 @@ var app = (function () {
     	}
     }
 
-    /* src\components\Cards\CardPageVisits.svelte generated by Svelte v3.35.0 */
+    /* src\components\Cards\CardPageVisits.svelte generated by Svelte v3.59.2 */
 
     function get_each_context$1(ctx, list, i) {
     	const child_ctx = ctx.slice();
@@ -18656,22 +18828,22 @@ var app = (function () {
     			t13 = text(t13_value);
     			t14 = text("%");
     			t15 = space();
-    			if (img.src !== (img_src_value = /*coin*/ ctx[1].logo)) attr(img, "src", img_src_value);
+    			if (!src_url_equal(img.src, img_src_value = /*coin*/ ctx[1].logo)) attr(img, "src", img_src_value);
     			attr(img, "class", "h-12 w-12 bg-white rounded-full border");
     			attr(img, "alt", "...");
-    			attr(span0, "class", "ml-3 font-bold " + "btext-blueGray-600");
+    			attr(span0, "class", "ml-3 font-bold " + 'btext-blueGray-600');
     			attr(th, "class", "border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left flex items-center");
     			attr(td0, "class", "border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4");
     			attr(td1, "class", "border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4");
     			attr(td2, "class", "border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4");
 
     			attr(i, "class", i_class_value = /*coin*/ ctx[1].change24h > 0
-    			? "fas fa-arrow-up"
-    			: "fas fa-arrow-down");
+    			? 'fas fa-arrow-up'
+    			: 'fas fa-arrow-down');
 
     			attr(span1, "class", span1_class_value = "mr-2 " + (/*coin*/ ctx[1].change24h > 0
-    			? "text-emerald-500"
-    			: "text-red-500"));
+    			? 'text-emerald-500'
+    			: 'text-red-500'));
 
     			attr(td3, "class", "border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4");
     		},
@@ -18704,7 +18876,7 @@ var app = (function () {
     			append(tr, t15);
     		},
     		p(ctx, dirty) {
-    			if (dirty & /*coins*/ 1 && img.src !== (img_src_value = /*coin*/ ctx[1].logo)) {
+    			if (dirty & /*coins*/ 1 && !src_url_equal(img.src, img_src_value = /*coin*/ ctx[1].logo)) {
     				attr(img, "src", img_src_value);
     			}
 
@@ -18715,16 +18887,16 @@ var app = (function () {
     			if (dirty & /*coins*/ 1 && t10_value !== (t10_value = /*coin*/ ctx[1].usd.toLocaleString() + "")) set_data(t10, t10_value);
 
     			if (dirty & /*coins*/ 1 && i_class_value !== (i_class_value = /*coin*/ ctx[1].change24h > 0
-    			? "fas fa-arrow-up"
-    			: "fas fa-arrow-down")) {
+    			? 'fas fa-arrow-up'
+    			: 'fas fa-arrow-down')) {
     				attr(i, "class", i_class_value);
     			}
 
     			if (dirty & /*coins*/ 1 && t13_value !== (t13_value = /*coin*/ ctx[1].change24h.toFixed(2) + "")) set_data(t13, t13_value);
 
     			if (dirty & /*coins*/ 1 && span1_class_value !== (span1_class_value = "mr-2 " + (/*coin*/ ctx[1].change24h > 0
-    			? "text-emerald-500"
-    			: "text-red-500"))) {
+    			? 'text-emerald-500'
+    			: 'text-red-500'))) {
     				attr(span1, "class", span1_class_value);
     			}
     		},
@@ -18792,7 +18964,9 @@ var app = (function () {
     			append(table, tbody);
 
     			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].m(tbody, null);
+    				if (each_blocks[i]) {
+    					each_blocks[i].m(tbody, null);
+    				}
     			}
     		},
     		p(ctx, [dirty]) {
@@ -32214,7 +32388,7 @@ var app = (function () {
 
     Chart.register(...registerables);
 
-    /* src\components\Cards\PieChart.svelte generated by Svelte v3.35.0 */
+    /* src\components\Cards\PieChart.svelte generated by Svelte v3.59.2 */
 
     function create_fragment$j(ctx) {
     	let div;
@@ -32254,22 +32428,22 @@ var app = (function () {
 
     	return function random() {
     		// Robert Jenkins' 32 bit integer hash function
-    		state = state + 2127912214 + (state << 12) & 4294967295;
+    		state = state + 0x7ed55d16 + (state << 12) & 0xffffffff;
 
-    		state = (state ^ 3345072700 ^ state >>> 19) & 4294967295;
-    		state = state + 374761393 + (state << 5) & 4294967295;
-    		state = (state + 3550635116 ^ state << 9) & 4294967295;
-    		state = state + 4251993797 + (state << 3) & 4294967295;
-    		state = (state ^ 3042594569 ^ state >>> 16) & 4294967295;
-    		return (state & 268435455) / 268435456;
+    		state = (state ^ 0xc761c23c ^ state >>> 19) & 0xffffffff;
+    		state = state + 0x165667b1 + (state << 5) & 0xffffffff;
+    		state = (state + 0xd3a2646c ^ state << 9) & 0xffffffff;
+    		state = state + 0xfd7046c5 + (state << 3) & 0xffffffff;
+    		state = (state ^ 0xb55a4f09 ^ state >>> 16) & 0xffffffff;
+    		return (state & 0xfffffff) / 0x10000000;
     	};
     }
 
     function instance$i($$self, $$props, $$invalidate) {
-    	let { coins = [] } = $$props; // Assume coins is passed as a prop
+    	let { coins = [] } = $$props;
 
     	onMount(() => {
-    		const ctx = document.getElementById("pie-chart");
+    		const ctx = document.getElementById('pie-chart');
     		$$invalidate(0, coins = coins.filter(coin => coin.amount > 0));
     		const labels = coins.map(coin => coin.name);
     		const data = coins.map(coin => coin.usd);
@@ -32277,7 +32451,7 @@ var app = (function () {
 
     		new Chart(ctx,
     		{
-    				type: "pie",
+    				type: 'pie',
     				data: {
     					labels,
     					datasets: [
@@ -32294,7 +32468,7 @@ var app = (function () {
     						tooltip: {
     							callbacks: {
     								label(context) {
-    									const label = context.label || "";
+    									const label = context.label || '';
     									const value = context.parsed || 0;
     									const dataset = context.dataset || {};
     									const total = dataset.data.reduce((acc, curr) => acc + curr, 0);
@@ -32309,7 +32483,7 @@ var app = (function () {
     	});
 
     	$$self.$$set = $$props => {
-    		if ("coins" in $$props) $$invalidate(0, coins = $$props.coins);
+    		if ('coins' in $$props) $$invalidate(0, coins = $$props.coins);
     	};
 
     	return [coins];
@@ -32322,7 +32496,7 @@ var app = (function () {
     	}
     }
 
-    /* src\views\admin\Dashboard.svelte generated by Svelte v3.35.0 */
+    /* src\views\admin\Dashboard.svelte generated by Svelte v3.59.2 */
 
     function create_else_block$1(ctx) {
     	let p;
@@ -32507,7 +32681,7 @@ var app = (function () {
     	let coins = [];
 
     	onMount(async () => {
-    		isLoggedIn = JSON.parse(sessionStorage.getItem("isLoggedIn"));
+    		isLoggedIn = JSON.parse(sessionStorage.getItem('isLoggedIn'));
 
     		if (!isLoggedIn) {
     			window.location.href = "http://localhost:5000/auth/login";
@@ -32517,7 +32691,7 @@ var app = (function () {
     	});
 
     	$$self.$$set = $$props => {
-    		if ("location" in $$props) $$invalidate(1, location = $$props.location);
+    		if ('location' in $$props) $$invalidate(1, location = $$props.location);
     	};
 
     	return [coins, location];
@@ -32530,7 +32704,7 @@ var app = (function () {
     	}
     }
 
-    /* src\components\Cards\CardSettings.svelte generated by Svelte v3.35.0 */
+    /* src\components\Cards\CardSettings.svelte generated by Svelte v3.59.2 */
 
     function create_fragment$h(ctx) {
     	let div24;
@@ -32567,8 +32741,8 @@ var app = (function () {
 
       <h6 class="text-blueGray-400 text-sm mt-3 mb-6 font-bold uppercase">About Me</h6> 
       <div class="flex flex-wrap"><div class="w-full lg:w-12/12 px-4"><div class="relative w-full mb-3"><label class="block uppercase text-blueGray-600 text-xs font-bold mb-2" for="grid-about-me">About me</label> 
-            <textarea id="grid-about-me" type="text" class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" rows="4" value="A beautiful UI Kit and Admin for Svelte &amp; Tailwind CSS. It is Free
-                and Open Source."></textarea></div></div></div></form></div>`;
+            <textarea id="grid-about-me" type="text" class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" rows="4">A beautiful UI Kit and Admin for Svelte &amp; Tailwind CSS. It is Free
+                and Open Source.</textarea></div></div></div></form></div>`;
 
     			attr(div24, "class", "relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-blueGray-100 border-0");
     		},
@@ -32591,7 +32765,7 @@ var app = (function () {
     	}
     }
 
-    /* src\components\Cards\CardProfile.svelte generated by Svelte v3.35.0 */
+    /* src\components\Cards\CardProfile.svelte generated by Svelte v3.59.2 */
 
     function create_fragment$g(ctx) {
     	let div16;
@@ -32654,7 +32828,7 @@ var app = (function () {
     			a = element("a");
     			a.textContent = "Show more";
     			attr(img, "alt", "...");
-    			if (img.src !== (img_src_value = team2$2)) attr(img, "src", img_src_value);
+    			if (!src_url_equal(img.src, img_src_value = team2$2)) attr(img, "src", img_src_value);
     			attr(img, "class", "shadow-xl rounded-full h-auto align-middle border-none absolute -m-16 -ml-20 lg:-ml-16 max-w-150-px");
     			attr(div0, "class", "relative");
     			attr(div1, "class", "w-full px-4 flex justify-center");
@@ -32715,7 +32889,7 @@ var app = (function () {
     	}
     }
 
-    /* src\views\admin\Settings.svelte generated by Svelte v3.35.0 */
+    /* src\views\admin\Settings.svelte generated by Svelte v3.59.2 */
 
     function create_fragment$f(ctx) {
     	let div2;
@@ -32783,7 +32957,7 @@ var app = (function () {
     	let { location } = $$props;
 
     	$$self.$$set = $$props => {
-    		if ("location" in $$props) $$invalidate(0, location = $$props.location);
+    		if ('location' in $$props) $$invalidate(0, location = $$props.location);
     	};
 
     	return [location];
@@ -32796,7 +32970,7 @@ var app = (function () {
     	}
     }
 
-    /* src\components\Cards\CardTable.svelte generated by Svelte v3.35.0 */
+    /* src\components\Cards\CardTable.svelte generated by Svelte v3.59.2 */
 
     function get_each_context(ctx, list, i) {
     	const child_ctx = ctx.slice();
@@ -32869,24 +33043,24 @@ var app = (function () {
     			t12 = text("$");
     			t13 = text(t13_value);
     			t14 = space();
-    			if (img.src !== (img_src_value = /*coin*/ ctx[3].logo)) attr(img, "src", img_src_value);
+    			if (!src_url_equal(img.src, img_src_value = /*coin*/ ctx[3].logo)) attr(img, "src", img_src_value);
     			attr(img, "class", "h-12 w-12 bg-white rounded-full border");
     			attr(img, "alt", "...");
 
-    			attr(span0, "class", span0_class_value = "ml-3 font-bold " + (/*color*/ ctx[0] === "light"
-    			? "btext-blueGray-600"
-    			: "text-whit"));
+    			attr(span0, "class", span0_class_value = "ml-3 font-bold " + (/*color*/ ctx[0] === 'light'
+    			? 'btext-blueGray-600'
+    			: 'text-whit'));
 
     			attr(th, "class", "border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left flex items-center");
     			attr(td0, "class", "border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4");
 
     			attr(i, "class", i_class_value = /*coin*/ ctx[3].change24h > 0
-    			? "fas fa-arrow-up"
-    			: "fas fa-arrow-down");
+    			? 'fas fa-arrow-up'
+    			: 'fas fa-arrow-down');
 
     			attr(span1, "class", span1_class_value = "mr-2 " + (/*coin*/ ctx[3].change24h > 0
-    			? "text-emerald-500"
-    			: "text-red-500"));
+    			? 'text-emerald-500'
+    			: 'text-red-500'));
 
     			attr(td1, "class", "border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4");
     			attr(td2, "class", "border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4");
@@ -32920,31 +33094,31 @@ var app = (function () {
     			append(tr, t14);
     		},
     		p(ctx, dirty) {
-    			if (dirty & /*coins*/ 2 && img.src !== (img_src_value = /*coin*/ ctx[3].logo)) {
+    			if (dirty & /*coins*/ 2 && !src_url_equal(img.src, img_src_value = /*coin*/ ctx[3].logo)) {
     				attr(img, "src", img_src_value);
     			}
 
     			if (dirty & /*coins*/ 2 && t1_value !== (t1_value = /*coin*/ ctx[3].name.toUpperCase() + "")) set_data(t1, t1_value);
 
-    			if (dirty & /*color*/ 1 && span0_class_value !== (span0_class_value = "ml-3 font-bold " + (/*color*/ ctx[0] === "light"
-    			? "btext-blueGray-600"
-    			: "text-whit"))) {
+    			if (dirty & /*color*/ 1 && span0_class_value !== (span0_class_value = "ml-3 font-bold " + (/*color*/ ctx[0] === 'light'
+    			? 'btext-blueGray-600'
+    			: 'text-whit'))) {
     				attr(span0, "class", span0_class_value);
     			}
 
     			if (dirty & /*coins*/ 2 && t4_value !== (t4_value = /*coin*/ ctx[3].price.toLocaleString() + "")) set_data(t4, t4_value);
 
     			if (dirty & /*coins*/ 2 && i_class_value !== (i_class_value = /*coin*/ ctx[3].change24h > 0
-    			? "fas fa-arrow-up"
-    			: "fas fa-arrow-down")) {
+    			? 'fas fa-arrow-up'
+    			: 'fas fa-arrow-down')) {
     				attr(i, "class", i_class_value);
     			}
 
     			if (dirty & /*coins*/ 2 && t7_value !== (t7_value = /*coin*/ ctx[3].change24h.toFixed(2) + "")) set_data(t7, t7_value);
 
     			if (dirty & /*coins*/ 2 && span1_class_value !== (span1_class_value = "mr-2 " + (/*coin*/ ctx[3].change24h > 0
-    			? "text-emerald-500"
-    			: "text-red-500"))) {
+    			? 'text-emerald-500'
+    			: 'text-red-500'))) {
     				attr(span1, "class", span1_class_value);
     			}
 
@@ -33033,40 +33207,40 @@ var app = (function () {
     				each_blocks[i].c();
     			}
 
-    			attr(h3, "class", h3_class_value = "font-semibold text-lg " + (/*color*/ ctx[0] === "light"
-    			? "text-blueGray-700"
-    			: "text-white"));
+    			attr(h3, "class", h3_class_value = "font-semibold text-lg " + (/*color*/ ctx[0] === 'light'
+    			? 'text-blueGray-700'
+    			: 'text-white'));
 
     			attr(div0, "class", "relative w-full px-4 max-w-full flex-grow flex-1");
     			attr(div1, "class", "flex flex-wrap items-center");
     			attr(div2, "class", "rounded-t mb-0 px-4 py-3 border-0");
 
-    			attr(th0, "class", th0_class_value = "px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left " + (/*color*/ ctx[0] === "light"
-    			? "bg-blueGray-50 text-blueGray-500 border-blueGray-100"
-    			: "bg-red-700 text-red-200 border-red-600"));
+    			attr(th0, "class", th0_class_value = "px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left " + (/*color*/ ctx[0] === 'light'
+    			? 'bg-blueGray-50 text-blueGray-500 border-blueGray-100'
+    			: 'bg-red-700 text-red-200 border-red-600'));
 
-    			attr(th1, "class", th1_class_value = "px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left " + (/*color*/ ctx[0] === "light"
-    			? "bg-blueGray-50 text-blueGray-500 border-blueGray-100"
-    			: "bg-red-700 text-red-200 border-red-600"));
+    			attr(th1, "class", th1_class_value = "px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left " + (/*color*/ ctx[0] === 'light'
+    			? 'bg-blueGray-50 text-blueGray-500 border-blueGray-100'
+    			: 'bg-red-700 text-red-200 border-red-600'));
 
-    			attr(th2, "class", th2_class_value = "px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left " + (/*color*/ ctx[0] === "light"
-    			? "bg-blueGray-50 text-blueGray-500 border-blueGray-100"
-    			: "bg-red-700 text-red-200 border-red-600"));
+    			attr(th2, "class", th2_class_value = "px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left " + (/*color*/ ctx[0] === 'light'
+    			? 'bg-blueGray-50 text-blueGray-500 border-blueGray-100'
+    			: 'bg-red-700 text-red-200 border-red-600'));
 
-    			attr(th3, "class", th3_class_value = "px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left " + (/*color*/ ctx[0] === "light"
-    			? "bg-blueGray-50 text-blueGray-500 border-blueGray-100"
-    			: "bg-red-700 text-red-200 border-red-600"));
+    			attr(th3, "class", th3_class_value = "px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left " + (/*color*/ ctx[0] === 'light'
+    			? 'bg-blueGray-50 text-blueGray-500 border-blueGray-100'
+    			: 'bg-red-700 text-red-200 border-red-600'));
 
-    			attr(th4, "class", th4_class_value = "px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left " + (/*color*/ ctx[0] === "light"
-    			? "bg-blueGray-50 text-blueGray-500 border-blueGray-100"
-    			: "bg-red-700 text-red-200 border-red-600"));
+    			attr(th4, "class", th4_class_value = "px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left " + (/*color*/ ctx[0] === 'light'
+    			? 'bg-blueGray-50 text-blueGray-500 border-blueGray-100'
+    			: 'bg-red-700 text-red-200 border-red-600'));
 
     			attr(table, "class", "items-center w-full bg-transparent border-collapse");
     			attr(div3, "class", "block w-full overflow-x-auto");
 
-    			attr(div4, "class", div4_class_value = "relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded " + (/*color*/ ctx[0] === "light"
-    			? "bg-white"
-    			: "bg-red-800 text-white"));
+    			attr(div4, "class", div4_class_value = "relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded " + (/*color*/ ctx[0] === 'light'
+    			? 'bg-white'
+    			: 'bg-red-800 text-white'));
     		},
     		m(target, anchor) {
     			insert(target, div4, anchor);
@@ -33098,43 +33272,45 @@ var app = (function () {
     			append(table, tbody);
 
     			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].m(tbody, null);
+    				if (each_blocks[i]) {
+    					each_blocks[i].m(tbody, null);
+    				}
     			}
     		},
     		p(ctx, [dirty]) {
-    			if (dirty & /*color*/ 1 && h3_class_value !== (h3_class_value = "font-semibold text-lg " + (/*color*/ ctx[0] === "light"
-    			? "text-blueGray-700"
-    			: "text-white"))) {
+    			if (dirty & /*color*/ 1 && h3_class_value !== (h3_class_value = "font-semibold text-lg " + (/*color*/ ctx[0] === 'light'
+    			? 'text-blueGray-700'
+    			: 'text-white'))) {
     				attr(h3, "class", h3_class_value);
     			}
 
-    			if (dirty & /*color*/ 1 && th0_class_value !== (th0_class_value = "px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left " + (/*color*/ ctx[0] === "light"
-    			? "bg-blueGray-50 text-blueGray-500 border-blueGray-100"
-    			: "bg-red-700 text-red-200 border-red-600"))) {
+    			if (dirty & /*color*/ 1 && th0_class_value !== (th0_class_value = "px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left " + (/*color*/ ctx[0] === 'light'
+    			? 'bg-blueGray-50 text-blueGray-500 border-blueGray-100'
+    			: 'bg-red-700 text-red-200 border-red-600'))) {
     				attr(th0, "class", th0_class_value);
     			}
 
-    			if (dirty & /*color*/ 1 && th1_class_value !== (th1_class_value = "px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left " + (/*color*/ ctx[0] === "light"
-    			? "bg-blueGray-50 text-blueGray-500 border-blueGray-100"
-    			: "bg-red-700 text-red-200 border-red-600"))) {
+    			if (dirty & /*color*/ 1 && th1_class_value !== (th1_class_value = "px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left " + (/*color*/ ctx[0] === 'light'
+    			? 'bg-blueGray-50 text-blueGray-500 border-blueGray-100'
+    			: 'bg-red-700 text-red-200 border-red-600'))) {
     				attr(th1, "class", th1_class_value);
     			}
 
-    			if (dirty & /*color*/ 1 && th2_class_value !== (th2_class_value = "px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left " + (/*color*/ ctx[0] === "light"
-    			? "bg-blueGray-50 text-blueGray-500 border-blueGray-100"
-    			: "bg-red-700 text-red-200 border-red-600"))) {
+    			if (dirty & /*color*/ 1 && th2_class_value !== (th2_class_value = "px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left " + (/*color*/ ctx[0] === 'light'
+    			? 'bg-blueGray-50 text-blueGray-500 border-blueGray-100'
+    			: 'bg-red-700 text-red-200 border-red-600'))) {
     				attr(th2, "class", th2_class_value);
     			}
 
-    			if (dirty & /*color*/ 1 && th3_class_value !== (th3_class_value = "px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left " + (/*color*/ ctx[0] === "light"
-    			? "bg-blueGray-50 text-blueGray-500 border-blueGray-100"
-    			: "bg-red-700 text-red-200 border-red-600"))) {
+    			if (dirty & /*color*/ 1 && th3_class_value !== (th3_class_value = "px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left " + (/*color*/ ctx[0] === 'light'
+    			? 'bg-blueGray-50 text-blueGray-500 border-blueGray-100'
+    			: 'bg-red-700 text-red-200 border-red-600'))) {
     				attr(th3, "class", th3_class_value);
     			}
 
-    			if (dirty & /*color*/ 1 && th4_class_value !== (th4_class_value = "px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left " + (/*color*/ ctx[0] === "light"
-    			? "bg-blueGray-50 text-blueGray-500 border-blueGray-100"
-    			: "bg-red-700 text-red-200 border-red-600"))) {
+    			if (dirty & /*color*/ 1 && th4_class_value !== (th4_class_value = "px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left " + (/*color*/ ctx[0] === 'light'
+    			? 'bg-blueGray-50 text-blueGray-500 border-blueGray-100'
+    			: 'bg-red-700 text-red-200 border-red-600'))) {
     				attr(th4, "class", th4_class_value);
     			}
 
@@ -33161,9 +33337,9 @@ var app = (function () {
     				each_blocks.length = each_value.length;
     			}
 
-    			if (dirty & /*color*/ 1 && div4_class_value !== (div4_class_value = "relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded " + (/*color*/ ctx[0] === "light"
-    			? "bg-white"
-    			: "bg-red-800 text-white"))) {
+    			if (dirty & /*color*/ 1 && div4_class_value !== (div4_class_value = "relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded " + (/*color*/ ctx[0] === 'light'
+    			? 'bg-white'
+    			: 'bg-red-800 text-white'))) {
     				attr(div4, "class", div4_class_value);
     			}
     		},
@@ -33182,7 +33358,7 @@ var app = (function () {
     	let coins = [];
 
     	onMount(async () => {
-    		const response = await fetch("http://localhost:9000/market");
+    		const response = await fetch('http://localhost:9000/market');
     		const jsonData = await response.json();
     		data = jsonData;
 
@@ -33210,7 +33386,7 @@ var app = (function () {
     	let { color = "light" } = $$props;
 
     	$$self.$$set = $$props => {
-    		if ("color" in $$props) $$invalidate(0, color = $$props.color);
+    		if ('color' in $$props) $$invalidate(0, color = $$props.color);
     	};
 
     	return [color, coins];
@@ -33223,7 +33399,7 @@ var app = (function () {
     	}
     }
 
-    /* src\views\admin\Tables.svelte generated by Svelte v3.35.0 */
+    /* src\views\admin\Tables.svelte generated by Svelte v3.59.2 */
 
     function create_fragment$d(ctx) {
     	let div1;
@@ -33267,7 +33443,7 @@ var app = (function () {
     	let { location } = $$props;
 
     	$$self.$$set = $$props => {
-    		if ("location" in $$props) $$invalidate(0, location = $$props.location);
+    		if ('location' in $$props) $$invalidate(0, location = $$props.location);
     	};
 
     	return [location];
@@ -33280,7 +33456,7 @@ var app = (function () {
     	}
     }
 
-    /* src\components\Maps\MapExample.svelte generated by Svelte v3.35.0 */
+    /* src\components\Maps\MapExample.svelte generated by Svelte v3.59.2 */
 
     function create_fragment$c(ctx) {
     	let div;
@@ -33371,7 +33547,7 @@ var app = (function () {
     				title: "Hello World!"
     			});
 
-    		const contentString = "<div class=\"info-window-content\"><h2>Notus Svelte</h2>" + "<p>A beautiful UI Kit and Admin for Tailwind CSS. It is Free and Open Source.</p></div>";
+    		const contentString = '<div class="info-window-content"><h2>Notus Svelte</h2>' + "<p>A beautiful UI Kit and Admin for Tailwind CSS. It is Free and Open Source.</p></div>";
     		const infowindow = new google.maps.InfoWindow({ content: contentString });
 
     		google.maps.event.addListener(marker, "click", function () {
@@ -33389,7 +33565,7 @@ var app = (function () {
     	}
     }
 
-    /* src\views\admin\Maps.svelte generated by Svelte v3.35.0 */
+    /* src\views\admin\Maps.svelte generated by Svelte v3.59.2 */
 
     function create_fragment$b(ctx) {
     	let div2;
@@ -33437,7 +33613,7 @@ var app = (function () {
     	let { location } = $$props;
 
     	$$self.$$set = $$props => {
-    		if ("location" in $$props) $$invalidate(0, location = $$props.location);
+    		if ('location' in $$props) $$invalidate(0, location = $$props.location);
     	};
 
     	return [location];
@@ -33450,7 +33626,7 @@ var app = (function () {
     	}
     }
 
-    /* src\layouts\Admin.svelte generated by Svelte v3.35.0 */
+    /* src\layouts\Admin.svelte generated by Svelte v3.59.2 */
 
     function create_default_slot$2(ctx) {
     	let route0;
@@ -33629,8 +33805,8 @@ var app = (function () {
     	let { admin = "" } = $$props;
 
     	$$self.$$set = $$props => {
-    		if ("location" in $$props) $$invalidate(0, location = $$props.location);
-    		if ("admin" in $$props) $$invalidate(1, admin = $$props.admin);
+    		if ('location' in $$props) $$invalidate(0, location = $$props.location);
+    		if ('admin' in $$props) $$invalidate(1, admin = $$props.admin);
     	};
 
     	return [location, admin];
@@ -33643,7 +33819,7 @@ var app = (function () {
     	}
     }
 
-    /* src\components\Dropdowns\PagesDropdown.svelte generated by Svelte v3.35.0 */
+    /* src\components\Dropdowns\PagesDropdown.svelte generated by Svelte v3.59.2 */
 
     function create_fragment$9(ctx) {
     	let div3;
@@ -33745,7 +33921,7 @@ var app = (function () {
     			attr(a7, "class", "text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700");
     			attr(a8, "href", "/profile");
     			attr(a8, "class", "text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700");
-    			attr(div2, "class", div2_class_value = "bg-white text-base z-50 float-left py-2 list-none text-left rounded shadow-lg min-w-48 " + (/*dropdownPopoverShow*/ ctx[0] ? "block" : "hidden"));
+    			attr(div2, "class", div2_class_value = "bg-white text-base z-50 float-left py-2 list-none text-left rounded shadow-lg min-w-48 " + (/*dropdownPopoverShow*/ ctx[0] ? 'block' : 'hidden'));
     		},
     		m(target, anchor) {
     			insert(target, div3, anchor);
@@ -33797,7 +33973,7 @@ var app = (function () {
     			}
     		},
     		p(ctx, [dirty]) {
-    			if (dirty & /*dropdownPopoverShow*/ 1 && div2_class_value !== (div2_class_value = "bg-white text-base z-50 float-left py-2 list-none text-left rounded shadow-lg min-w-48 " + (/*dropdownPopoverShow*/ ctx[0] ? "block" : "hidden"))) {
+    			if (dirty & /*dropdownPopoverShow*/ 1 && div2_class_value !== (div2_class_value = "bg-white text-base z-50 float-left py-2 list-none text-left rounded shadow-lg min-w-48 " + (/*dropdownPopoverShow*/ ctx[0] ? 'block' : 'hidden'))) {
     				attr(div2, "class", div2_class_value);
     			}
     		},
@@ -33830,14 +34006,14 @@ var app = (function () {
     	};
 
     	function a0_binding($$value) {
-    		binding_callbacks[$$value ? "unshift" : "push"](() => {
+    		binding_callbacks[$$value ? 'unshift' : 'push'](() => {
     			btnDropdownRef = $$value;
     			$$invalidate(1, btnDropdownRef);
     		});
     	}
 
     	function div2_binding($$value) {
-    		binding_callbacks[$$value ? "unshift" : "push"](() => {
+    		binding_callbacks[$$value ? 'unshift' : 'push'](() => {
     			popoverDropdownRef = $$value;
     			$$invalidate(2, popoverDropdownRef);
     		});
@@ -33860,7 +34036,7 @@ var app = (function () {
     	}
     }
 
-    /* src\components\Navbars\AuthNavbar.svelte generated by Svelte v3.35.0 */
+    /* src\components\Navbars\AuthNavbar.svelte generated by Svelte v3.59.2 */
 
     function create_if_block_1(ctx) {
     	let li;
@@ -34052,7 +34228,7 @@ var app = (function () {
     			attr(li1, "class", "flex items-center");
     			attr(li2, "class", "flex items-center");
     			attr(ul, "class", "flex flex-col lg:flex-row list-none lg:ml-auto");
-    			attr(div1, "class", div1_class_value = "lg:flex flex-grow items-center bg-white lg:bg-opacity-0 lg:shadow-none rounded shadow-lg " + (/*navbarOpen*/ ctx[0] ? "block" : "hidden"));
+    			attr(div1, "class", div1_class_value = "lg:flex flex-grow items-center bg-white lg:bg-opacity-0 lg:shadow-none rounded shadow-lg " + (/*navbarOpen*/ ctx[0] ? 'block' : 'hidden'));
     			attr(div1, "id", "example-navbar-warning");
     			attr(div2, "class", "container px-4 mx-auto flex flex-wrap items-center justify-between");
     			attr(nav, "class", "top-0 absolute z-50 w-full flex flex-wrap items-center justify-between px-2 py-3 navbar-expand-lg");
@@ -34121,7 +34297,7 @@ var app = (function () {
     				}
     			}
 
-    			if (!current || dirty & /*navbarOpen*/ 1 && div1_class_value !== (div1_class_value = "lg:flex flex-grow items-center bg-white lg:bg-opacity-0 lg:shadow-none rounded shadow-lg " + (/*navbarOpen*/ ctx[0] ? "block" : "hidden"))) {
+    			if (!current || dirty & /*navbarOpen*/ 1 && div1_class_value !== (div1_class_value = "lg:flex flex-grow items-center bg-white lg:bg-opacity-0 lg:shadow-none rounded shadow-lg " + (/*navbarOpen*/ ctx[0] ? 'block' : 'hidden'))) {
     				attr(div1, "class", div1_class_value);
     			}
     		},
@@ -34145,9 +34321,9 @@ var app = (function () {
     }
 
     function logout() {
-    	sessionStorage.setItem("isLoggedIn", JSON.stringify(false));
-    	sessionStorage.setItem("userID", 0);
-    	sessionStorage.setItem("userName", "");
+    	sessionStorage.setItem('isLoggedIn', JSON.stringify(false));
+    	sessionStorage.setItem('userID', 0);
+    	sessionStorage.setItem('userName', '');
     	location.reload();
     }
 
@@ -34161,8 +34337,8 @@ var app = (function () {
     	let isLoggedIn = false, userName;
 
     	onMount(() => {
-    		$$invalidate(1, isLoggedIn = JSON.parse(sessionStorage.getItem("isLoggedIn")));
-    		$$invalidate(2, userName = sessionStorage.getItem("userName"));
+    		$$invalidate(1, isLoggedIn = JSON.parse(sessionStorage.getItem('isLoggedIn')));
+    		$$invalidate(2, userName = sessionStorage.getItem('userName'));
     	});
 
     	return [navbarOpen, isLoggedIn, userName, setNavbarOpen];
@@ -34175,7 +34351,7 @@ var app = (function () {
     	}
     }
 
-    /* src\components\Footers\FooterSmall.svelte generated by Svelte v3.35.0 */
+    /* src\components\Footers\FooterSmall.svelte generated by Svelte v3.59.2 */
 
     function create_fragment$7(ctx) {
     	let footer;
@@ -34225,8 +34401,8 @@ var app = (function () {
     			attr(div4, "class", "container mx-auto px-4");
 
     			attr(footer, "class", footer_class_value = "pb-6 " + (/*absolute*/ ctx[0]
-    			? "absolute w-full bottom-0 bg-blueGray-800"
-    			: "relative"));
+    			? 'absolute w-full bottom-0 bg-blueGray-800'
+    			: 'relative'));
     		},
     		m(target, anchor) {
     			insert(target, footer, anchor);
@@ -34245,8 +34421,8 @@ var app = (function () {
     		},
     		p(ctx, [dirty]) {
     			if (dirty & /*absolute*/ 1 && footer_class_value !== (footer_class_value = "pb-6 " + (/*absolute*/ ctx[0]
-    			? "absolute w-full bottom-0 bg-blueGray-800"
-    			: "relative"))) {
+    			? 'absolute w-full bottom-0 bg-blueGray-800'
+    			: 'relative'))) {
     				attr(footer, "class", footer_class_value);
     			}
     		},
@@ -34263,7 +34439,7 @@ var app = (function () {
     	let { absolute = false } = $$props;
 
     	$$self.$$set = $$props => {
-    		if ("absolute" in $$props) $$invalidate(0, absolute = $$props.absolute);
+    		if ('absolute' in $$props) $$invalidate(0, absolute = $$props.absolute);
     	};
 
     	return [absolute, date];
@@ -34276,7 +34452,7 @@ var app = (function () {
     	}
     }
 
-    /* src\views\auth\Login.svelte generated by Svelte v3.35.0 */
+    /* src\views\auth\Login.svelte generated by Svelte v3.59.2 */
 
     function create_fragment$6(ctx) {
     	let div15;
@@ -34386,12 +34562,12 @@ var app = (function () {
     			attr(div0, "class", "text-center mb-3");
     			attr(img0, "alt", "...");
     			attr(img0, "class", "w-5 mr-1");
-    			if (img0.src !== (img0_src_value = github$1)) attr(img0, "src", img0_src_value);
+    			if (!src_url_equal(img0.src, img0_src_value = github$1)) attr(img0, "src", img0_src_value);
     			attr(button0, "class", "bg-white active:bg-blueGray-50 text-blueGray-700 font-normal px-4 py-2 rounded outline-none focus:outline-none mr-2 mb-1 uppercase shadow hover:shadow-md inline-flex items-center font-bold text-xs ease-linear transition-all duration-150");
     			attr(button0, "type", "button");
     			attr(img1, "alt", "...");
     			attr(img1, "class", "w-5 mr-1");
-    			if (img1.src !== (img1_src_value = google$1)) attr(img1, "src", img1_src_value);
+    			if (!src_url_equal(img1.src, img1_src_value = google$1)) attr(img1, "src", img1_src_value);
     			attr(button1, "class", "bg-white active:bg-blueGray-50 text-blueGray-700 font-normal px-4 py-2 rounded outline-none focus:outline-none mr-1 mb-1 uppercase shadow hover:shadow-md inline-flex items-center font-bold text-xs ease-linear transition-all duration-150");
     			attr(button1, "type", "button");
     			attr(div1, "class", "btn-wrapper text-center");
@@ -34513,21 +34689,21 @@ var app = (function () {
 
     async function getWalletAddress() {
     	try {
-    		if (typeof window.ethereum !== "undefined") {
-    			const accs = await ethereum.request({ method: "eth_requestAccounts" });
+    		if (typeof window.ethereum !== 'undefined') {
+    			const accs = await ethereum.request({ method: 'eth_requestAccounts' });
     			return accs[0];
     		}
     	} catch(error) {
     		console.error("Error fetching wallet address:", error);
-    		return "";
+    		return '';
     	}
     }
 
     const click_handler$2 = e => e.preventDefault();
 
     function instance$7($$self, $$props, $$invalidate) {
-    	let username = "";
-    	let password = "";
+    	let username = '';
+    	let password = '';
 
     	async function sendData() {
     		const data = { username, password };
@@ -34536,9 +34712,9 @@ var app = (function () {
     			console.log(data.username);
     			console.log(data.password);
 
-    			const response = await fetch("http://localhost:9000/login", {
-    				method: "POST",
-    				headers: { "Content-Type": "application/json" },
+    			const response = await fetch('http://localhost:9000/login', {
+    				method: 'POST',
+    				headers: { 'Content-Type': 'application/json' },
     				body: JSON.stringify(data)
     			});
 
@@ -34549,18 +34725,18 @@ var app = (function () {
 
     			if (response.status == 200) {
     				let walletAddress = await getWalletAddress();
-    				sessionStorage.setItem("walletAddress", walletAddress);
-    				sessionStorage.setItem("userID", variable._id);
-    				sessionStorage.setItem("isLoggedIn", JSON.stringify(true));
-    				sessionStorage.setItem("userName", variable.username);
-    				navigate("/admin/dashboard");
-    				console.log("Data sent successfully");
+    				sessionStorage.setItem('walletAddress', walletAddress);
+    				sessionStorage.setItem('userID', variable._id);
+    				sessionStorage.setItem('isLoggedIn', JSON.stringify(true));
+    				sessionStorage.setItem('userName', variable.username);
+    				navigate('/admin/dashboard');
+    				console.log('Data sent successfully');
     			} else {
     				// Handle error
-    				console.error("Error sending data");
+    				console.error('Error sending data');
     			}
     		} catch(error) {
-    			console.error("Error:", error);
+    			console.error('Error:', error);
     		}
     	}
 
@@ -34577,7 +34753,7 @@ var app = (function () {
     	}
 
     	$$self.$$set = $$props => {
-    		if ("location" in $$props) $$invalidate(3, location = $$props.location);
+    		if ('location' in $$props) $$invalidate(3, location = $$props.location);
     	};
 
     	return [
@@ -34597,7 +34773,7 @@ var app = (function () {
     	}
     }
 
-    /* src\views\auth\Register.svelte generated by Svelte v3.35.0 */
+    /* src\views\auth\Register.svelte generated by Svelte v3.59.2 */
 
     function create_fragment$5(ctx) {
     	let div13;
@@ -34700,12 +34876,12 @@ var app = (function () {
     			attr(div0, "class", "text-center mb-3");
     			attr(img0, "alt", "...");
     			attr(img0, "class", "w-5 mr-1");
-    			if (img0.src !== (img0_src_value = github)) attr(img0, "src", img0_src_value);
+    			if (!src_url_equal(img0.src, img0_src_value = github)) attr(img0, "src", img0_src_value);
     			attr(button0, "class", "bg-white active:bg-blueGray-50 text-blueGray-700 font-normal px-4 py-2 rounded outline-none focus:outline-none mr-2 mb-1 uppercase shadow hover:shadow-md inline-flex items-center font-bold text-xs ease-linear transition-all duration-150");
     			attr(button0, "type", "button");
     			attr(img1, "alt", "...");
     			attr(img1, "class", "w-5 mr-1");
-    			if (img1.src !== (img1_src_value = google)) attr(img1, "src", img1_src_value);
+    			if (!src_url_equal(img1.src, img1_src_value = google)) attr(img1, "src", img1_src_value);
     			attr(button1, "class", "bg-white active:bg-blueGray-50 text-blueGray-700 font-normal px-4 py-2 rounded outline-none focus:outline-none mr-1 mb-1 uppercase shadow hover:shadow-md inline-flex items-center font-bold text-xs ease-linear transition-all duration-150");
     			attr(button1, "type", "button");
     			attr(div1, "class", "btn-wrapper text-center");
@@ -34792,7 +34968,7 @@ var app = (function () {
     	let { location } = $$props;
 
     	$$self.$$set = $$props => {
-    		if ("location" in $$props) $$invalidate(0, location = $$props.location);
+    		if ('location' in $$props) $$invalidate(0, location = $$props.location);
     	};
 
     	return [location];
@@ -34805,7 +34981,7 @@ var app = (function () {
     	}
     }
 
-    /* src\layouts\Auth.svelte generated by Svelte v3.35.0 */
+    /* src\layouts\Auth.svelte generated by Svelte v3.59.2 */
 
     function create_default_slot$1(ctx) {
     	let route0;
@@ -34944,8 +35120,8 @@ var app = (function () {
     	let { auth = "" } = $$props;
 
     	$$self.$$set = $$props => {
-    		if ("location" in $$props) $$invalidate(0, location = $$props.location);
-    		if ("auth" in $$props) $$invalidate(1, auth = $$props.auth);
+    		if ('location' in $$props) $$invalidate(0, location = $$props.location);
+    		if ('auth' in $$props) $$invalidate(1, auth = $$props.auth);
     	};
 
     	return [location, auth];
@@ -34958,7 +35134,7 @@ var app = (function () {
     	}
     }
 
-    /* src\components\Footers\Footer.svelte generated by Svelte v3.35.0 */
+    /* src\components\Footers\Footer.svelte generated by Svelte v3.59.2 */
 
     function create_fragment$3(ctx) {
     	let footer;
@@ -35064,7 +35240,7 @@ var app = (function () {
     	}
     }
 
-    /* src\views\Index.svelte generated by Svelte v3.35.0 */
+    /* src\views\Index.svelte generated by Svelte v3.59.2 */
 
     function instance$3($$self, $$props, $$invalidate) {
     	let { location } = $$props;
@@ -35074,7 +35250,7 @@ var app = (function () {
     	});
 
     	$$self.$$set = $$props => {
-    		if ("location" in $$props) $$invalidate(0, location = $$props.location);
+    		if ('location' in $$props) $$invalidate(0, location = $$props.location);
     	};
 
     	return [location];
@@ -35087,7 +35263,7 @@ var app = (function () {
     	}
     }
 
-    /* src\views\Landing.svelte generated by Svelte v3.35.0 */
+    /* src\views\Landing.svelte generated by Svelte v3.59.2 */
 
     function create_fragment$2(ctx) {
     	let div79;
@@ -35168,9 +35344,7 @@ var app = (function () {
     			main = element("main");
     			div6 = element("div");
 
-    			div6.innerHTML = `<div class="absolute top-0 w-full h-full bg-center bg-cover" style="
-          background-image: url(https://images.unsplash.com/photo-1557804506-669a67965ba0?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=1267&amp;q=80);
-        "><span id="blackOverlay" class="w-full h-full absolute opacity-75 bg-black"></span></div> 
+    			div6.innerHTML = `<div class="absolute top-0 w-full h-full bg-center bg-cover" style="background-image: url(https://images.unsplash.com/photo-1557804506-669a67965ba0?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=1267&amp;q=80); "><span id="blackOverlay" class="w-full h-full absolute opacity-75 bg-black"></span></div> 
       <div class="container relative mx-auto"><div class="items-center flex flex-wrap"><div class="w-full lg:w-6/12 px-4 ml-auto mr-auto text-center"><div class="pr-12"><h1 class="text-white font-semibold text-5xl">Your portfolio grows with us.</h1> 
               <p class="mt-4 text-lg text-blueGray-200">FundMan is the one stop solution to your DEX 
                 portfolio management. Simply connect your wallet
@@ -35348,25 +35522,25 @@ var app = (function () {
     			attr(section1, "class", "relative py-20");
     			attr(div43, "class", "flex flex-wrap justify-center text-center mb-24");
     			attr(img2, "alt", "...");
-    			if (img2.src !== (img2_src_value = team1)) attr(img2, "src", img2_src_value);
+    			if (!src_url_equal(img2.src, img2_src_value = team1)) attr(img2, "src", img2_src_value);
     			attr(img2, "class", "shadow-lg rounded-full mx-auto max-w-120-px");
     			attr(div45, "class", "pt-6 text-center");
     			attr(div46, "class", "px-6");
     			attr(div47, "class", "w-full md:w-6/12 lg:w-3/12 lg:mb-0 mb-12 px-4");
     			attr(img3, "alt", "...");
-    			if (img3.src !== (img3_src_value = team2$1)) attr(img3, "src", img3_src_value);
+    			if (!src_url_equal(img3.src, img3_src_value = team2$1)) attr(img3, "src", img3_src_value);
     			attr(img3, "class", "shadow-lg rounded-full mx-auto max-w-120-px");
     			attr(div49, "class", "pt-6 text-center");
     			attr(div50, "class", "px-6");
     			attr(div51, "class", "w-full md:w-6/12 lg:w-3/12 lg:mb-0 mb-12 px-4");
     			attr(img4, "alt", "...");
-    			if (img4.src !== (img4_src_value = team3)) attr(img4, "src", img4_src_value);
+    			if (!src_url_equal(img4.src, img4_src_value = team3)) attr(img4, "src", img4_src_value);
     			attr(img4, "class", "shadow-lg rounded-full mx-auto max-w-120-px");
     			attr(div53, "class", "pt-6 text-center");
     			attr(div54, "class", "px-6");
     			attr(div55, "class", "w-full md:w-6/12 lg:w-3/12 lg:mb-0 mb-12 px-4");
     			attr(img5, "alt", "...");
-    			if (img5.src !== (img5_src_value = team4)) attr(img5, "src", img5_src_value);
+    			if (!src_url_equal(img5.src, img5_src_value = team4)) attr(img5, "src", img5_src_value);
     			attr(img5, "class", "shadow-lg rounded-full mx-auto max-w-120-px");
     			attr(div57, "class", "pt-6 text-center");
     			attr(div58, "class", "px-6");
@@ -35476,7 +35650,7 @@ var app = (function () {
     	let { location } = $$props;
 
     	$$self.$$set = $$props => {
-    		if ("location" in $$props) $$invalidate(0, location = $$props.location);
+    		if ('location' in $$props) $$invalidate(0, location = $$props.location);
     	};
 
     	return [location];
@@ -35489,7 +35663,7 @@ var app = (function () {
     	}
     }
 
-    /* src\views\Profile.svelte generated by Svelte v3.35.0 */
+    /* src\views\Profile.svelte generated by Svelte v3.59.2 */
 
     function create_fragment$1(ctx) {
     	let div22;
@@ -35536,9 +35710,7 @@ var app = (function () {
     			main = element("main");
     			section0 = element("section");
 
-    			section0.innerHTML = `<div class="absolute top-0 w-full h-full bg-center bg-cover" style="
-          background-image: url(https://images.unsplash.com/photo-1499336315816-097655dcfbda?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=2710&amp;q=80);
-        "><span id="blackOverlay" class="w-full h-full absolute opacity-50 bg-black"></span></div> 
+    			section0.innerHTML = `<div class="absolute top-0 w-full h-full bg-center bg-cover" style="background-image: url(https://images.unsplash.com/photo-1499336315816-097655dcfbda?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=2710&amp;q=80); "><span id="blackOverlay" class="w-full h-full absolute opacity-50 bg-black"></span></div> 
       <div class="top-auto bottom-0 left-0 right-0 w-full absolute pointer-events-none overflow-hidden h-70-px" style="transform: translateZ(0);"><svg class="absolute bottom-0 overflow-hidden" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" version="1.1" viewBox="0 0 2560 100" x="0" y="0"><polygon class="text-blueGray-200 fill-current" points="2560 0 2560 100 0 100"></polygon></svg></div>`;
 
     			t2 = space();
@@ -35587,7 +35759,7 @@ var app = (function () {
     			create_component(footer.$$.fragment);
     			attr(section0, "class", "relative block h-500-px");
     			attr(img, "alt", "...");
-    			if (img.src !== (img_src_value = team2)) attr(img, "src", img_src_value);
+    			if (!src_url_equal(img.src, img_src_value = team2)) attr(img, "src", img_src_value);
     			attr(img, "class", "shadow-xl rounded-full h-auto align-middle border-none absolute -m-16 -ml-20 lg:-ml-16 max-w-150-px");
     			attr(div2, "class", "relative");
     			attr(div3, "class", "w-full lg:w-3/12 px-4 lg:order-2 flex justify-center");
@@ -35673,7 +35845,7 @@ var app = (function () {
     	let { location } = $$props;
 
     	$$self.$$set = $$props => {
-    		if ("location" in $$props) $$invalidate(0, location = $$props.location);
+    		if ('location' in $$props) $$invalidate(0, location = $$props.location);
     	};
 
     	return [location];
@@ -35686,7 +35858,7 @@ var app = (function () {
     	}
     }
 
-    /* src\App.svelte generated by Svelte v3.35.0 */
+    /* src\App.svelte generated by Svelte v3.59.2 */
 
     function create_default_slot(ctx) {
     	let route0;
@@ -35823,7 +35995,7 @@ var app = (function () {
     	let { url = "" } = $$props;
 
     	$$self.$$set = $$props => {
-    		if ("url" in $$props) $$invalidate(0, url = $$props.url);
+    		if ('url' in $$props) $$invalidate(0, url = $$props.url);
     	};
 
     	return [url];
