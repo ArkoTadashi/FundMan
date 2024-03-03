@@ -164,6 +164,22 @@ app.get("/holding/:userid",(req,res)=>{
     })     
 })
 
+app.patch("/holding/:userid/asset",(req,res)=>{
+    console.log(req.body)
+    
+    database.collection('holding')
+    .updateOne(
+        { "userID":  req.params.userid},
+        { $set: { 'assets.11': req.body.value } }
+    )
+    .then((entry)=>{
+        res.status(200).json(entry)
+    })  
+    .catch(()=>{
+        res.status(500).json({err:'Holding single collection fetching err'})
+    })     
+})
+
 //db.holding.find({userID: "1"}, {assets: {$slice:[2,1]}})
 app.get("/holding/:userid/group/:grpid", (req, res) => {
     const gid = req.params.grpid;
@@ -295,7 +311,7 @@ app.get("/market",(req,res)=>{
     let holdings=[]
 
     database.collection('market')
-    .find({},{projection: {token: 1, circulatingSupply: 1, currentPrice: 1}}) //cursor
+    .find({},{projection: {token: 1, circulatingSupply: 1, currentPrice: 1, change24h: 1, volume: 1}}) //cursor
     .forEach(entry=>holdings.push(entry))  //toArray
     .then(()=>{
         res.status(200).json(holdings)
@@ -308,7 +324,7 @@ app.get("/market",(req,res)=>{
 app.get("/market/:token",(req,res)=>{
 
     database.collection('market')
-    .findOne({token: req.params.token}, {projection: {currentPrice: 1, _id: 0}}) //cursor
+    .findOne({token: req.params.token}, {projection: {currentPrice: 1, _id: 0, change24h: 1}}) //cursor
     .then((entry)=>{
         console.log(entry)
         res.status(200).json(entry)
@@ -602,24 +618,6 @@ app.get('/fundraiserequest/count', (req, res) => {
         });
 });
 
-//patch status
-app.patch('/fundraiserequest/:pid',(req,res)=>{
-    const entry=req.body //front theke json create korte hobe(tokens:[])
-    
-
-    database.collection('fundraiserequest')
-    .updateOne(
-        { "_id":new ObjectId(req.params.pid) },
-        { $set: { "status": entry.status } }
-    )
-    .then(result => {
-        res.status(200).json({success:"patched"})
-        })
-    .catch(error => {
-        console.error('Error updating fund raise req:', error);
-    });
-})
-
 
 //user only
 app.get('/fundraiserequest/:userid',(req,res)=>{
@@ -647,7 +645,6 @@ app.post('/fundraiserequest', async (req, res) => {
 });
 
 
-//user
 app.get("/user/:userid", async (req, res) => {
     try {
         const userId = req.params.userid;
