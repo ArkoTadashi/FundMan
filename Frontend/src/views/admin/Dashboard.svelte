@@ -6,17 +6,23 @@
   import CardBarChart from "components/Cards/CardBarChart.svelte";
   import CardPageVisits from "components/Cards/CardPageVisits.svelte";
   import CardSocialTraffic from "components/Cards/CardSocialTraffic.svelte";
+  import PieChart from '../../components/Cards/PieChart.svelte';
   import CardStats from "components/Cards/CardStats.svelte";
   import AdminNavbar from "components/Navbars/AdminNavbar.svelte";
   export let location;
 
+  let isLoggedIn=false;
 
 
-
-
+  let coins = [];
   onMount (async () => {
+
+    isLoggedIn = JSON.parse(sessionStorage.getItem('isLoggedIn'));
+    if(!isLoggedIn){
+      window.location.href="http://localhost:5000/auth/login"
+    }
     
-    
+    coins = await JSON.parse(sessionStorage.getItem("coins"));
 
   })
 
@@ -40,7 +46,11 @@
       <CardPageVisits />
     </div>
     <div class="w-full xl:w-4/12 px-4">
-      <CardSocialTraffic />
+      {#if coins.length > 0}
+            <PieChart {coins} />
+            {:else}
+            <p>Loading...</p>
+            {/if}
     </div>
   </div>
 </div>

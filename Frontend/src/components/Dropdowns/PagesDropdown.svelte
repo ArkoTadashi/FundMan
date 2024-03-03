@@ -30,7 +30,7 @@
     bind:this="{btnDropdownRef}"
     on:click="{toggleDropdown}"
   >
-    Demo Pages
+    quick access
   </a>
   <div
     bind:this="{popoverDropdownRef}"
