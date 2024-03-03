@@ -4,30 +4,34 @@
     import Navbar from './Navbar.svelte';
 
     let data = [];
-    let panel = [];
+    let requests = [];
     
     onMount(async () => {
-        const response = await fetch('http://localhost:9000/panel');
+        let requestID=sessionStorage.getItem('fundraiserequestId')
+        const response = await fetch(`http://localhost:9000/fundraiserequest/donar/${requestID}`);
         const jsonData = await response.json();
         data = jsonData;
 
+        //may be map lage na
         console.log(data)
-        panel = data.map(panelMember => ({
-            id:panelMember._id.toString(),
-            username: panelMember.username,
-            name: panelMember.name,
-            rating: panelMember.rating,
-            pnl: panelMember.pnl,
-            manageCount:panelMember.manageCount
-        }));
+        requests = await Promise.all(data.map(async request => ({
+            id:request._id,
+            userName:request.userName,
+            userID:request.userID,
+            requestID:request.requestID,
+            amount:request.amount,
+            returnPolicy:request.returnPolicy,
+            description:request.description,
+            status:request.status
+            })));
     });
 
     let money=0
     let pMember=''
-    function giveMoney(m,n){
-        money=m
-        pMember=n
-    }
+    // function goDetail(id){
+    //     // sessionStorage
+    //     // push(/fundraiseruserdetails);
+    // }
     
 </script>
 
@@ -36,23 +40,14 @@
         <Navbar />
         <h1 style="font-family: 'Inter', sans-serif; text-align: left">Fund Raise</h1>
         <div class="card-container">
-            {#each panel as panelMember, index}
-                <div class="card" key={index}>
-                    <img class="img" src='./pic/person.png' alt={panelMember.name} />
-                    <h2>{panelMember.name.toUpperCase()}</h2>
-                    <h4>Rating: {panelMember.rating}</h4>
-                    <h4>PnL: {panelMember.pnl}</h4>
-                    <h4>Target Amount $100</h4>
-                    <br>
-                    <button on:click={() => {giveMoney(100,panelMember.name)}} on:keypress={() => {giveMoney(100,panelMember.name)}} class="btn"> Give </button>
-                </div>
+            {#each requests as request, index}
+                <div class="card" key={index} on:click={()=>{ goDetail(request.requestID) }} on:keypress={() => goDetail(index)}>
+                    <p><strong>Fund raiser:</strong> {request.userName}</p>
+                    <p><strong>Target Amount:</strong> {request.amount}</p>
+                    <p><strong>Return Policy:</strong> {request.returnPolicy}</p>  
+                      <!-- <p>count lagbe<p/> -->
+                    </div>
             {/each}
-
-            {#if money>0}
-            <div>
-                <h3>${money} is given to ${pMember}</h3>
-            </div>
-            {/if}
           </div>
     </main>
 </body>

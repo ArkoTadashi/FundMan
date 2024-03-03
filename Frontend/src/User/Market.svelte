@@ -3,6 +3,7 @@
     import { onMount } from 'svelte';
     import Navbar from './Navbar.svelte';
     import { push } from 'svelte-spa-router';
+    import Sidebar from './Sidebar.svelte';
 
     let data = [];
     let coins = [];
@@ -37,8 +38,10 @@
 
 <div class="gradient" style="min-height: 100vh;">
     <Navbar/>
-        <h1 style="font-family: 'Inter', sans-serif; text-align: left; margin-left: 2%;">Market</h1>
-        <div class="card-container">
+    <h1 style="font-family: 'Inter', sans-serif; text-align: left; margin-left: 2%;">Market</h1>
+    <div class="card-container">
+        <!-- <Sidebar/> -->
+        <div>
             <table>
                 <thead>
                   <tr>
@@ -66,6 +69,7 @@
                 
                 </tbody>
               </table>
+              </div>
           </div>
 </div>
 

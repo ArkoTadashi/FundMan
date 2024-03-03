@@ -53,6 +53,7 @@
     console.log('Amount:', amount);
     console.log('Percentage:', selectedPercentage);
     console.log('Panel Member Name:', panelMember.name);
+    console.log('Year ',selectedYear)
     //pmem
 
     let walletAddress = await getWalletAddress();
@@ -74,7 +75,8 @@
             "total":amount,
             "starting": parseInt(Date.now()/1000),
             "ending": parseInt(Date.now()/1000+30*24*60*60),
-            "wallet": walletAddress
+            "wallet": walletAddress,
+            "year":selectedYear
           }
           console.log("----data",data)
 
@@ -95,8 +97,9 @@
                 "panelID": panelID,
                 "total":amount,
                 "starting": parseInt(Date.now()/1000),
-                "ending": parseInt(Date.now()/1000+30*24*60*60),
-                "wallet": walletAddress
+                "ending": parseInt(Date.now()/1000+selectedYear*365*24*60*60),
+                "wallet": walletAddress,
+                "year": selectedYear
               }
 
           response = await fetch(`http://localhost:9000/umanagement/${userID}`, {
@@ -128,6 +131,10 @@
       preview=!preview
   }
 
+  //online
+  let selectedYear=''
+  let years=[1,2,5,10]
+
 </script>
 <Navbar />
 <div class="page">
@@ -143,7 +150,14 @@
         <label for="percentage1"><input type="radio" id="percentage1" name="percentage" value="5%" bind:group={selectedPercentage} /> Less than 5%</label>
         <label for="percentage2"><input type="radio" id="percentage2" name="percentage" value="10%" bind:group={selectedPercentage} /> Less than 10%</label>
         <label for="percentage3"><input type="radio" id="percentage3" name="percentage" value="15%" bind:group={selectedPercentage} /> Less than 15%</label>
-      </div>         
+      </div>
+      <label for="tokenSelect">Year:</label>
+        <select id="tokenSelect" bind:value={selectedYear}>
+          {#each years as t}
+            <option value={t}>{t}</option>
+          {/each}
+        </select>
+
   </div>
 
   <div class="details">  
@@ -171,7 +185,7 @@
   <div class="submit-info">
       Amount: {amount} <br>
       Percentage:Less than {selectedPercentage} <br>
-      {selectedTime} <br>
+      Year: {selectedYear} <br>
       {#if panelMember}
       Request to: {panelMember.name} <br>
       {/if}

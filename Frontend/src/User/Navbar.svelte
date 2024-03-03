@@ -14,7 +14,8 @@
         { name: 'Fund Manage', link: '/#/Fundmanage', id: 5},
         { name: 'Management Overview', link: '/#/Umanagementoverview', id: 6},
         { name: 'Fund Raise', link: '/#/FundRaiseUser', id: 7},
-        { name: 'Fund Raise Request', link: '/#/FundRaiseRequest', id: 8}
+        { name: 'Fund Raise Request', link: '/#/FundRaiseRequest', id: 8},
+        { name: 'Fund Raise Overview', link: '/#/FundRaiseOverview', id: 9},
     ]
 
     let isLoggedIn=false, userName;   
@@ -28,7 +29,7 @@
     }
 
     function sendHolding(){
-        push('/holding');
+        push('/user/holding');
     }
 
     onMount(
