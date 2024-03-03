@@ -164,22 +164,6 @@ app.get("/holding/:userid",(req,res)=>{
     })     
 })
 
-app.patch("/holding/:userid/asset",(req,res)=>{
-    console.log(req.body)
-    
-    database.collection('holding')
-    .updateOne(
-        { "userID":  req.params.userid},
-        { $set: { 'assets.11': req.body.value } }
-    )
-    .then((entry)=>{
-        res.status(200).json(entry)
-    })  
-    .catch(()=>{
-        res.status(500).json({err:'Holding single collection fetching err'})
-    })     
-})
-
 //db.holding.find({userID: "1"}, {assets: {$slice:[2,1]}})
 app.get("/holding/:userid/group/:grpid", (req, res) => {
     const gid = req.params.grpid;
@@ -311,7 +295,7 @@ app.get("/market",(req,res)=>{
     let holdings=[]
 
     database.collection('market')
-    .find({},{projection: {token: 1, circulatingSupply: 1, currentPrice: 1, change24h: 1, volume: 1}}) //cursor
+    .find({},{projection: {token: 1, circulatingSupply: 1, currentPrice: 1}}) //cursor
     .forEach(entry=>holdings.push(entry))  //toArray
     .then(()=>{
         res.status(200).json(holdings)
@@ -324,7 +308,7 @@ app.get("/market",(req,res)=>{
 app.get("/market/:token",(req,res)=>{
 
     database.collection('market')
-    .findOne({token: req.params.token}, {projection: {currentPrice: 1, _id: 0, change24h: 1}}) //cursor
+    .findOne({token: req.params.token}, {projection: {currentPrice: 1, _id: 0}}) //cursor
     .then((entry)=>{
         console.log(entry)
         res.status(200).json(entry)
@@ -618,6 +602,24 @@ app.get('/fundraiserequest/count', (req, res) => {
         });
 });
 
+//patch status
+app.patch('/fundraiserequest/:pid',(req,res)=>{
+    const entry=req.body //front theke json create korte hobe(tokens:[])
+    
+
+    database.collection('fundraiserequest')
+    .updateOne(
+        { "_id":new ObjectId(req.params.pid) },
+        { $set: { "status": entry.status } }
+    )
+    .then(result => {
+        res.status(200).json({success:"patched"})
+        })
+    .catch(error => {
+        console.error('Error updating fund raise req:', error);
+    });
+})
+
 
 //user only
 app.get('/fundraiserequest/:userid',(req,res)=>{
@@ -644,7 +646,181 @@ app.post('/fundraiserequest', async (req, res) => {
     }
 });
 
+//donar, all without doner
+app.get('/fundraiserequestdonar/:uid', (req, res) => {
+    let panel = [];
+    database.collection('fundraiserequest')
+        .find({ "status": "accepted" ,"userID": { $ne: req.params.uid } })
+        .toArray() 
+        .then(entries => {
+            panel = entries;
+            res.status(200).json(panel);
+        })
+        .catch(error => {
+            console.error(error);
+            res.status(500).json({ err: 'Panel collection fetching err' });
+        });
+});
 
+//one req
+app.get('/fundraiserequest/donar/:id',(req,res)=>{
+    database.collection('fundraiserequest')
+    .findOne({ '_id': new ObjectId(req.params.id) })
+    .then((result)=>{
+        res.status(200).json(result)
+    })  
+    .catch(()=>{
+        res.status(500).json({err:'Panel collection fetching err'})
+    })
+})
+
+//pay
+// app.patch('/fundraiserequest/donar/:id/pay', (req, res) => {
+//     const entry = req.body;
+
+//     database.collection('fundraiserequest')
+//         .updateOne(
+//             { "_id": new ObjectId(req.params.id) },
+//             {
+//                 $set: { "currentAmount": entry.currentAmount },
+//                 $push: { "payee": { "payeeID": entry.payeeID, "amount": entry.amount } }
+//             }
+//         )
+//         .then(result => {
+//             res.status(200).json({ success: "patched" });
+//         })
+//         .catch(error => {
+//             console.error('Error updating fund raise req:', error);
+//             res.status(500).json({ success: 'Error updating fund raise req' });
+//         });
+// });
+
+app.patch('/fundraiserequest/donar/:id/pay', (req, res) => {
+    const entry = req.body;
+
+    database.collection('fundraiserequest')
+        .updateOne(
+            { "_id": new ObjectId(req.params.id) },
+            {
+                 $set: { "currentAmount": entry.currentAmount }                
+            }
+        )
+        .then(result => {
+            res.status(200).json({ success: "patched" });
+        })
+        .catch(error => {
+            console.error('Error updating fund raise req:', error);
+            res.status(500).json({ success: 'Error updating fund raise req' });
+        });
+});
+
+app.patch('/fundraiserequest/donar/:id/payee', async (req, res) => {
+    const entry = req.body;
+
+    try {
+        const existing = await database.collection('fundraiserequest').findOne({"_id": new ObjectId(req.params.id)});
+
+        if (existing) {
+            //upd payment
+            const existingPayment = existing.payee.find(p => p.payeeID === entry.payeeID);
+
+            if (existingPayment) {
+                await database.collection('fundraiserequest').updateOne(
+                    { "_id": new ObjectId(req.params.id), "payee.payeeID":entry.payeeID },
+                    { $inc: { "payee.$.amount": entry.amount } } // Increment the amount by newAmount
+                );
+            } 
+            else{
+            // Update the existing document
+            await database.collection('fundraiserequest').updateOne(
+                { "_id": new ObjectId(req.params.id) },
+                { $push: { "payee": entry } }
+            );
+            }
+            res.status(200).json({ success: "patched" });
+        }
+    } catch (error) {
+        console.error('Error updating/inserting payee entry:', error);
+        res.status(500).json({ error: 'Error updating/inserting payee entry' });
+    }
+});
+
+
+
+app.patch('/fundraisepayee/:uid', async (req, res) => {
+    const entry = req.body;
+
+    try {
+        const existingUser = await database.collection('fundraisepayee').findOne({ userID: req.params.uid });
+
+        if (existingUser) {
+            //upd payment
+            const existingPayment = existingUser.payments.find(payment => payment.requestID === entry.requestID);
+
+            if (existingPayment) {
+                await database.collection('fundraisepayee').updateOne(
+                    { "userID": req.params.uid, "payments.requestID":entry.requestID },
+                    { $inc: { "payments.$.amount": entry.amount } } // Increment the amount by newAmount
+                );
+            } 
+            else{
+            // Update the existing document
+            await database.collection('fundraisepayee').updateOne(
+                { "userID": req.params.uid },
+                { $push: { "payments": entry } }
+            );
+            }
+        } else {
+            // Insert a new document
+            await database.collection('fundraisepayee').insertOne(
+                { "userID": req.params.uid, "payments": [entry] }
+            );
+        }
+
+        res.status(200).json({ success: "patched" });
+    } catch (error) {
+        console.error('Error updating/inserting payee entry:', error);
+        res.status(500).json({ error: 'Error updating/inserting payee entry' });
+    }
+});
+
+app.get('/fundraisepayee/:id',(req,res)=>{
+    database.collection('fundraisepayee')
+    .findOne({ 'userID': req.params.id })
+    .then((result)=>{
+        res.status(200).json(result)
+    })  
+    .catch(()=>{
+        res.status(500).json({err:'Panel collection fetching err'})
+    })
+})
+
+//update one user status
+app.patch('/fundraisepayee/updatestatus/:uid/:reqId', async (req, res) => {
+    const uid = req.params.uid;
+    const reqId = req.params.reqId;
+    const newStatus = req.body.status;
+
+    try {
+        const result = await database.collection('fundraisepayee').updateOne(
+            { "userID": uid, "payments.requestID": reqId },
+            { $set: { "payments.$.status": newStatus } }
+        );
+
+        if (result.modifiedCount === 1) {
+            res.status(200).json({ success: "patched" });
+        } else {
+            res.status(404).json({ error: "No matching document found" });
+        }
+    } catch (error) {
+        console.error('Error updating payment status:', error);
+        res.status(500).json({ error: 'Error updating payment status' });
+    }
+});
+
+
+
+//user
 app.get("/user/:userid", async (req, res) => {
     try {
         const userId = req.params.userid;
