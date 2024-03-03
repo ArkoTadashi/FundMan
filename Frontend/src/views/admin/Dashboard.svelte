@@ -1,5 +1,7 @@
 <script>
   // core components
+
+  import { onMount } from 'svelte';
   import CardLineChart from "components/Cards/CardLineChart.svelte";
   import CardBarChart from "components/Cards/CardBarChart.svelte";
   import CardPageVisits from "components/Cards/CardPageVisits.svelte";
@@ -7,6 +9,19 @@
   import CardStats from "components/Cards/CardStats.svelte";
   import AdminNavbar from "components/Navbars/AdminNavbar.svelte";
   export let location;
+
+
+
+
+
+  onMount (async () => {
+    
+    
+
+  })
+
+
+
 </script>
 
 

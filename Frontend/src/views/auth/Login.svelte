@@ -1,5 +1,64 @@
 <script>
-  import { link } from "svelte-routing";
+  import { link, navigate } from "svelte-routing";
+
+
+  let username = '';
+  let password = '';
+  let errorMessage = '';
+
+  async function getWalletAddress() {
+    try {
+      if (typeof window.ethereum !== 'undefined') {
+        const accs = await ethereum.request({ method: 'eth_requestAccounts' });
+        return accs[0];
+      }
+    } catch (error) {
+      console.error("Error fetching wallet address:", error);
+      return '';
+    }
+  }
+
+  async function sendData() {
+    const data = {
+      username: username,
+      password: password
+    };
+
+    try {
+      console.log(data.username);
+      console.log(data.password)
+      const response = await fetch('http://localhost:9000/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+      
+      console.log(response.status)
+      let variable = await response.json()
+
+      console.log(variable.username)
+      console.log(variable._id)
+
+      if (response.status == 200) {
+
+        let walletAddress = await getWalletAddress();
+        sessionStorage.setItem('walletAddress', walletAddress);
+        sessionStorage.setItem('userID', variable._id);
+        sessionStorage.setItem('isLoggedIn', JSON.stringify(true));
+        sessionStorage.setItem('userName', variable.username);
+        
+        navigate('/admin/dashboard');
+        console.log('Data sent successfully');
+      } else {
+        // Handle error
+        console.error('Error sending data');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
 
   // core components
   const github = "../assets/img/github.svg";
@@ -47,13 +106,14 @@
                 class="block uppercase text-blueGray-600 text-xs font-bold mb-2"
                 for="grid-email"
               >
-                Email
+                Username
               </label>
               <input
-                id="grid-email"
-                type="email"
+                id="grid-username"
+                type="text"
                 class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                placeholder="Email"
+                placeholder="Username"
+                bind:value={username}
               />
             </div>
 
@@ -69,6 +129,7 @@
                 type="password"
                 class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                 placeholder="Password"
+                bind:value={password}
               />
             </div>
             <div>
@@ -88,6 +149,7 @@
               <button
                 class="bg-blueGray-800 text-white active:bg-blueGray-600 text-sm font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 w-full ease-linear transition-all duration-150"
                 type="button"
+                on:click={sendData}
               >
                 Sign In
               </button>

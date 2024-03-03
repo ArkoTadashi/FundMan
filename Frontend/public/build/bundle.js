@@ -159,6 +159,9 @@ var app = (function () {
         if (text.wholeText !== data)
             text.data = data;
     }
+    function set_input_value(input, value) {
+        input.value = value == null ? '' : value;
+    }
     function set_style(node, key, value, important) {
         node.style.setProperty(key, value, important ? 'important' : '');
     }
@@ -1063,7 +1066,7 @@ var app = (function () {
     	};
     }
 
-    function instance$t($$self, $$props, $$invalidate) {
+    function instance$v($$self, $$props, $$invalidate) {
     	let $base;
     	let $location;
     	let $routes;
@@ -1223,7 +1226,7 @@ var app = (function () {
     class Router extends SvelteComponent {
     	constructor(options) {
     		super();
-    		init(this, options, instance$t, create_fragment$z, safe_not_equal, { basepath: 3, url: 4 });
+    		init(this, options, instance$v, create_fragment$z, safe_not_equal, { basepath: 3, url: 4 });
     	}
     }
 
@@ -1493,7 +1496,7 @@ var app = (function () {
     	};
     }
 
-    function instance$s($$self, $$props, $$invalidate) {
+    function instance$u($$self, $$props, $$invalidate) {
     	let $activeRoute;
     	let $location;
     	let { $$slots: slots = {}, $$scope } = $$props;
@@ -1563,7 +1566,7 @@ var app = (function () {
     class Route extends SvelteComponent {
     	constructor(options) {
     		super();
-    		init(this, options, instance$s, create_fragment$y, safe_not_equal, { path: 8, component: 0 });
+    		init(this, options, instance$u, create_fragment$y, safe_not_equal, { path: 8, component: 0 });
     	}
     }
 
@@ -1642,7 +1645,7 @@ var app = (function () {
     	};
     }
 
-    function instance$r($$self, $$props, $$invalidate) {
+    function instance$t($$self, $$props, $$invalidate) {
     	let ariaCurrent;
     	const omit_props_names = ["to","replace","state","getProps"];
     	let $$restProps = compute_rest_props($$props, omit_props_names);
@@ -1736,7 +1739,7 @@ var app = (function () {
     	constructor(options) {
     		super();
 
-    		init(this, options, instance$r, create_fragment$x, safe_not_equal, {
+    		init(this, options, instance$t, create_fragment$x, safe_not_equal, {
     			to: 7,
     			replace: 8,
     			state: 9,
@@ -3762,7 +3765,7 @@ var app = (function () {
     const click_handler_2$1 = e => e.preventDefault();
     const click_handler_3$1 = e => e.preventDefault();
 
-    function instance$q($$self, $$props, $$invalidate) {
+    function instance$s($$self, $$props, $$invalidate) {
     	let dropdownPopoverShow = false;
     	let btnDropdownRef;
     	let popoverDropdownRef;
@@ -3805,7 +3808,7 @@ var app = (function () {
     class UserDropdown extends SvelteComponent {
     	constructor(options) {
     		super();
-    		init(this, options, instance$q, create_fragment$w, safe_not_equal, {});
+    		init(this, options, instance$s, create_fragment$w, safe_not_equal, {});
     	}
     }
 
@@ -3995,7 +3998,7 @@ var app = (function () {
     const click_handler_2 = e => e.preventDefault();
     const click_handler_3 = e => e.preventDefault();
 
-    function instance$p($$self, $$props, $$invalidate) {
+    function instance$r($$self, $$props, $$invalidate) {
     	let dropdownPopoverShow = false;
     	let btnDropdownRef;
     	let popoverDropdownRef;
@@ -4038,7 +4041,7 @@ var app = (function () {
     class NotificationDropdown extends SvelteComponent {
     	constructor(options) {
     		super();
-    		init(this, options, instance$p, create_fragment$u, safe_not_equal, {});
+    		init(this, options, instance$r, create_fragment$u, safe_not_equal, {});
     	}
     }
 
@@ -4585,7 +4588,7 @@ var app = (function () {
     	};
     }
 
-    function instance$o($$self, $$props, $$invalidate) {
+    function instance$q($$self, $$props, $$invalidate) {
     	let collapseShow = "hidden";
 
     	function toggleCollapseShow(classes) {
@@ -4606,7 +4609,7 @@ var app = (function () {
     class Sidebar extends SvelteComponent {
     	constructor(options) {
     		super();
-    		init(this, options, instance$o, create_fragment$t, safe_not_equal, { location: 0 });
+    		init(this, options, instance$q, create_fragment$t, safe_not_equal, { location: 0 });
     	}
     }
 
@@ -4742,7 +4745,7 @@ var app = (function () {
     	};
     }
 
-    function instance$n($$self, $$props, $$invalidate) {
+    function instance$p($$self, $$props, $$invalidate) {
     	let { statSubtitle = "Traffic" } = $$props;
     	let { statTitle = "350,897" } = $$props;
     	let { statArrow = "up" } = $$props;
@@ -4779,7 +4782,7 @@ var app = (function () {
     	constructor(options) {
     		super();
 
-    		init(this, options, instance$n, create_fragment$s, safe_not_equal, {
+    		init(this, options, instance$p, create_fragment$s, safe_not_equal, {
     			statSubtitle: 0,
     			statTitle: 1,
     			statArrow: 2,
@@ -4814,8 +4817,8 @@ var app = (function () {
 
     	cardstats0 = new CardStats({
     			props: {
-    				statSubtitle: "TRAFFIC",
-    				statTitle: "350,897",
+    				statSubtitle: "Total Asset",
+    				statTitle: /*totalAssetValue*/ ctx[0].toLocaleString(),
     				statArrow: "up",
     				statPercent: "3.48",
     				statPercentColor: "text-emerald-500",
@@ -4907,7 +4910,11 @@ var app = (function () {
     			mount_component(cardstats3, div3, null);
     			current = true;
     		},
-    		p: noop,
+    		p(ctx, [dirty]) {
+    			const cardstats0_changes = {};
+    			if (dirty & /*totalAssetValue*/ 1) cardstats0_changes.statTitle = /*totalAssetValue*/ ctx[0].toLocaleString();
+    			cardstats0.$set(cardstats0_changes);
+    		},
     		i(local) {
     			if (current) return;
     			transition_in(cardstats0.$$.fragment, local);
@@ -4933,10 +4940,90 @@ var app = (function () {
     	};
     }
 
+    async function fetchCoinData(address, decimal) {
+    	try {
+    		const wallet = sessionStorage.getItem("walletAddress");
+
+    		const bal = await ethereum.request({
+    			method: "eth_call",
+    			params: [
+    				{
+    					to: address,
+    					data: "0x70a08231" + "000000000000000000000000" + wallet.substring(2)
+    				},
+    				"latest"
+    			]
+    		});
+
+    		const value = parseInt(bal, 16) / 10 ** decimal;
+    		return value;
+    	} catch(error) {
+    		console.error("Error fetching coin data:", error);
+    		return 0;
+    	}
+    }
+
+    function instance$o($$self, $$props, $$invalidate) {
+    	let totalAssetValue = 0;
+    	let coins = [];
+
+    	onMount(async () => {
+    		try {
+    			let response = await fetch("http://localhost:9000/market");
+    			let jsonData = await response.json();
+    			let data = jsonData;
+
+    			coins = await Promise.all(data.map(async obj => {
+    				const response = await fetch(`http://localhost:9000/token/${obj.token}`);
+    				const jsonData = await response.json();
+    				let dat = jsonData;
+    				let tokenAddress = dat.address;
+    				let decimal = dat.decimal;
+    				let logo = dat.logo;
+    				let holdingValue = await fetchCoinData(tokenAddress, decimal);
+    				let marketcoin = await fetch(`http://localhost:9000/market/${obj.token}`);
+    				marketcoin = await marketcoin.json();
+
+    				//console.log(marketcoin.currentPrice);
+    				$$invalidate(0, totalAssetValue += holdingValue * marketcoin.currentPrice);
+
+    				return {
+    					name: dat.name,
+    					code: obj.token.toUpperCase(),
+    					price: marketcoin.currentPrice,
+    					amount: parseFloat(holdingValue.toFixed(7)),
+    					usd: parseFloat((holdingValue * marketcoin.currentPrice).toFixed(7)),
+    					change24h: marketcoin.change24h,
+    					logo
+    				};
+    			}));
+
+    			let userID = await sessionStorage.getItem("userID");
+    			let valueUpdate = { value: totalAssetValue.toFixed(2) };
+
+    			response = await fetch(`http://localhost:9000/holding/${userID}/asset`, {
+    				method: "PATCH",
+    				headers: { "Content-Type": "application/json" },
+    				body: JSON.stringify(valueUpdate)
+    			});
+
+    			sessionStorage.setItem("coins", JSON.stringify(coins));
+    			response = await fetch(`http://localhost:9000/holding/${userID}`);
+    			jsonData = await response.json();
+    			let assets = jsonData.assets;
+    			sessionStorage.setItem("assets", JSON.stringify(assets));
+    		} catch(error) {
+    			console.error("Error fetching token data:", error);
+    		}
+    	});
+
+    	return [totalAssetValue];
+    }
+
     class HeaderStats extends SvelteComponent {
     	constructor(options) {
     		super();
-    		init(this, options, null, create_fragment$r, safe_not_equal, {});
+    		init(this, options, instance$o, create_fragment$r, safe_not_equal, {});
     	}
     }
 
@@ -5013,7 +5100,7 @@ var app = (function () {
     	};
     }
 
-    function instance$m($$self) {
+    function instance$n($$self) {
     	let date = new Date().getFullYear();
     	return [date];
     }
@@ -5021,7 +5108,7 @@ var app = (function () {
     class FooterAdmin extends SvelteComponent {
     	constructor(options) {
     		super();
-    		init(this, options, instance$m, create_fragment$q, safe_not_equal, {});
+    		init(this, options, instance$n, create_fragment$q, safe_not_equal, {});
     	}
     }
 
@@ -26909,26 +26996,43 @@ var app = (function () {
     	};
     }
 
-    function instance$l($$self) {
+    function instance$m($$self) {
+    	let config;
+
+    	function updateChart() {
+    		if (!config) return;
+    		var ctx = document.getElementById("line-chart").getContext("2d");
+    		window.myLine = new Chart(ctx, config);
+    	}
+
+    	// init chart
     	onMount(async () => {
-    		var config = {
+    		let data = await JSON.parse(sessionStorage.getItem("assets"));
+
+    		config = {
     			type: "line",
     			data: {
-    				labels: ["January", "February", "March", "April", "May", "June", "July"],
+    				labels: [
+    					"April",
+    					"May",
+    					"June",
+    					"July",
+    					"August",
+    					"September",
+    					"October",
+    					"November",
+    					"December",
+    					"January",
+    					"February",
+    					"March"
+    				],
     				datasets: [
     					{
     						label: new Date().getFullYear(),
     						backgroundColor: "#4c51bf",
     						borderColor: "#4c51bf",
-    						data: [65, 78, 66, 44, 56, 67, 75],
+    						data,
     						fill: false
-    					},
-    					{
-    						label: new Date().getFullYear() - 1,
-    						fill: false,
-    						backgroundColor: "#fff",
-    						borderColor: "#fff",
-    						data: [40, 68, 86, 74, 56, 60, 87]
     					}
     				]
     			},
@@ -26992,9 +27096,9 @@ var app = (function () {
     			}
     		};
 
-    		var ctx = document.getElementById("line-chart").getContext("2d");
-    		window.myLine = new Chart(ctx, config);
-    	});
+    		updateChart();
+    	}); // var ctx = document.getElementById("line-chart").getContext("2d");
+    	// window.myLine = new Chart(ctx, config);
 
     	return [];
     }
@@ -27002,7 +27106,7 @@ var app = (function () {
     class CardLineChart extends SvelteComponent {
     	constructor(options) {
     		super();
-    		init(this, options, instance$l, create_fragment$p, safe_not_equal, {});
+    		init(this, options, instance$m, create_fragment$p, safe_not_equal, {});
     	}
     }
 
@@ -27033,7 +27137,7 @@ var app = (function () {
     	};
     }
 
-    function instance$k($$self) {
+    function instance$l($$self) {
     	onMount(async () => {
     		let config = {
     			type: "bar",
@@ -27113,69 +27217,272 @@ var app = (function () {
     class CardBarChart extends SvelteComponent {
     	constructor(options) {
     		super();
-    		init(this, options, instance$k, create_fragment$o, safe_not_equal, {});
+    		init(this, options, instance$l, create_fragment$o, safe_not_equal, {});
     	}
     }
 
     /* src/components/Cards/CardPageVisits.svelte generated by Svelte v3.35.0 */
 
+    function get_each_context$1(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[1] = list[i];
+    	child_ctx[3] = i;
+    	return child_ctx;
+    }
+
+    // (67:8) {#each coins as coin, index}
+    function create_each_block$1(ctx) {
+    	let tr;
+    	let th;
+    	let img;
+    	let img_src_value;
+    	let t0;
+    	let span0;
+    	let t1_value = /*coin*/ ctx[1].name.toUpperCase() + "";
+    	let t1;
+    	let t2;
+    	let td0;
+    	let t3_value = /*coin*/ ctx[1].price.toLocaleString() + "";
+    	let t3;
+    	let t4;
+    	let td1;
+    	let t5_value = /*coin*/ ctx[1].amount.toLocaleString() + "";
+    	let t5;
+    	let t6;
+    	let t7_value = /*coin*/ ctx[1].code + "";
+    	let t7;
+    	let t8;
+    	let td2;
+    	let t9;
+    	let t10_value = /*coin*/ ctx[1].usd.toLocaleString() + "";
+    	let t10;
+    	let t11;
+    	let td3;
+    	let span1;
+    	let i;
+    	let i_class_value;
+    	let t12;
+    	let t13_value = /*coin*/ ctx[1].change24h.toFixed(2) + "";
+    	let t13;
+    	let t14;
+    	let span1_class_value;
+    	let t15;
+
+    	return {
+    		c() {
+    			tr = element("tr");
+    			th = element("th");
+    			img = element("img");
+    			t0 = space();
+    			span0 = element("span");
+    			t1 = text(t1_value);
+    			t2 = space();
+    			td0 = element("td");
+    			t3 = text(t3_value);
+    			t4 = space();
+    			td1 = element("td");
+    			t5 = text(t5_value);
+    			t6 = space();
+    			t7 = text(t7_value);
+    			t8 = space();
+    			td2 = element("td");
+    			t9 = text("$");
+    			t10 = text(t10_value);
+    			t11 = space();
+    			td3 = element("td");
+    			span1 = element("span");
+    			i = element("i");
+    			t12 = space();
+    			t13 = text(t13_value);
+    			t14 = text("%");
+    			t15 = space();
+    			if (img.src !== (img_src_value = /*coin*/ ctx[1].logo)) attr(img, "src", img_src_value);
+    			attr(img, "class", "h-12 w-12 bg-white rounded-full border");
+    			attr(img, "alt", "...");
+    			attr(span0, "class", "ml-3 font-bold " + "btext-blueGray-600");
+    			attr(th, "class", "border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left flex items-center");
+    			attr(td0, "class", "border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4");
+    			attr(td1, "class", "border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4");
+    			attr(td2, "class", "border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4");
+
+    			attr(i, "class", i_class_value = /*coin*/ ctx[1].change24h > 0
+    			? "fas fa-arrow-up"
+    			: "fas fa-arrow-down");
+
+    			attr(span1, "class", span1_class_value = "mr-2 " + (/*coin*/ ctx[1].change24h > 0
+    			? "text-emerald-500"
+    			: "text-red-500"));
+
+    			attr(td3, "class", "border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4");
+    		},
+    		m(target, anchor) {
+    			insert(target, tr, anchor);
+    			append(tr, th);
+    			append(th, img);
+    			append(th, t0);
+    			append(th, span0);
+    			append(span0, t1);
+    			append(tr, t2);
+    			append(tr, td0);
+    			append(td0, t3);
+    			append(tr, t4);
+    			append(tr, td1);
+    			append(td1, t5);
+    			append(td1, t6);
+    			append(td1, t7);
+    			append(tr, t8);
+    			append(tr, td2);
+    			append(td2, t9);
+    			append(td2, t10);
+    			append(tr, t11);
+    			append(tr, td3);
+    			append(td3, span1);
+    			append(span1, i);
+    			append(span1, t12);
+    			append(span1, t13);
+    			append(span1, t14);
+    			append(tr, t15);
+    		},
+    		p(ctx, dirty) {
+    			if (dirty & /*coins*/ 1 && img.src !== (img_src_value = /*coin*/ ctx[1].logo)) {
+    				attr(img, "src", img_src_value);
+    			}
+
+    			if (dirty & /*coins*/ 1 && t1_value !== (t1_value = /*coin*/ ctx[1].name.toUpperCase() + "")) set_data(t1, t1_value);
+    			if (dirty & /*coins*/ 1 && t3_value !== (t3_value = /*coin*/ ctx[1].price.toLocaleString() + "")) set_data(t3, t3_value);
+    			if (dirty & /*coins*/ 1 && t5_value !== (t5_value = /*coin*/ ctx[1].amount.toLocaleString() + "")) set_data(t5, t5_value);
+    			if (dirty & /*coins*/ 1 && t7_value !== (t7_value = /*coin*/ ctx[1].code + "")) set_data(t7, t7_value);
+    			if (dirty & /*coins*/ 1 && t10_value !== (t10_value = /*coin*/ ctx[1].usd.toLocaleString() + "")) set_data(t10, t10_value);
+
+    			if (dirty & /*coins*/ 1 && i_class_value !== (i_class_value = /*coin*/ ctx[1].change24h > 0
+    			? "fas fa-arrow-up"
+    			: "fas fa-arrow-down")) {
+    				attr(i, "class", i_class_value);
+    			}
+
+    			if (dirty & /*coins*/ 1 && t13_value !== (t13_value = /*coin*/ ctx[1].change24h.toFixed(2) + "")) set_data(t13, t13_value);
+
+    			if (dirty & /*coins*/ 1 && span1_class_value !== (span1_class_value = "mr-2 " + (/*coin*/ ctx[1].change24h > 0
+    			? "text-emerald-500"
+    			: "text-red-500"))) {
+    				attr(span1, "class", span1_class_value);
+    			}
+    		},
+    		d(detaching) {
+    			if (detaching) detach(tr);
+    		}
+    	};
+    }
+
     function create_fragment$n(ctx) {
     	let div5;
+    	let div3;
+    	let t3;
+    	let div4;
+    	let table;
+    	let thead;
+    	let t13;
+    	let tbody;
+    	let each_value = /*coins*/ ctx[0];
+    	let each_blocks = [];
+
+    	for (let i = 0; i < each_value.length; i += 1) {
+    		each_blocks[i] = create_each_block$1(get_each_context$1(ctx, each_value, i));
+    	}
 
     	return {
     		c() {
     			div5 = element("div");
+    			div3 = element("div");
 
-    			div5.innerHTML = `<div class="rounded-t mb-0 px-4 py-3 border-0"><div class="flex flex-wrap items-center"><div class="relative w-full px-4 max-w-full flex-grow flex-1"><h3 class="font-semibold text-base text-blueGray-700">Page visits</h3></div> 
-      <div class="relative w-full px-4 max-w-full flex-grow flex-1 text-right"><button class="bg-indigo-500 text-white active:bg-indigo-600 text-xs font-bold uppercase px-3 py-1 rounded outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150" type="button">See all</button></div></div></div> 
-  <div class="block w-full overflow-x-auto"><table class="items-center w-full bg-transparent border-collapse"><thead><tr><th class="px-6 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left">Page name</th> 
-          <th class="px-6 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left">Visitors</th> 
-          <th class="px-6 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left">Unique users</th> 
-          <th class="px-6 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left">Bounce rate</th></tr></thead> 
-      <tbody><tr><th class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left">/argon/</th> 
-          <td class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">4,569</td> 
-          <td class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">340</td> 
-          <td class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4"><i class="fas fa-arrow-up text-emerald-500 mr-4"></i>
-            46,53%</td></tr> 
-        <tr><th class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left">/argon/index.html</th> 
-          <td class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">3,985</td> 
-          <td class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">319</td> 
-          <td class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4"><i class="fas fa-arrow-down text-orange-500 mr-4"></i>
-            46,53%</td></tr> 
-        <tr><th class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left">/argon/charts.html</th> 
-          <td class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">3,513</td> 
-          <td class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">294</td> 
-          <td class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4"><i class="fas fa-arrow-down text-orange-500 mr-4"></i>
-            36,49%</td></tr> 
-        <tr><th class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left">/argon/tables.html</th> 
-          <td class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">2,050</td> 
-          <td class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">147</td> 
-          <td class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4"><i class="fas fa-arrow-up text-emerald-500 mr-4"></i>
-            50,87%</td></tr> 
-        <tr><th class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left">/argon/profile.html</th> 
-          <td class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">1,795</td> 
-          <td class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">190</td> 
-          <td class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4"><i class="fas fa-arrow-down text-red-500 mr-4"></i>
-            46,53%</td></tr></tbody></table></div>`;
+    			div3.innerHTML = `<div class="flex flex-wrap items-center"><div class="relative w-full px-4 max-w-full flex-grow flex-1"><h3 class="font-semibold text-base text-blueGray-700">Holdings</h3></div> 
+      <div class="relative w-full px-4 max-w-full flex-grow flex-1 text-right"><button class="bg-indigo-500 text-white active:bg-indigo-600 text-xs font-bold uppercase px-3 py-1 rounded outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150" type="button">See all</button></div></div>`;
 
+    			t3 = space();
+    			div4 = element("div");
+    			table = element("table");
+    			thead = element("thead");
+
+    			thead.innerHTML = `<tr><th class="px-6 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left">Token</th> 
+          <th class="px-6 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left">Price</th> 
+          <th class="px-6 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left">Amount</th> 
+          <th class="px-6 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left">Value</th> 
+          <th class="px-6 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left">Change 24H</th></tr>`;
+
+    			t13 = space();
+    			tbody = element("tbody");
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].c();
+    			}
+
+    			attr(div3, "class", "rounded-t mb-0 px-4 py-3 border-0");
+    			attr(table, "class", "items-center w-full bg-transparent border-collapse");
+    			attr(div4, "class", "block w-full overflow-x-auto");
     			attr(div5, "class", "relative flex flex-col min-w-0 break-words bg-white w-full mb-6 shadow-lg rounded");
     		},
     		m(target, anchor) {
     			insert(target, div5, anchor);
+    			append(div5, div3);
+    			append(div5, t3);
+    			append(div5, div4);
+    			append(div4, table);
+    			append(table, thead);
+    			append(table, t13);
+    			append(table, tbody);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].m(tbody, null);
+    			}
     		},
-    		p: noop,
+    		p(ctx, [dirty]) {
+    			if (dirty & /*coins*/ 1) {
+    				each_value = /*coins*/ ctx[0];
+    				let i;
+
+    				for (i = 0; i < each_value.length; i += 1) {
+    					const child_ctx = get_each_context$1(ctx, each_value, i);
+
+    					if (each_blocks[i]) {
+    						each_blocks[i].p(child_ctx, dirty);
+    					} else {
+    						each_blocks[i] = create_each_block$1(child_ctx);
+    						each_blocks[i].c();
+    						each_blocks[i].m(tbody, null);
+    					}
+    				}
+
+    				for (; i < each_blocks.length; i += 1) {
+    					each_blocks[i].d(1);
+    				}
+
+    				each_blocks.length = each_value.length;
+    			}
+    		},
     		i: noop,
     		o: noop,
     		d(detaching) {
     			if (detaching) detach(div5);
+    			destroy_each(each_blocks, detaching);
     		}
     	};
+    }
+
+    function instance$k($$self, $$props, $$invalidate) {
+    	let coins = [];
+
+    	onMount(async () => {
+    		$$invalidate(0, coins = await JSON.parse(sessionStorage.getItem("coins")));
+    		$$invalidate(0, coins = await coins.filter(coin => coin.amount > 0));
+    	});
+
+    	return [coins];
     }
 
     class CardPageVisits extends SvelteComponent {
     	constructor(options) {
     		super();
-    		init(this, options, null, create_fragment$n, safe_not_equal, {});
+    		init(this, options, instance$k, create_fragment$n, safe_not_equal, {});
     	}
     }
 
@@ -27326,6 +27633,10 @@ var app = (function () {
 
     function instance$j($$self, $$props, $$invalidate) {
     	let { location } = $$props;
+
+    	onMount(async () => {
+    		
+    	});
 
     	$$self.$$set = $$props => {
     		if ("location" in $$props) $$invalidate(0, location = $$props.location);
@@ -28966,6 +29277,23 @@ var app = (function () {
     	let hr;
     	let t6;
     	let div8;
+    	let div3;
+    	let t8;
+    	let form;
+    	let div4;
+    	let label0;
+    	let t10;
+    	let input0;
+    	let t11;
+    	let div5;
+    	let label1;
+    	let t13;
+    	let input1;
+    	let t14;
+    	let div6;
+    	let t17;
+    	let div7;
+    	let button2;
     	let t19;
     	let div12;
     	let div10;
@@ -28998,18 +29326,31 @@ var app = (function () {
     			hr = element("hr");
     			t6 = space();
     			div8 = element("div");
+    			div3 = element("div");
+    			div3.innerHTML = `<small>Or sign in with credentials</small>`;
+    			t8 = space();
+    			form = element("form");
+    			div4 = element("div");
+    			label0 = element("label");
+    			label0.textContent = "Username";
+    			t10 = space();
+    			input0 = element("input");
+    			t11 = space();
+    			div5 = element("div");
+    			label1 = element("label");
+    			label1.textContent = "Password";
+    			t13 = space();
+    			input1 = element("input");
+    			t14 = space();
+    			div6 = element("div");
 
-    			div8.innerHTML = `<div class="text-blueGray-400 text-center mb-3 font-bold"><small>Or sign in with credentials</small></div> 
-          <form><div class="relative w-full mb-3"><label class="block uppercase text-blueGray-600 text-xs font-bold mb-2" for="grid-email">Email</label> 
-              <input id="grid-email" type="email" class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" placeholder="Email"/></div> 
+    			div6.innerHTML = `<label class="inline-flex items-center cursor-pointer"><input id="customCheckLogin" type="checkbox" class="form-checkbox border-0 rounded text-blueGray-700 ml-1 w-5 h-5 ease-linear transition-all duration-150"/> 
+                <span class="ml-2 text-sm font-semibold text-blueGray-600">Remember me</span></label>`;
 
-            <div class="relative w-full mb-3"><label class="block uppercase text-blueGray-600 text-xs font-bold mb-2" for="grid-password">Password</label> 
-              <input id="grid-password" type="password" class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" placeholder="Password"/></div> 
-            <div><label class="inline-flex items-center cursor-pointer"><input id="customCheckLogin" type="checkbox" class="form-checkbox border-0 rounded text-blueGray-700 ml-1 w-5 h-5 ease-linear transition-all duration-150"/> 
-                <span class="ml-2 text-sm font-semibold text-blueGray-600">Remember me</span></label></div> 
-
-            <div class="text-center mt-6"><button class="bg-blueGray-800 text-white active:bg-blueGray-600 text-sm font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 w-full ease-linear transition-all duration-150" type="button">Sign In</button></div></form>`;
-
+    			t17 = space();
+    			div7 = element("div");
+    			button2 = element("button");
+    			button2.textContent = "Sign In";
     			t19 = space();
     			div12 = element("div");
     			div10 = element("div");
@@ -29033,6 +29374,24 @@ var app = (function () {
     			attr(div1, "class", "btn-wrapper text-center");
     			attr(hr, "class", "mt-6 border-b-1 border-blueGray-300");
     			attr(div2, "class", "rounded-t mb-0 px-6 py-6");
+    			attr(div3, "class", "text-blueGray-400 text-center mb-3 font-bold");
+    			attr(label0, "class", "block uppercase text-blueGray-600 text-xs font-bold mb-2");
+    			attr(label0, "for", "grid-email");
+    			attr(input0, "id", "grid-username");
+    			attr(input0, "type", "text");
+    			attr(input0, "class", "border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150");
+    			attr(input0, "placeholder", "Username");
+    			attr(div4, "class", "relative w-full mb-3");
+    			attr(label1, "class", "block uppercase text-blueGray-600 text-xs font-bold mb-2");
+    			attr(label1, "for", "grid-password");
+    			attr(input1, "id", "grid-password");
+    			attr(input1, "type", "password");
+    			attr(input1, "class", "border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150");
+    			attr(input1, "placeholder", "Password");
+    			attr(div5, "class", "relative w-full mb-3");
+    			attr(button2, "class", "bg-blueGray-800 text-white active:bg-blueGray-600 text-sm font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 w-full ease-linear transition-all duration-150");
+    			attr(button2, "type", "button");
+    			attr(div7, "class", "text-center mt-6");
     			attr(div8, "class", "flex-auto px-4 lg:px-10 py-10 pt-0");
     			attr(div9, "class", "relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-blueGray-200 border-0");
     			attr(a0, "href", "#pablo");
@@ -29066,6 +29425,25 @@ var app = (function () {
     			append(div2, hr);
     			append(div9, t6);
     			append(div9, div8);
+    			append(div8, div3);
+    			append(div8, t8);
+    			append(div8, form);
+    			append(form, div4);
+    			append(div4, label0);
+    			append(div4, t10);
+    			append(div4, input0);
+    			set_input_value(input0, /*username*/ ctx[0]);
+    			append(form, t11);
+    			append(form, div5);
+    			append(div5, label1);
+    			append(div5, t13);
+    			append(div5, input1);
+    			set_input_value(input1, /*password*/ ctx[1]);
+    			append(form, t14);
+    			append(form, div6);
+    			append(form, t17);
+    			append(form, div7);
+    			append(div7, button2);
     			append(div13, t19);
     			append(div13, div12);
     			append(div12, div10);
@@ -29076,6 +29454,9 @@ var app = (function () {
 
     			if (!mounted) {
     				dispose = [
+    					listen(input0, "input", /*input0_input_handler*/ ctx[4]),
+    					listen(input1, "input", /*input1_input_handler*/ ctx[5]),
+    					listen(button2, "click", /*sendData*/ ctx[2]),
     					listen(a0, "click", click_handler$2),
     					action_destroyer(link.call(null, a1))
     				];
@@ -29083,7 +29464,15 @@ var app = (function () {
     				mounted = true;
     			}
     		},
-    		p: noop,
+    		p(ctx, [dirty]) {
+    			if (dirty & /*username*/ 1 && input0.value !== /*username*/ ctx[0]) {
+    				set_input_value(input0, /*username*/ ctx[0]);
+    			}
+
+    			if (dirty & /*password*/ 2 && input1.value !== /*password*/ ctx[1]) {
+    				set_input_value(input1, /*password*/ ctx[1]);
+    			}
+    		},
     		i: noop,
     		o: noop,
     		d(detaching) {
@@ -29094,24 +29483,94 @@ var app = (function () {
     	};
     }
 
+    // core components
     const github$1 = "../assets/img/github.svg";
+
     const google$1 = "../assets/img/google.svg";
+
+    async function getWalletAddress() {
+    	try {
+    		if (typeof window.ethereum !== "undefined") {
+    			const accs = await ethereum.request({ method: "eth_requestAccounts" });
+    			return accs[0];
+    		}
+    	} catch(error) {
+    		console.error("Error fetching wallet address:", error);
+    		return "";
+    	}
+    }
+
     const click_handler$2 = e => e.preventDefault();
 
     function instance$9($$self, $$props, $$invalidate) {
+    	let username = "";
+    	let password = "";
+
+    	async function sendData() {
+    		const data = { username, password };
+
+    		try {
+    			console.log(data.username);
+    			console.log(data.password);
+
+    			const response = await fetch("http://localhost:9000/login", {
+    				method: "POST",
+    				headers: { "Content-Type": "application/json" },
+    				body: JSON.stringify(data)
+    			});
+
+    			console.log(response.status);
+    			let variable = await response.json();
+    			console.log(variable.username);
+    			console.log(variable._id);
+
+    			if (response.status == 200) {
+    				let walletAddress = await getWalletAddress();
+    				sessionStorage.setItem("walletAddress", walletAddress);
+    				sessionStorage.setItem("userID", variable._id);
+    				sessionStorage.setItem("isLoggedIn", JSON.stringify(true));
+    				sessionStorage.setItem("userName", variable.username);
+    				navigate("/admin/dashboard");
+    				console.log("Data sent successfully");
+    			} else {
+    				// Handle error
+    				console.error("Error sending data");
+    			}
+    		} catch(error) {
+    			console.error("Error:", error);
+    		}
+    	}
+
     	let { location } = $$props;
 
+    	function input0_input_handler() {
+    		username = this.value;
+    		$$invalidate(0, username);
+    	}
+
+    	function input1_input_handler() {
+    		password = this.value;
+    		$$invalidate(1, password);
+    	}
+
     	$$self.$$set = $$props => {
-    		if ("location" in $$props) $$invalidate(0, location = $$props.location);
+    		if ("location" in $$props) $$invalidate(3, location = $$props.location);
     	};
 
-    	return [location];
+    	return [
+    		username,
+    		password,
+    		sendData,
+    		location,
+    		input0_input_handler,
+    		input1_input_handler
+    	];
     }
 
     class Login extends SvelteComponent {
     	constructor(options) {
     		super();
-    		init(this, options, instance$9, create_fragment$9, safe_not_equal, { location: 0 });
+    		init(this, options, instance$9, create_fragment$9, safe_not_equal, { location: 3 });
     	}
     }
 

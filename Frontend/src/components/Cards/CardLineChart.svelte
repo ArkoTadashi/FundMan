@@ -3,34 +3,43 @@
   // library that creates chart objects in page
   import Chart from "chart.js";
 
+
+  let config;
+  function updateChart() {
+    if (!config) return;
+    var ctx = document.getElementById("line-chart").getContext("2d");
+    window.myLine = new Chart(ctx, config);
+  }
+
   // init chart
   onMount(async () => {
-    var config = {
+
+    let data = await JSON.parse(sessionStorage.getItem("assets"));
+
+    config = {
       type: "line",
       data: {
         labels: [
-          "January",
-          "February",
-          "March",
           "April",
           "May",
           "June",
           "July",
+          "August",
+          "September",
+          "October",
+          "November",
+          "December",
+          "January",
+          "February",
+          "March"
         ],
         datasets: [
           {
             label: new Date().getFullYear(),
             backgroundColor: "#4c51bf",
             borderColor: "#4c51bf",
-            data: [65, 78, 66, 44, 56, 67, 75],
+            data: data,
             fill: false
-          },
-          {
-            label: new Date().getFullYear() - 1,
-            fill: false,
-            backgroundColor: "#fff",
-            borderColor: "#fff",
-            data: [40, 68, 86, 74, 56, 60, 87]
           }
         ]
       },
@@ -105,9 +114,12 @@
         },
       },
     };
-    var ctx = document.getElementById("line-chart").getContext("2d");
-    window.myLine = new Chart(ctx, config);
+    updateChart();
+    // var ctx = document.getElementById("line-chart").getContext("2d");
+    // window.myLine = new Chart(ctx, config);
   });
+
+  
 </script>
 
 <div
