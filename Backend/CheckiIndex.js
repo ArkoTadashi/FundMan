@@ -15,9 +15,6 @@ app.use(Express.json())
 
 const backendPort=9000
 
-const geckoAPI = "CG-DXyth2fs4WGhHT5LZUu18m41";
-const cmpAPI = "ebd07a503760d91d712ec6c1ad74d5550a79cb0aac656608fe7297f564972bb1";
-
 const {connectToDb,getDb} = require('./router/db')
 let database
 
@@ -85,7 +82,7 @@ connectToDb((err)=>{
 // }, 30000);
 
 setInterval(async () => {
-    var res = await fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=200&page=1&sparkline=false&locale=en&x_cg_demo_api_key=${geckoAPI}`);
+    var res = await fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=200&page=1&sparkline=false&locale=en&x_cg_demo_api_key=CG-DXyth2fs4WGhHT5LZUu18m41`);
     var _res = await res.json();
 
 
@@ -145,97 +142,7 @@ setInterval(async () => {
 
     
 
-}, 3600000);
-
-
-async function computeSMA(data, windowSize) {
-    let rAvgs = [], avgPrev = 0;
-    for (let i = 0; i <= data.length - windowSize; i++) {
-        let currAvg = 0.00, t = i + windowSize;
-        for (let k = i; k < t && k <= data.length; k++) {
-            currAvg += data[k]['price'] / windowSize;
-        }
-        rAvgs.push({ set: data.slice(i, i + windowSize), avg: currAvg });
-        avgPrev = currAvg;
-    }
-    return rAvgs;
-}
-
-async function predictValue(data) {
-    let window = 10;
-    let value = await computeSMA(data, window);
-    let avg = [];
-    
-    
-    for (let i = 0; i < data.length; i++) {
-        if (i < window-1) {
-            avg.push(0);
-            continue;
-        }    
-        avg.push(value[i-window+1].avg);
-        
-    }
-
-    return avg;
-}
-
-
-setInterval(async () => {
-
-    tokens = []
-    database.collection('token')
-    .find({},{projection: {token: 1}}) 
-    .forEach(entry => tokens.push(entry))  
-    .then(async () => {
-        //console.log(tokens)
-        tokens.forEach(async (token) => {
-            //console.log(token.token)
-            var res = await fetch(`https://min-api.cryptocompare.com/data/v2/histoday?fsym=${token.token.toUpperCase()}&tsym=USD&limit=365&api_key=${cmpAPI} `);
-            var _res = await res.json();
-
-            _res = await _res["Data"];
-            let data = await _res["Data"];
-
-            database.collection('ai')
-            .updateOne(
-                { "token":  token.token},
-                { $set: { "actual": data } }
-            )
-            .then(result => {
-                console.log(`ai updated: `, result);
-            })
-            .catch(error => {
-                console.error('Error updating document: ', error);
-            });
-
-            let aiData = [];
-            data.forEach(async (time) => {
-                aiData.push({ timeStamp: time.time, price: time.close });
-            })
-
-            data = await predictValue(aiData);
-
-            database.collection('ai')
-            .updateOne(
-                { "token":  token.token},
-                { $set: { "predicted": data } }
-            )
-            .then(result => {
-                console.log(`ai updated: `, result);
-            })
-            .catch(error => {
-                console.error('Error updating document: ', error);
-            });
-
-
-        })
-    }) 
-    
-
-
-    
-
-}, 86400000);
+}, 360000);
 
 
 
@@ -404,7 +311,7 @@ app.get("/market",(req,res)=>{
     let holdings=[]
 
     database.collection('market')
-    .find({},{projection: {token: 1, circulatingSupply: 1, currentPrice: 1, volume:1, change24h:1}}) //cursor
+    .find({},{projection: {token: 1, circulatingSupply: 1, currentPrice: 1, change24h: 1, volume: 1}}) //cursor
     .forEach(entry=>holdings.push(entry))  //toArray
     .then(()=>{
         res.status(200).json(holdings)
@@ -424,30 +331,6 @@ app.get("/market/:token",(req,res)=>{
     })  
     .catch(()=>{
         res.status(500).json({err:'Market collection fetching err'})
-    })
-})
-
-app.get("/market/price/:token",(req,res)=>{
-
-    database.collection('market')
-    .findOne({token: req.params.token}, {projection: {currentPrice: 1}}) //cursor
-    .then((entry)=>{
-        console.log(entry)
-        res.status(200).json(entry)
-    })  
-    .catch(()=>{
-        res.status(500).json({err:'Market collection fetching err'})
-    })
-})
-
-app.get("/ai/:token",(req,res)=>{
-    database.collection('ai')
-    .findOne({token: req.params.token}, {projection: {actual: 1, predicted: 1}})
-    .then((entry)=>{
-        res.status(200).json(entry)
-    })  
-    .catch(()=>{
-        res.status(500).json({err:'AI collection fetching err'})
     })
 })
 
@@ -596,20 +479,7 @@ app.get("/token/:tname",(req,res)=>{
     })
 })
 
-app.get("/token",(req,res)=>{
-    let tokens=[]
-    database.collection('token')
-    .find({}, {projection: {token: 1, logo: 1, name: 1}})
-    .forEach(entry=>tokens.push(entry)) 
-    .then(()=>{
-        res.status(200).json(tokens)
-    })  
-    .catch(()=>{
-        res.status(500).json({err:'Token collection fetching err'})
-    })
-})
 
-                                                                                                
 //panel
 app.get('/panel',(req,res)=>{
     let panel=[]
@@ -748,24 +618,6 @@ app.get('/fundraiserequest/count', (req, res) => {
         });
 });
 
-//patch status
-app.patch('/fundraiserequest/:pid',(req,res)=>{
-    const entry=req.body //front theke json create korte hobe(tokens:[])
-    
-
-    database.collection('fundraiserequest')
-    .updateOne(
-        { "_id":new ObjectId(req.params.pid) },
-        { $set: { "status": entry.status } }
-    )
-    .then(result => {
-        res.status(200).json({success:"patched"})
-        })
-    .catch(error => {
-        console.error('Error updating fund raise req:', error);
-    });
-})
-
 
 //user only
 app.get('/fundraiserequest/:userid',(req,res)=>{
@@ -792,181 +644,7 @@ app.post('/fundraiserequest', async (req, res) => {
     }
 });
 
-//donar, all without doner
-app.get('/fundraiserequestdonar/:uid', (req, res) => {
-    let panel = [];
-    database.collection('fundraiserequest')
-        .find({ "status": "accepted" ,"userID": { $ne: req.params.uid } })
-        .toArray() 
-        .then(entries => {
-            panel = entries;
-            res.status(200).json(panel);
-        })
-        .catch(error => {
-            console.error(error);
-            res.status(500).json({ err: 'Panel collection fetching err' });
-        });
-});
 
-//one req
-app.get('/fundraiserequest/donar/:id',(req,res)=>{
-    database.collection('fundraiserequest')
-    .findOne({ '_id': new ObjectId(req.params.id) })
-    .then((result)=>{
-        res.status(200).json(result)
-    })  
-    .catch(()=>{
-        res.status(500).json({err:'Panel collection fetching err'})
-    })
-})
-
-//pay
-// app.patch('/fundraiserequest/donar/:id/pay', (req, res) => {
-//     const entry = req.body;
-
-//     database.collection('fundraiserequest')
-//         .updateOne(
-//             { "_id": new ObjectId(req.params.id) },
-//             {
-//                 $set: { "currentAmount": entry.currentAmount },
-//                 $push: { "payee": { "payeeID": entry.payeeID, "amount": entry.amount } }
-//             }
-//         )
-//         .then(result => {
-//             res.status(200).json({ success: "patched" });
-//         })
-//         .catch(error => {
-//             console.error('Error updating fund raise req:', error);
-//             res.status(500).json({ success: 'Error updating fund raise req' });
-//         });
-// });
-
-app.patch('/fundraiserequest/donar/:id/pay', (req, res) => {
-    const entry = req.body;
-
-    database.collection('fundraiserequest')
-        .updateOne(
-            { "_id": new ObjectId(req.params.id) },
-            {
-                 $set: { "currentAmount": entry.currentAmount }                
-            }
-        )
-        .then(result => {
-            res.status(200).json({ success: "patched" });
-        })
-        .catch(error => {
-            console.error('Error updating fund raise req:', error);
-            res.status(500).json({ success: 'Error updating fund raise req' });
-        });
-});
-
-app.patch('/fundraiserequest/donar/:id/payee', async (req, res) => {
-    const entry = req.body;
-
-    try {
-        const existing = await database.collection('fundraiserequest').findOne({"_id": new ObjectId(req.params.id)});
-
-        if (existing) {
-            //upd payment
-            const existingPayment = existing.payee.find(p => p.payeeID === entry.payeeID);
-
-            if (existingPayment) {
-                await database.collection('fundraiserequest').updateOne(
-                    { "_id": new ObjectId(req.params.id), "payee.payeeID":entry.payeeID },
-                    { $inc: { "payee.$.amount": entry.amount } } // Increment the amount by newAmount
-                );
-            } 
-            else{
-            // Update the existing document
-            await database.collection('fundraiserequest').updateOne(
-                { "_id": new ObjectId(req.params.id) },
-                { $push: { "payee": entry } }
-            );
-            }
-            res.status(200).json({ success: "patched" });
-        }
-    } catch (error) {
-        console.error('Error updating/inserting payee entry:', error);
-        res.status(500).json({ error: 'Error updating/inserting payee entry' });
-    }
-});
-
-
-
-app.patch('/fundraisepayee/:uid', async (req, res) => {
-    const entry = req.body;
-
-    try {
-        const existingUser = await database.collection('fundraisepayee').findOne({ userID: req.params.uid });
-
-        if (existingUser) {
-            //upd payment
-            const existingPayment = existingUser.payments.find(payment => payment.requestID === entry.requestID);
-
-            if (existingPayment) {
-                await database.collection('fundraisepayee').updateOne(
-                    { "userID": req.params.uid, "payments.requestID":entry.requestID },
-                    { $inc: { "payments.$.amount": entry.amount } } // Increment the amount by newAmount
-                );
-            } 
-            else{
-            // Update the existing document
-            await database.collection('fundraisepayee').updateOne(
-                { "userID": req.params.uid },
-                { $push: { "payments": entry } }
-            );
-            }
-        } else {
-            // Insert a new document
-            await database.collection('fundraisepayee').insertOne(
-                { "userID": req.params.uid, "payments": [entry] }
-            );
-        }
-
-        res.status(200).json({ success: "patched" });
-    } catch (error) {
-        console.error('Error updating/inserting payee entry:', error);
-        res.status(500).json({ error: 'Error updating/inserting payee entry' });
-    }
-});
-
-app.get('/fundraisepayee/:id',(req,res)=>{
-    database.collection('fundraisepayee')
-    .findOne({ 'userID': req.params.id })
-    .then((result)=>{
-        res.status(200).json(result)
-    })  
-    .catch(()=>{
-        res.status(500).json({err:'Panel collection fetching err'})
-    })
-})
-
-//update one user status
-app.patch('/fundraisepayee/updatestatus/:uid/:reqId', async (req, res) => {
-    const uid = req.params.uid;
-    const reqId = req.params.reqId;
-    const newStatus = req.body.status;
-
-    try {
-        const result = await database.collection('fundraisepayee').updateOne(
-            { "userID": uid, "payments.requestID": reqId },
-            { $set: { "payments.$.status": newStatus } }
-        );
-
-        if (result.modifiedCount === 1) {
-            res.status(200).json({ success: "patched" });
-        } else {
-            res.status(404).json({ error: "No matching document found" });
-        }
-    } catch (error) {
-        console.error('Error updating payment status:', error);
-        res.status(500).json({ error: 'Error updating payment status' });
-    }
-});
-
-
-
-//user
 app.get("/user/:userid", async (req, res) => {
     try {
         const userId = req.params.userid;
