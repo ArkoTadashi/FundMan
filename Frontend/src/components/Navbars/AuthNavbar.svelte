@@ -1,5 +1,7 @@
 <script>
-  import { link } from "svelte-routing";
+  import { link, navigate } from "svelte-routing";
+      import { onMount } from "svelte";
+
 
   // core components
   import PagesDropdown from "components/Dropdowns/PagesDropdown.svelte";
@@ -9,6 +11,23 @@
   function setNavbarOpen() {
     navbarOpen = !navbarOpen;
   }
+
+  let isLoggedIn=false, userName;   
+
+
+    function logout(){
+        sessionStorage.setItem('isLoggedIn', JSON.stringify(false));
+        sessionStorage.setItem('userID', 0);
+        sessionStorage.setItem('userName', '');
+        location.reload();
+    }
+
+    onMount(
+        ()=> {
+            isLoggedIn = JSON.parse(sessionStorage.getItem('isLoggedIn'));
+            userName = sessionStorage.getItem('userName');
+        }
+    );
 </script>
 
 <nav
@@ -39,23 +58,14 @@
       class="lg:flex flex-grow items-center bg-white lg:bg-opacity-0 lg:shadow-none rounded shadow-lg {navbarOpen ? 'block':'hidden'}"
       id="example-navbar-warning"
     >
-      <ul class="flex flex-col lg:flex-row list-none mr-auto">
-        <li class="flex items-center">
-          <a
-            class="lg:text-white lg:hover:text-blueGray-200 text-blueGray-700 px-3 py-4 lg:py-2 flex items-center text-xs uppercase font-bold"
-            href="https://www.creative-tim.com/learning-lab/tailwind/svelte/overview/notus?ref=ns-auth-navbar"
-          >
-            <i
-              class="lg:text-blueGray-200 text-blueGray-400 far fa-file-alt text-lg leading-lg mr-2"
-            />
-            Docs
-          </a>
-        </li>
-      </ul>
+      
       <ul class="flex flex-col lg:flex-row list-none lg:ml-auto">
+        {#if isLoggedIn}
+        
         <li class="flex items-center">
           <PagesDropdown />
         </li>
+        {/if}
         <li class="flex items-center">
           <a
             class="lg:text-white lg:hover:text-blueGray-200 text-blueGray-700 px-3 py-4 lg:py-2 flex items-center text-xs uppercase font-bold"
@@ -94,7 +104,25 @@
             <span class="lg:hidden inline-block ml-2">Star</span>
           </a>
         </li>
-
+        {#if isLoggedIn}
+        <li class="flex items-center">
+          <button
+            class="lg:text-white lg:hover:text-blueGray-200 text-blueGray-700 px-3 py-4 lg:py-2 flex items-center text-xs uppercase font-bold"
+            href="/auth/login"
+            on:click={logout}
+          >
+            <i class="fas fa-arrow-alt-circle-down"></i> Logout
+        </button>
+        </li>
+        <li class="flex items-center">
+          <a
+            class="lg:text-white lg:hover:text-blueGray-200 text-blueGray-700 px-3 py-4 lg:py-2 flex items-center text-xs uppercase font-bold"
+            href="/admin/dashboard"
+          >
+            {userName}
+          </a>
+        </li>
+        {:else}
         <li class="flex items-center">
           <a
             class="lg:text-white lg:hover:text-blueGray-200 text-blueGray-700 px-3 py-4 lg:py-2 flex items-center text-xs uppercase font-bold"
@@ -112,6 +140,7 @@
             <i class="fas fa-arrow-alt-circle-down"></i> Signup
           </a>
         </li>
+        {/if}
       </ul>
     </div>
   </div>

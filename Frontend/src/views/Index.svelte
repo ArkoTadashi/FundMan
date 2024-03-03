@@ -1,5 +1,6 @@
 <script>
   import { Link } from "svelte-routing";
+  import { onMount } from "svelte";
 
   // core components
   import IndexNavbar from "components/Navbars/IndexNavbar.svelte";
@@ -17,9 +18,15 @@
   const profile = "/assets/img/profile.jpg";
   const landing = "/assets/img/landing.jpg";
   export let location;
+
+
+  onMount (async () => {
+    window.location.href="http://localhost:5000/landing"
+  })
+
 </script>
 
-<IndexNavbar />
+<!-- <IndexNavbar />
 <section class="header relative pt-16 items-center flex h-screen max-h-860-px">
   <div class="container mx-auto items-center flex flex-wrap">
     <div class="w-full md:w-8/12 lg:w-6/12 xl:w-6/12 px-4">
@@ -741,4 +748,4 @@
     </div>
   </div>
 </section>
-<Footer />
+<Footer /> -->
