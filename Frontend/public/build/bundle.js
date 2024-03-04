@@ -1067,7 +1067,7 @@ var app = (function () {
     	};
     }
 
-    function instance$G($$self, $$props, $$invalidate) {
+    function instance$J($$self, $$props, $$invalidate) {
     	let $location;
     	let $routes;
     	let $base;
@@ -1227,7 +1227,7 @@ var app = (function () {
     class Router extends SvelteComponent {
     	constructor(options) {
     		super();
-    		init(this, options, instance$G, create_fragment$I, safe_not_equal, { basepath: 3, url: 4 });
+    		init(this, options, instance$J, create_fragment$I, safe_not_equal, { basepath: 3, url: 4 });
     	}
     }
 
@@ -1244,7 +1244,7 @@ var app = (function () {
     });
 
     // (40:0) {#if $activeRoute !== null && $activeRoute.route === route}
-    function create_if_block$9(ctx) {
+    function create_if_block$b(ctx) {
     	let current_block_type_index;
     	let if_block;
     	let if_block_anchor;
@@ -1451,7 +1451,7 @@ var app = (function () {
     function create_fragment$H(ctx) {
     	let if_block_anchor;
     	let current;
-    	let if_block = /*$activeRoute*/ ctx[1] !== null && /*$activeRoute*/ ctx[1].route === /*route*/ ctx[7] && create_if_block$9(ctx);
+    	let if_block = /*$activeRoute*/ ctx[1] !== null && /*$activeRoute*/ ctx[1].route === /*route*/ ctx[7] && create_if_block$b(ctx);
 
     	return {
     		c() {
@@ -1472,7 +1472,7 @@ var app = (function () {
     						transition_in(if_block, 1);
     					}
     				} else {
-    					if_block = create_if_block$9(ctx);
+    					if_block = create_if_block$b(ctx);
     					if_block.c();
     					transition_in(if_block, 1);
     					if_block.m(if_block_anchor.parentNode, if_block_anchor);
@@ -1503,7 +1503,7 @@ var app = (function () {
     	};
     }
 
-    function instance$F($$self, $$props, $$invalidate) {
+    function instance$I($$self, $$props, $$invalidate) {
     	let $activeRoute;
     	let $location;
     	let { $$slots: slots = {}, $$scope } = $$props;
@@ -1573,7 +1573,7 @@ var app = (function () {
     class Route extends SvelteComponent {
     	constructor(options) {
     		super();
-    		init(this, options, instance$F, create_fragment$H, safe_not_equal, { path: 8, component: 0 });
+    		init(this, options, instance$I, create_fragment$H, safe_not_equal, { path: 8, component: 0 });
     	}
     }
 
@@ -3523,7 +3523,7 @@ var app = (function () {
     			a4.textContent = "Seprated link";
     			attr(img, "alt", "...");
     			attr(img, "class", "w-full rounded-full align-middle border-none shadow-lg");
-    			if (!src_url_equal(img.src, img_src_value = image)) attr(img, "src", img_src_value);
+    			if (!src_url_equal(img.src, img_src_value = image$1)) attr(img, "src", img_src_value);
     			attr(span, "class", "w-12 h-12 text-sm text-white bg-blueGray-200 inline-flex items-center justify-center rounded-full");
     			attr(div0, "class", "items-center flex");
     			attr(a0, "class", "text-blueGray-500 block");
@@ -3562,7 +3562,7 @@ var app = (function () {
     			if (!mounted) {
     				dispose = [
     					listen(a0, "click", /*toggleDropdown*/ ctx[3]),
-    					listen(a1, "click", click_handler$6),
+    					listen(a1, "click", click_handler$3),
     					listen(a2, "click", click_handler_1$1),
     					listen(a3, "click", click_handler_2$1),
     					listen(a4, "click", click_handler_3$1)
@@ -3588,13 +3588,13 @@ var app = (function () {
     	};
     }
 
-    const image = "../assets/img/team-1-800x800.jpg";
-    const click_handler$6 = e => e.preventDefault();
+    const image$1 = "../assets/img/team-1-800x800.jpg";
+    const click_handler$3 = e => e.preventDefault();
     const click_handler_1$1 = e => e.preventDefault();
     const click_handler_2$1 = e => e.preventDefault();
     const click_handler_3$1 = e => e.preventDefault();
 
-    function instance$E($$self, $$props, $$invalidate) {
+    function instance$H($$self, $$props, $$invalidate) {
     	let dropdownPopoverShow = false;
     	let btnDropdownRef;
     	let popoverDropdownRef;
@@ -3637,7 +3637,7 @@ var app = (function () {
     class UserDropdown extends SvelteComponent {
     	constructor(options) {
     		super();
-    		init(this, options, instance$E, create_fragment$G, safe_not_equal, {});
+    		init(this, options, instance$H, create_fragment$G, safe_not_equal, {});
     	}
     }
 
@@ -3645,81 +3645,82 @@ var app = (function () {
 
     function create_fragment$F(ctx) {
     	let nav;
+    	let div2;
+    	let ul;
     	let div1;
     	let a;
-    	let t1;
-    	let form;
-    	let t3;
-    	let ul;
-    	let userdropdown;
-    	let current;
+    	let div0;
+    	let span;
+    	let img;
+    	let img_src_value;
     	let mounted;
     	let dispose;
-    	userdropdown = new UserDropdown({});
 
     	return {
     		c() {
     			nav = element("nav");
+    			div2 = element("div");
+    			ul = element("ul");
     			div1 = element("div");
     			a = element("a");
-    			a.textContent = "Dashboard";
-    			t1 = space();
-    			form = element("form");
-
-    			form.innerHTML = `<div class="relative flex w-full flex-wrap items-stretch"><span class="z-10 h-full leading-snug font-normal absolute text-center text-blueGray-300 absolute bg-transparent rounded text-base items-center justify-center w-8 pl-3 py-3"><i class="fas fa-search"></i></span> 
-        <input type="text" placeholder="Search here..." class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 relative bg-white bg-white rounded text-sm shadow outline-none focus:outline-none focus:ring w-full pl-10"/></div>`;
-
-    			t3 = space();
-    			ul = element("ul");
-    			create_component(userdropdown.$$.fragment);
-    			attr(a, "class", "text-white text-sm uppercase hidden lg:inline-block font-semibold");
-    			attr(a, "href", "#pablo");
-    			attr(form, "class", "md:flex hidden flex-row flex-wrap items-center lg:ml-auto mr-3");
-    			attr(ul, "class", "flex-col md:flex-row list-none items-center hidden md:flex");
-    			attr(div1, "class", "w-full mx-autp items-center flex justify-between md:flex-nowrap flex-wrap md:px-10 px-4");
+    			div0 = element("div");
+    			span = element("span");
+    			img = element("img");
+    			attr(img, "alt", "...");
+    			attr(img, "class", "w-full rounded-full align-middle border-none shadow-lg");
+    			if (!src_url_equal(img.src, img_src_value = image)) attr(img, "src", img_src_value);
+    			attr(span, "class", "w-12 h-12 text-sm text-white bg-blueGray-200 inline-flex justify-items-center justify-center rounded-full");
+    			attr(div0, "class", "items-center flex");
+    			attr(a, "class", "text-blueGray-500 block");
+    			attr(a, "href", "/admin/profile");
+    			attr(ul, "class", "md:flex hidden flex-row flex-wrap items-center lg:ml-auto mr-3");
+    			attr(div2, "class", "w-full mx-autp items-center flex justify-between md:flex-nowrap flex-wrap md:px-10 px-4");
     			attr(nav, "class", "absolute top-0 left-0 w-full z-10 bg-transparent md:flex-row md:flex-nowrap md:justify-start flex items-center p-4");
     		},
     		m(target, anchor) {
     			insert(target, nav, anchor);
-    			append(nav, div1);
+    			append(nav, div2);
+    			append(div2, ul);
+    			append(ul, div1);
     			append(div1, a);
-    			append(div1, t1);
-    			append(div1, form);
-    			append(div1, t3);
-    			append(div1, ul);
-    			mount_component(userdropdown, ul, null);
-    			current = true;
+    			append(a, div0);
+    			append(div0, span);
+    			append(span, img);
 
     			if (!mounted) {
-    				dispose = listen(a, "click", click_handler$5);
+    				dispose = listen(a, "click", /*showProfile*/ ctx[0]);
     				mounted = true;
     			}
     		},
     		p: noop$1,
-    		i(local) {
-    			if (current) return;
-    			transition_in(userdropdown.$$.fragment, local);
-    			current = true;
-    		},
-    		o(local) {
-    			transition_out(userdropdown.$$.fragment, local);
-    			current = false;
-    		},
+    		i: noop$1,
+    		o: noop$1,
     		d(detaching) {
     			if (detaching) detach(nav);
-    			destroy_component(userdropdown);
     			mounted = false;
     			dispose();
     		}
     	};
     }
 
-    const click_handler$5 = e => e.preventDefault();
+    const image = "../assets/img/team-1-800x800.jpg";
+
+    function instance$G($$self) {
+    	function showProfile() {
+    		navigate("./profile");
+    	}
+
+    	onMount(() => {
+    		sessionStorage.getItem('currentPage');
+    	});
+
+    	return [showProfile];
+    }
 
     class AdminNavbar extends SvelteComponent {
     	constructor(options) {
     		super();
-    		init(this, options, null, create_fragment$F, safe_not_equal, {});
+    		init(this, options, instance$G, create_fragment$F, safe_not_equal, {});
     	}
     }
 
@@ -3796,7 +3797,7 @@ var app = (function () {
     			if (!mounted) {
     				dispose = [
     					listen(a0, "click", /*toggleDropdown*/ ctx[3]),
-    					listen(a1, "click", click_handler$4),
+    					listen(a1, "click", click_handler$2),
     					listen(a2, "click", click_handler_1),
     					listen(a3, "click", click_handler_2),
     					listen(a4, "click", click_handler_3)
@@ -3822,12 +3823,12 @@ var app = (function () {
     	};
     }
 
-    const click_handler$4 = e => e.preventDefault();
+    const click_handler$2 = e => e.preventDefault();
     const click_handler_1 = e => e.preventDefault();
     const click_handler_2 = e => e.preventDefault();
     const click_handler_3 = e => e.preventDefault();
 
-    function instance$D($$self, $$props, $$invalidate) {
+    function instance$F($$self, $$props, $$invalidate) {
     	let dropdownPopoverShow = false;
     	let btnDropdownRef;
     	let popoverDropdownRef;
@@ -3870,7 +3871,7 @@ var app = (function () {
     class NotificationDropdown extends SvelteComponent {
     	constructor(options) {
     		super();
-    		init(this, options, instance$D, create_fragment$E, safe_not_equal, {});
+    		init(this, options, instance$F, create_fragment$E, safe_not_equal, {});
     	}
     }
 
@@ -4501,7 +4502,7 @@ var app = (function () {
     	};
     }
 
-    function instance$C($$self, $$props, $$invalidate) {
+    function instance$E($$self, $$props, $$invalidate) {
     	let collapseShow = "hidden";
 
     	function toggleCollapseShow(classes) {
@@ -4522,7 +4523,7 @@ var app = (function () {
     class Sidebar extends SvelteComponent {
     	constructor(options) {
     		super();
-    		init(this, options, instance$C, create_fragment$D, safe_not_equal, { location: 0 });
+    		init(this, options, instance$E, create_fragment$D, safe_not_equal, { location: 0 });
     	}
     }
 
@@ -4536,25 +4537,15 @@ var app = (function () {
     	let h5;
     	let t0;
     	let t1;
-    	let span0;
+    	let span;
     	let t2;
     	let t3;
     	let div2;
     	let div1;
-    	let i0;
+    	let i;
     	let div1_class_value;
     	let t4;
     	let p;
-    	let span1;
-    	let i1;
-    	let i1_class_value;
-    	let t5;
-    	let t6;
-    	let t7;
-    	let span1_class_value;
-    	let t8;
-    	let span2;
-    	let t9;
 
     	return {
     		c() {
@@ -4565,36 +4556,21 @@ var app = (function () {
     			h5 = element("h5");
     			t0 = text(/*statSubtitle*/ ctx[0]);
     			t1 = space();
-    			span0 = element("span");
+    			span = element("span");
     			t2 = text(/*statTitle*/ ctx[1]);
     			t3 = space();
     			div2 = element("div");
     			div1 = element("div");
-    			i0 = element("i");
+    			i = element("i");
     			t4 = space();
     			p = element("p");
-    			span1 = element("span");
-    			i1 = element("i");
-    			t5 = space();
-    			t6 = text(/*statPercent*/ ctx[3]);
-    			t7 = text("%");
-    			t8 = space();
-    			span2 = element("span");
-    			t9 = text(/*statDescripiron*/ ctx[5]);
     			attr(h5, "class", "text-blueGray-400 uppercase font-bold text-xs");
-    			attr(span0, "class", "font-semibold text-xl text-blueGray-700");
+    			attr(span, "class", "font-semibold text-xl text-blueGray-700");
     			attr(div0, "class", "relative w-full pr-4 max-w-full flex-grow flex-1");
-    			attr(i0, "class", /*statIconName*/ ctx[6]);
-    			attr(div1, "class", div1_class_value = "text-white p-3 text-center inline-flex items-center justify-center w-12 h-12 shadow-lg rounded-full " + /*statIconColor*/ ctx[7]);
+    			attr(i, "class", /*statIconName*/ ctx[2]);
+    			attr(div1, "class", div1_class_value = "text-white p-3 text-center inline-flex items-center justify-center w-12 h-12 shadow-lg rounded-full " + /*statIconColor*/ ctx[3]);
     			attr(div2, "class", "relative w-auto pl-4 flex-initial");
     			attr(div3, "class", "flex flex-wrap");
-
-    			attr(i1, "class", i1_class_value = /*statArrow*/ ctx[2] === 'up'
-    			? 'fas fa-arrow-up'
-    			: 'fas fa-arrow-down');
-
-    			attr(span1, "class", span1_class_value = "mr-2 " + /*statPercentColor*/ ctx[4]);
-    			attr(span2, "class", "whitespace-nowrap");
     			attr(p, "class", "text-sm text-blueGray-400 mt-4");
     			attr(div4, "class", "flex-auto p-4");
     			attr(div5, "class", "relative flex flex-col min-w-0 break-words bg-white rounded mb-6 xl:mb-0 shadow-lg");
@@ -4607,48 +4583,26 @@ var app = (function () {
     			append(div0, h5);
     			append(h5, t0);
     			append(div0, t1);
-    			append(div0, span0);
-    			append(span0, t2);
+    			append(div0, span);
+    			append(span, t2);
     			append(div3, t3);
     			append(div3, div2);
     			append(div2, div1);
-    			append(div1, i0);
+    			append(div1, i);
     			append(div4, t4);
     			append(div4, p);
-    			append(p, span1);
-    			append(span1, i1);
-    			append(span1, t5);
-    			append(span1, t6);
-    			append(span1, t7);
-    			append(p, t8);
-    			append(p, span2);
-    			append(span2, t9);
     		},
     		p(ctx, [dirty]) {
     			if (dirty & /*statSubtitle*/ 1) set_data(t0, /*statSubtitle*/ ctx[0]);
     			if (dirty & /*statTitle*/ 2) set_data(t2, /*statTitle*/ ctx[1]);
 
-    			if (dirty & /*statIconName*/ 64) {
-    				attr(i0, "class", /*statIconName*/ ctx[6]);
+    			if (dirty & /*statIconName*/ 4) {
+    				attr(i, "class", /*statIconName*/ ctx[2]);
     			}
 
-    			if (dirty & /*statIconColor*/ 128 && div1_class_value !== (div1_class_value = "text-white p-3 text-center inline-flex items-center justify-center w-12 h-12 shadow-lg rounded-full " + /*statIconColor*/ ctx[7])) {
+    			if (dirty & /*statIconColor*/ 8 && div1_class_value !== (div1_class_value = "text-white p-3 text-center inline-flex items-center justify-center w-12 h-12 shadow-lg rounded-full " + /*statIconColor*/ ctx[3])) {
     				attr(div1, "class", div1_class_value);
     			}
-
-    			if (dirty & /*statArrow*/ 4 && i1_class_value !== (i1_class_value = /*statArrow*/ ctx[2] === 'up'
-    			? 'fas fa-arrow-up'
-    			: 'fas fa-arrow-down')) {
-    				attr(i1, "class", i1_class_value);
-    			}
-
-    			if (dirty & /*statPercent*/ 8) set_data(t6, /*statPercent*/ ctx[3]);
-
-    			if (dirty & /*statPercentColor*/ 16 && span1_class_value !== (span1_class_value = "mr-2 " + /*statPercentColor*/ ctx[4])) {
-    				attr(span1, "class", span1_class_value);
-    			}
-
-    			if (dirty & /*statDescripiron*/ 32) set_data(t9, /*statDescripiron*/ ctx[5]);
     		},
     		i: noop$1,
     		o: noop$1,
@@ -4658,7 +4612,7 @@ var app = (function () {
     	};
     }
 
-    function instance$B($$self, $$props, $$invalidate) {
+    function instance$D($$self, $$props, $$invalidate) {
     	let { statSubtitle = "Traffic" } = $$props;
     	let { statTitle = "350,897" } = $$props;
     	let { statArrow = "up" } = $$props;
@@ -4671,23 +4625,23 @@ var app = (function () {
     	$$self.$$set = $$props => {
     		if ('statSubtitle' in $$props) $$invalidate(0, statSubtitle = $$props.statSubtitle);
     		if ('statTitle' in $$props) $$invalidate(1, statTitle = $$props.statTitle);
-    		if ('statArrow' in $$props) $$invalidate(2, statArrow = $$props.statArrow);
-    		if ('statPercent' in $$props) $$invalidate(3, statPercent = $$props.statPercent);
-    		if ('statPercentColor' in $$props) $$invalidate(4, statPercentColor = $$props.statPercentColor);
-    		if ('statDescripiron' in $$props) $$invalidate(5, statDescripiron = $$props.statDescripiron);
-    		if ('statIconName' in $$props) $$invalidate(6, statIconName = $$props.statIconName);
-    		if ('statIconColor' in $$props) $$invalidate(7, statIconColor = $$props.statIconColor);
+    		if ('statArrow' in $$props) $$invalidate(4, statArrow = $$props.statArrow);
+    		if ('statPercent' in $$props) $$invalidate(5, statPercent = $$props.statPercent);
+    		if ('statPercentColor' in $$props) $$invalidate(6, statPercentColor = $$props.statPercentColor);
+    		if ('statDescripiron' in $$props) $$invalidate(7, statDescripiron = $$props.statDescripiron);
+    		if ('statIconName' in $$props) $$invalidate(2, statIconName = $$props.statIconName);
+    		if ('statIconColor' in $$props) $$invalidate(3, statIconColor = $$props.statIconColor);
     	};
 
     	return [
     		statSubtitle,
     		statTitle,
+    		statIconName,
+    		statIconColor,
     		statArrow,
     		statPercent,
     		statPercentColor,
-    		statDescripiron,
-    		statIconName,
-    		statIconColor
+    		statDescripiron
     	];
     }
 
@@ -4695,15 +4649,15 @@ var app = (function () {
     	constructor(options) {
     		super();
 
-    		init(this, options, instance$B, create_fragment$C, safe_not_equal, {
+    		init(this, options, instance$D, create_fragment$C, safe_not_equal, {
     			statSubtitle: 0,
     			statTitle: 1,
-    			statArrow: 2,
-    			statPercent: 3,
-    			statPercentColor: 4,
-    			statDescripiron: 5,
-    			statIconName: 6,
-    			statIconColor: 7
+    			statArrow: 4,
+    			statPercent: 5,
+    			statPercentColor: 6,
+    			statDescripiron: 7,
+    			statIconName: 2,
+    			statIconColor: 3
     		});
     	}
     }
@@ -4711,149 +4665,27 @@ var app = (function () {
     /* src\components\Headers\HeaderStats.svelte generated by Svelte v3.59.2 */
 
     function create_fragment$B(ctx) {
-    	let div7;
-    	let div6;
-    	let div5;
-    	let div4;
-    	let div0;
-    	let cardstats0;
-    	let t0;
-    	let div1;
-    	let cardstats1;
-    	let t1;
-    	let div2;
-    	let cardstats2;
-    	let t2;
     	let div3;
-    	let cardstats3;
-    	let current;
-
-    	cardstats0 = new CardStats({
-    			props: {
-    				statSubtitle: "Total Asset",
-    				statTitle: /*totalAssetValue*/ ctx[0].toLocaleString(),
-    				statArrow: "up",
-    				statPercent: "3.48",
-    				statPercentColor: "text-emerald-500",
-    				statDescripiron: "Since last month",
-    				statIconName: "far fa-chart-bar",
-    				statIconColor: "bg-red-500"
-    			}
-    		});
-
-    	cardstats1 = new CardStats({
-    			props: {
-    				statSubtitle: "NEW USERS",
-    				statTitle: "2,356",
-    				statArrow: "down",
-    				statPercent: "3.48",
-    				statPercentColor: "text-red-500",
-    				statDescripiron: "Since last week",
-    				statIconName: "fas fa-chart-pie",
-    				statIconColor: "bg-orange-500"
-    			}
-    		});
-
-    	cardstats2 = new CardStats({
-    			props: {
-    				statSubtitle: "SALES",
-    				statTitle: "924",
-    				statArrow: "down",
-    				statPercent: "1.10",
-    				statPercentColor: "text-orange-500",
-    				statDescripiron: "Since yesterday",
-    				statIconName: "fas fa-users",
-    				statIconColor: "bg-pink-500"
-    			}
-    		});
-
-    	cardstats3 = new CardStats({
-    			props: {
-    				statSubtitle: "PERFORMANCE",
-    				statTitle: "49,65%",
-    				statArrow: "up",
-    				statPercent: "12",
-    				statPercentColor: "text-emerald-500",
-    				statDescripiron: "Since last month",
-    				statIconName: "fas fa-percent",
-    				statIconColor: "bg-emerald-500"
-    			}
-    		});
 
     	return {
     		c() {
-    			div7 = element("div");
-    			div6 = element("div");
-    			div5 = element("div");
-    			div4 = element("div");
-    			div0 = element("div");
-    			create_component(cardstats0.$$.fragment);
-    			t0 = space();
-    			div1 = element("div");
-    			create_component(cardstats1.$$.fragment);
-    			t1 = space();
-    			div2 = element("div");
-    			create_component(cardstats2.$$.fragment);
-    			t2 = space();
     			div3 = element("div");
-    			create_component(cardstats3.$$.fragment);
-    			attr(div0, "class", "w-full lg:w-6/12 xl:w-3/12 px-4");
-    			attr(div1, "class", "w-full lg:w-6/12 xl:w-3/12 px-4");
-    			attr(div2, "class", "w-full lg:w-6/12 xl:w-3/12 px-4");
-    			attr(div3, "class", "w-full lg:w-6/12 xl:w-3/12 px-4");
-    			attr(div4, "class", "flex flex-wrap");
-    			attr(div6, "class", "px-4 md:px-10 mx-auto w-full");
-    			attr(div7, "class", "relative bg-red-500 md:pt-32 pb-32 pt-12");
+    			div3.innerHTML = `<div class="px-4 md:px-10 mx-auto w-full"><div><div class="flex flex-wrap"></div></div></div>`;
+    			attr(div3, "class", "relative bg-red-500 md:pt-32 pb-32 pt-12");
     		},
     		m(target, anchor) {
-    			insert(target, div7, anchor);
-    			append(div7, div6);
-    			append(div6, div5);
-    			append(div5, div4);
-    			append(div4, div0);
-    			mount_component(cardstats0, div0, null);
-    			append(div4, t0);
-    			append(div4, div1);
-    			mount_component(cardstats1, div1, null);
-    			append(div4, t1);
-    			append(div4, div2);
-    			mount_component(cardstats2, div2, null);
-    			append(div4, t2);
-    			append(div4, div3);
-    			mount_component(cardstats3, div3, null);
-    			current = true;
+    			insert(target, div3, anchor);
     		},
-    		p(ctx, [dirty]) {
-    			const cardstats0_changes = {};
-    			if (dirty & /*totalAssetValue*/ 1) cardstats0_changes.statTitle = /*totalAssetValue*/ ctx[0].toLocaleString();
-    			cardstats0.$set(cardstats0_changes);
-    		},
-    		i(local) {
-    			if (current) return;
-    			transition_in(cardstats0.$$.fragment, local);
-    			transition_in(cardstats1.$$.fragment, local);
-    			transition_in(cardstats2.$$.fragment, local);
-    			transition_in(cardstats3.$$.fragment, local);
-    			current = true;
-    		},
-    		o(local) {
-    			transition_out(cardstats0.$$.fragment, local);
-    			transition_out(cardstats1.$$.fragment, local);
-    			transition_out(cardstats2.$$.fragment, local);
-    			transition_out(cardstats3.$$.fragment, local);
-    			current = false;
-    		},
+    		p: noop$1,
+    		i: noop$1,
+    		o: noop$1,
     		d(detaching) {
-    			if (detaching) detach(div7);
-    			destroy_component(cardstats0);
-    			destroy_component(cardstats1);
-    			destroy_component(cardstats2);
-    			destroy_component(cardstats3);
+    			if (detaching) detach(div3);
     		}
     	};
     }
 
-    async function fetchCoinData(address, decimal) {
+    async function fetchCoinData$2(address, decimal) {
     	try {
     		const wallet = sessionStorage.getItem('walletAddress');
 
@@ -4876,7 +4708,7 @@ var app = (function () {
     	}
     }
 
-    function instance$A($$self, $$props, $$invalidate) {
+    function instance$C($$self) {
     	let totalAssetValue = 0;
     	let coins = [];
 
@@ -4893,12 +4725,12 @@ var app = (function () {
     				let tokenAddress = dat.address;
     				let decimal = dat.decimal;
     				let logo = dat.logo;
-    				let holdingValue = await fetchCoinData(tokenAddress, decimal);
+    				let holdingValue = await fetchCoinData$2(tokenAddress, decimal);
     				let marketcoin = await fetch(`http://localhost:9000/market/${obj.token}`);
     				marketcoin = await marketcoin.json();
 
     				//console.log(marketcoin.currentPrice);
-    				$$invalidate(0, totalAssetValue += holdingValue * marketcoin.currentPrice);
+    				totalAssetValue += holdingValue * marketcoin.currentPrice;
 
     				return {
     					name: dat.name,
@@ -4925,18 +4757,19 @@ var app = (function () {
     			jsonData = await response.json();
     			let assets = jsonData.assets;
     			sessionStorage.setItem("assets", JSON.stringify(assets));
+    			coins = coins.filter(coin => coin.amount > 0);
     		} catch(error) {
     			console.error("Error fetching token data:", error);
     		}
     	});
 
-    	return [totalAssetValue];
+    	return [];
     }
 
     class HeaderStats extends SvelteComponent {
     	constructor(options) {
     		super();
-    		init(this, options, instance$A, create_fragment$B, safe_not_equal, {});
+    		init(this, options, instance$C, create_fragment$B, safe_not_equal, {});
     	}
     }
 
@@ -5013,7 +4846,7 @@ var app = (function () {
     	};
     }
 
-    function instance$z($$self) {
+    function instance$B($$self) {
     	let date = new Date().getFullYear();
     	return [date];
     }
@@ -5021,7 +4854,7 @@ var app = (function () {
     class FooterAdmin extends SvelteComponent {
     	constructor(options) {
     		super();
-    		init(this, options, instance$z, create_fragment$A, safe_not_equal, {});
+    		init(this, options, instance$B, create_fragment$A, safe_not_equal, {});
     	}
     }
 
@@ -18585,7 +18418,7 @@ var app = (function () {
     	};
     }
 
-    function instance$y($$self) {
+    function instance$A($$self) {
     	let config;
 
     	function updateChart() {
@@ -18695,7 +18528,7 @@ var app = (function () {
     class CardLineChart extends SvelteComponent {
     	constructor(options) {
     		super();
-    		init(this, options, instance$y, create_fragment$z, safe_not_equal, {});
+    		init(this, options, instance$A, create_fragment$z, safe_not_equal, {});
     	}
     }
 
@@ -18726,7 +18559,7 @@ var app = (function () {
     	};
     }
 
-    function instance$x($$self) {
+    function instance$z($$self) {
     	onMount(async () => {
     		let config = {
     			type: "bar",
@@ -18806,7 +18639,7 @@ var app = (function () {
     class CardBarChart extends SvelteComponent {
     	constructor(options) {
     		super();
-    		init(this, options, instance$x, create_fragment$y, safe_not_equal, {});
+    		init(this, options, instance$z, create_fragment$y, safe_not_equal, {});
     	}
     }
 
@@ -18819,8 +18652,8 @@ var app = (function () {
     	return child_ctx;
     }
 
-    // (67:8) {#each coins as coin, index}
-    function create_each_block$7(ctx) {
+    // (68:10) {#if coin.usd != null || coin.amount != null}
+    function create_if_block$a(ctx) {
     	let tr;
     	let th;
     	let img;
@@ -18966,6 +18799,41 @@ var app = (function () {
     	};
     }
 
+    // (67:8) {#each coins as coin, index}
+    function create_each_block$7(ctx) {
+    	let if_block_anchor;
+    	let if_block = (/*coin*/ ctx[1].usd != null || /*coin*/ ctx[1].amount != null) && create_if_block$a(ctx);
+
+    	return {
+    		c() {
+    			if (if_block) if_block.c();
+    			if_block_anchor = empty();
+    		},
+    		m(target, anchor) {
+    			if (if_block) if_block.m(target, anchor);
+    			insert(target, if_block_anchor, anchor);
+    		},
+    		p(ctx, dirty) {
+    			if (/*coin*/ ctx[1].usd != null || /*coin*/ ctx[1].amount != null) {
+    				if (if_block) {
+    					if_block.p(ctx, dirty);
+    				} else {
+    					if_block = create_if_block$a(ctx);
+    					if_block.c();
+    					if_block.m(if_block_anchor.parentNode, if_block_anchor);
+    				}
+    			} else if (if_block) {
+    				if_block.d(1);
+    				if_block = null;
+    			}
+    		},
+    		d(detaching) {
+    			if (if_block) if_block.d(detaching);
+    			if (detaching) detach(if_block_anchor);
+    		}
+    	};
+    }
+
     function create_fragment$x(ctx) {
     	let div5;
     	let div3;
@@ -19062,8 +18930,18 @@ var app = (function () {
     	};
     }
 
-    function instance$w($$self, $$props, $$invalidate) {
-    	let coins = [];
+    function instance$y($$self, $$props, $$invalidate) {
+    	let coins = [
+    		{
+    			logo: "",
+    			name: "",
+    			price: 0,
+    			amount: 0,
+    			code: "",
+    			usd: 0,
+    			change24h: 0
+    		}
+    	];
 
     	onMount(async () => {
     		$$invalidate(0, coins = await JSON.parse(sessionStorage.getItem("coins")));
@@ -19076,7 +18954,7 @@ var app = (function () {
     class CardPageVisits extends SvelteComponent {
     	constructor(options) {
     		super();
-    		init(this, options, instance$w, create_fragment$x, safe_not_equal, {});
+    		init(this, options, instance$y, create_fragment$x, safe_not_equal, {});
     	}
     }
 
@@ -32499,7 +32377,7 @@ var app = (function () {
     	};
     }
 
-    function instance$v($$self, $$props, $$invalidate) {
+    function instance$x($$self, $$props, $$invalidate) {
     	let { coins = [] } = $$props;
 
     	onMount(() => {
@@ -32552,7 +32430,227 @@ var app = (function () {
     class PieChart extends SvelteComponent {
     	constructor(options) {
     		super();
-    		init(this, options, instance$v, create_fragment$w, safe_not_equal, { coins: 0 });
+    		init(this, options, instance$x, create_fragment$w, safe_not_equal, { coins: 0 });
+    	}
+    }
+
+    /* src\components\Cards\HoldingCard.svelte generated by Svelte v3.59.2 */
+
+    function create_fragment$v(ctx) {
+    	let div6;
+    	let div5;
+    	let div4;
+    	let div3;
+    	let div0;
+    	let cardstats0;
+    	let t0;
+    	let div1;
+    	let cardstats1;
+    	let t1;
+    	let div2;
+    	let cardstats2;
+    	let current;
+
+    	cardstats0 = new CardStats({
+    			props: {
+    				statSubtitle: "Total Asset",
+    				statTitle: /*totalAssetValue*/ ctx[0].toLocaleString(),
+    				statArrow: "up",
+    				statPercent: "3.48",
+    				statPercentColor: "text-emerald-500",
+    				statDescripiron: "Since last month",
+    				statIconName: "far fa-chart-bar",
+    				statIconColor: "bg-red-500"
+    			}
+    		});
+
+    	cardstats1 = new CardStats({
+    			props: {
+    				statSubtitle: "CHANGE SINCE YESTERDAY",
+    				statTitle: /*changeValue*/ ctx[1],
+    				statArrow: "down",
+    				statPercent: "3.48",
+    				statPercentColor: "text-red-500",
+    				statDescripiron: "Since last week",
+    				statIconName: "fas fa-chart-pie",
+    				statIconColor: "bg-orange-500"
+    			}
+    		});
+
+    	cardstats2 = new CardStats({
+    			props: {
+    				statSubtitle: "TOTAL TOKENS",
+    				statTitle: /*coins*/ ctx[2].length,
+    				statArrow: "down",
+    				statPercent: "1.10",
+    				statPercentColor: "text-orange-500",
+    				statDescripiron: "Since yesterday",
+    				statIconName: "fas fa-users",
+    				statIconColor: "bg-pink-500"
+    			}
+    		});
+
+    	return {
+    		c() {
+    			div6 = element("div");
+    			div5 = element("div");
+    			div4 = element("div");
+    			div3 = element("div");
+    			div0 = element("div");
+    			create_component(cardstats0.$$.fragment);
+    			t0 = space();
+    			div1 = element("div");
+    			create_component(cardstats1.$$.fragment);
+    			t1 = space();
+    			div2 = element("div");
+    			create_component(cardstats2.$$.fragment);
+    			attr(div0, "class", "w-1/3 lg:w-1/3 xl:w-1/3 px-4");
+    			attr(div1, "class", "w-1/3 lg:w-1/3 xl:w-1/3 px-4");
+    			attr(div2, "class", "w-1/3 lg:w-1/3 xl:w-1/3 px-4");
+    			attr(div3, "class", "flex flex-wrap");
+    			attr(div5, "class", "px-4 md:px-10 mx-auto w-full");
+    			attr(div6, "class", "relative md:ml-64 bg-red-500 pb-6 pt-12");
+    		},
+    		m(target, anchor) {
+    			insert(target, div6, anchor);
+    			append(div6, div5);
+    			append(div5, div4);
+    			append(div4, div3);
+    			append(div3, div0);
+    			mount_component(cardstats0, div0, null);
+    			append(div3, t0);
+    			append(div3, div1);
+    			mount_component(cardstats1, div1, null);
+    			append(div3, t1);
+    			append(div3, div2);
+    			mount_component(cardstats2, div2, null);
+    			current = true;
+    		},
+    		p(ctx, [dirty]) {
+    			const cardstats0_changes = {};
+    			if (dirty & /*totalAssetValue*/ 1) cardstats0_changes.statTitle = /*totalAssetValue*/ ctx[0].toLocaleString();
+    			cardstats0.$set(cardstats0_changes);
+    			const cardstats1_changes = {};
+    			if (dirty & /*changeValue*/ 2) cardstats1_changes.statTitle = /*changeValue*/ ctx[1];
+    			cardstats1.$set(cardstats1_changes);
+    			const cardstats2_changes = {};
+    			if (dirty & /*coins*/ 4) cardstats2_changes.statTitle = /*coins*/ ctx[2].length;
+    			cardstats2.$set(cardstats2_changes);
+    		},
+    		i(local) {
+    			if (current) return;
+    			transition_in(cardstats0.$$.fragment, local);
+    			transition_in(cardstats1.$$.fragment, local);
+    			transition_in(cardstats2.$$.fragment, local);
+    			current = true;
+    		},
+    		o(local) {
+    			transition_out(cardstats0.$$.fragment, local);
+    			transition_out(cardstats1.$$.fragment, local);
+    			transition_out(cardstats2.$$.fragment, local);
+    			current = false;
+    		},
+    		d(detaching) {
+    			if (detaching) detach(div6);
+    			destroy_component(cardstats0);
+    			destroy_component(cardstats1);
+    			destroy_component(cardstats2);
+    		}
+    	};
+    }
+
+    async function fetchCoinData$1(address, decimal) {
+    	try {
+    		const wallet = sessionStorage.getItem('walletAddress');
+
+    		const bal = await ethereum.request({
+    			method: 'eth_call',
+    			params: [
+    				{
+    					to: address,
+    					data: "0x70a08231" + "000000000000000000000000" + wallet.substring(2)
+    				},
+    				'latest'
+    			]
+    		});
+
+    		const value = parseInt(bal, 16) / 10 ** decimal;
+    		return value;
+    	} catch(error) {
+    		console.error("Error fetching coin data:", error);
+    		return 0;
+    	}
+    }
+
+    function getRandomReal$1(min, max) {
+    	return Math.random() * (max - min) + min;
+    }
+
+    function instance$w($$self, $$props, $$invalidate) {
+    	let totalAssetValue = 0;
+    	let changeValue = 0;
+    	let coins = [];
+
+    	onMount(async () => {
+    		try {
+    			let response = await fetch('http://localhost:9000/market');
+    			let jsonData = await response.json();
+    			let data = jsonData;
+
+    			$$invalidate(2, coins = await Promise.all(data.map(async obj => {
+    				const response = await fetch(`http://localhost:9000/token/${obj.token}`);
+    				const jsonData = await response.json();
+    				let dat = jsonData;
+    				let tokenAddress = dat.address;
+    				let decimal = dat.decimal;
+    				let logo = dat.logo;
+    				let holdingValue = await fetchCoinData$1(tokenAddress, decimal);
+    				let marketcoin = await fetch(`http://localhost:9000/market/${obj.token}`);
+    				marketcoin = await marketcoin.json();
+
+    				//console.log(marketcoin.currentPrice);
+    				$$invalidate(0, totalAssetValue += holdingValue * marketcoin.currentPrice);
+
+    				return {
+    					name: dat.name,
+    					code: obj.token.toUpperCase(),
+    					price: marketcoin.currentPrice,
+    					amount: parseFloat(holdingValue.toFixed(7)),
+    					usd: parseFloat((holdingValue * marketcoin.currentPrice).toFixed(7)),
+    					change24h: marketcoin.change24h,
+    					logo
+    				};
+    			})));
+
+    			let userID = await sessionStorage.getItem("userID");
+    			let valueUpdate = { value: totalAssetValue.toFixed(2) };
+
+    			response = await fetch(`http://localhost:9000/holding/${userID}/asset`, {
+    				method: 'PATCH',
+    				headers: { 'Content-Type': 'application/json' },
+    				body: JSON.stringify(valueUpdate)
+    			});
+
+    			sessionStorage.setItem("coins", JSON.stringify(coins));
+    			response = await fetch(`http://localhost:9000/holding/${userID}`);
+    			jsonData = await response.json();
+    			let assets = jsonData.assets;
+    			sessionStorage.setItem("assets", JSON.stringify(assets));
+    			$$invalidate(2, coins = coins.filter(coin => coin.amount > 0));
+    			$$invalidate(1, changeValue = (getRandomReal$1(0, 10) - 5) * totalAssetValue / 100);
+    			$$invalidate(1, changeValue = changeValue.toFixed(5));
+    		} catch(error) {
+    			console.error("Error fetching token data:", error);
+    		}
+    	});
+
+    	return [totalAssetValue, changeValue, coins];
+    }
+
+    class HoldingCard$1 extends SvelteComponent {
+    	constructor(options) {
+    		super();
+    		init(this, options, instance$w, create_fragment$v, safe_not_equal, {});
     	}
     }
 
@@ -32578,8 +32676,8 @@ var app = (function () {
     	};
     }
 
-    // (49:6) {#if coins.length > 0}
-    function create_if_block$8(ctx) {
+    // (57:6) {#if coins.length > 0}
+    function create_if_block$9(ctx) {
     	let piechart;
     	let current;
     	piechart = new PieChart({ props: { coins: /*coins*/ ctx[0] } });
@@ -32612,27 +32710,32 @@ var app = (function () {
     	};
     }
 
-    function create_fragment$v(ctx) {
-    	let div6;
-    	let div2;
-    	let div0;
-    	let cardlinechart;
-    	let t0;
+    function create_fragment$u(ctx) {
+    	let div8;
     	let div1;
-    	let cardbarchart;
-    	let t1;
-    	let div5;
-    	let div3;
-    	let cardpagevisits;
-    	let t2;
+    	let div0;
+    	let holdingcard;
+    	let t0;
     	let div4;
+    	let div2;
+    	let cardlinechart;
+    	let t1;
+    	let div3;
+    	let cardbarchart;
+    	let t2;
+    	let div7;
+    	let div5;
+    	let cardpagevisits;
+    	let t3;
+    	let div6;
     	let current_block_type_index;
     	let if_block;
     	let current;
+    	holdingcard = new HoldingCard$1({});
     	cardlinechart = new CardLineChart({});
     	cardbarchart = new CardBarChart({});
     	cardpagevisits = new CardPageVisits({});
-    	const if_block_creators = [create_if_block$8, create_else_block$2];
+    	const if_block_creators = [create_if_block$9, create_else_block$2];
     	const if_blocks = [];
 
     	function select_block_type(ctx, dirty) {
@@ -32645,42 +32748,52 @@ var app = (function () {
 
     	return {
     		c() {
-    			div6 = element("div");
-    			div2 = element("div");
-    			div0 = element("div");
-    			create_component(cardlinechart.$$.fragment);
-    			t0 = space();
+    			div8 = element("div");
     			div1 = element("div");
-    			create_component(cardbarchart.$$.fragment);
-    			t1 = space();
-    			div5 = element("div");
-    			div3 = element("div");
-    			create_component(cardpagevisits.$$.fragment);
-    			t2 = space();
+    			div0 = element("div");
+    			create_component(holdingcard.$$.fragment);
+    			t0 = space();
     			div4 = element("div");
+    			div2 = element("div");
+    			create_component(cardlinechart.$$.fragment);
+    			t1 = space();
+    			div3 = element("div");
+    			create_component(cardbarchart.$$.fragment);
+    			t2 = space();
+    			div7 = element("div");
+    			div5 = element("div");
+    			create_component(cardpagevisits.$$.fragment);
+    			t3 = space();
+    			div6 = element("div");
     			if_block.c();
-    			attr(div0, "class", "w-full xl:w-8/12 mb-12 xl:mb-0 px-4");
-    			attr(div1, "class", "w-full xl:w-4/12 px-4");
-    			attr(div2, "class", "flex flex-wrap");
-    			attr(div3, "class", "w-full xl:w-8/12 mb-12 xl:mb-0 px-4");
-    			attr(div4, "class", "w-full xl:w-4/12 px-4");
-    			attr(div5, "class", "flex flex-wrap mt-4");
+    			attr(div0, "class", "w-full justify-center mb-12 xl:mb-0 px-4 -m-24");
+    			attr(div1, "class", "flex flex-wrap");
+    			attr(div2, "class", "w-full xl:w-8/12 mb-12 xl:mb-0 px-4");
+    			attr(div3, "class", "w-full xl:w-4/12 px-4");
+    			attr(div4, "class", "flex flex-wrap");
+    			attr(div5, "class", "w-full xl:w-8/12 mb-12 xl:mb-0 px-4");
+    			attr(div6, "class", "w-full xl:w-4/12 px-4");
+    			attr(div7, "class", "flex flex-wrap mt-4");
     		},
     		m(target, anchor) {
-    			insert(target, div6, anchor);
-    			append(div6, div2);
-    			append(div2, div0);
-    			mount_component(cardlinechart, div0, null);
-    			append(div2, t0);
-    			append(div2, div1);
-    			mount_component(cardbarchart, div1, null);
-    			append(div6, t1);
-    			append(div6, div5);
-    			append(div5, div3);
-    			mount_component(cardpagevisits, div3, null);
-    			append(div5, t2);
-    			append(div5, div4);
-    			if_blocks[current_block_type_index].m(div4, null);
+    			insert(target, div8, anchor);
+    			append(div8, div1);
+    			append(div1, div0);
+    			mount_component(holdingcard, div0, null);
+    			append(div8, t0);
+    			append(div8, div4);
+    			append(div4, div2);
+    			mount_component(cardlinechart, div2, null);
+    			append(div4, t1);
+    			append(div4, div3);
+    			mount_component(cardbarchart, div3, null);
+    			append(div8, t2);
+    			append(div8, div7);
+    			append(div7, div5);
+    			mount_component(cardpagevisits, div5, null);
+    			append(div7, t3);
+    			append(div7, div6);
+    			if_blocks[current_block_type_index].m(div6, null);
     			current = true;
     		},
     		p(ctx, [dirty]) {
@@ -32707,11 +32820,12 @@ var app = (function () {
     				}
 
     				transition_in(if_block, 1);
-    				if_block.m(div4, null);
+    				if_block.m(div6, null);
     			}
     		},
     		i(local) {
     			if (current) return;
+    			transition_in(holdingcard.$$.fragment, local);
     			transition_in(cardlinechart.$$.fragment, local);
     			transition_in(cardbarchart.$$.fragment, local);
     			transition_in(cardpagevisits.$$.fragment, local);
@@ -32719,6 +32833,7 @@ var app = (function () {
     			current = true;
     		},
     		o(local) {
+    			transition_out(holdingcard.$$.fragment, local);
     			transition_out(cardlinechart.$$.fragment, local);
     			transition_out(cardbarchart.$$.fragment, local);
     			transition_out(cardpagevisits.$$.fragment, local);
@@ -32726,7 +32841,8 @@ var app = (function () {
     			current = false;
     		},
     		d(detaching) {
-    			if (detaching) detach(div6);
+    			if (detaching) detach(div8);
+    			destroy_component(holdingcard);
     			destroy_component(cardlinechart);
     			destroy_component(cardbarchart);
     			destroy_component(cardpagevisits);
@@ -32735,12 +32851,13 @@ var app = (function () {
     	};
     }
 
-    function instance$u($$self, $$props, $$invalidate) {
+    function instance$v($$self, $$props, $$invalidate) {
     	let { location } = $$props;
     	let isLoggedIn = false;
     	let coins = [];
 
     	onMount(async () => {
+    		sessionStorage.setItem('currentPage', 'dashboard');
     		isLoggedIn = JSON.parse(sessionStorage.getItem('isLoggedIn'));
 
     		if (!isLoggedIn) {
@@ -32760,234 +32877,326 @@ var app = (function () {
     class Dashboard extends SvelteComponent {
     	constructor(options) {
     		super();
-    		init(this, options, instance$u, create_fragment$v, safe_not_equal, { location: 1 });
+    		init(this, options, instance$v, create_fragment$u, safe_not_equal, { location: 1 });
     	}
     }
 
     /* src\components\Cards\CardSettings.svelte generated by Svelte v3.59.2 */
 
-    function create_fragment$u(ctx) {
-    	let div24;
-
-    	return {
-    		c() {
-    			div24 = element("div");
-
-    			div24.innerHTML = `<div class="rounded-t bg-white mb-0 px-6 py-6"><div class="text-center flex justify-between"><h6 class="text-blueGray-700 text-xl font-bold">My account</h6> 
-      <button class="bg-red-400 text-white active:bg-red-500 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150" type="button">Settings</button></div></div> 
-  <div class="flex-auto px-4 lg:px-10 py-10 pt-0"><form><h6 class="text-blueGray-400 text-sm mt-3 mb-6 font-bold uppercase">User Information</h6> 
-      <div class="flex flex-wrap"><div class="w-full lg:w-6/12 px-4"><div class="relative w-full mb-3"><label class="block uppercase text-blueGray-600 text-xs font-bold mb-2" for="grid-username">Username</label> 
-            <input id="grid-username" type="text" class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" value="lucky.jesse"/></div></div> 
-        <div class="w-full lg:w-6/12 px-4"><div class="relative w-full mb-3"><label class="block uppercase text-blueGray-600 text-xs font-bold mb-2" for="grid-email">Email address</label> 
-            <input id="grid-email" type="email" class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" value="jesse@example.com"/></div></div> 
-        <div class="w-full lg:w-6/12 px-4"><div class="relative w-full mb-3"><label class="block uppercase text-blueGray-600 text-xs font-bold mb-2" for="grid-first-name">First Name</label> 
-            <input id="grid-first-name" type="text" class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" value="Lucky"/></div></div> 
-        <div class="w-full lg:w-6/12 px-4"><div class="relative w-full mb-3"><label class="block uppercase text-blueGray-600 text-xs font-bold mb-2" for="grid-last-name">Last Name</label> 
-            <input id="grid-last-name" type="text" class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" value="Jesse"/></div></div></div> 
-
-      <hr class="mt-6 border-b-1 border-blueGray-300"/> 
-
-      <h6 class="text-blueGray-400 text-sm mt-3 mb-6 font-bold uppercase">Contact Information</h6> 
-      <div class="flex flex-wrap"><div class="w-full lg:w-12/12 px-4"><div class="relative w-full mb-3"><label class="block uppercase text-blueGray-600 text-xs font-bold mb-2" for="grid-address">Address</label> 
-            <input id="grid-address" type="text" class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" value="Bld Mihail Kogalniceanu, nr. 8 Bl 1, Sc 1, Ap 09"/></div></div> 
-        <div class="w-full lg:w-4/12 px-4"><div class="relative w-full mb-3"><label class="block uppercase text-blueGray-600 text-xs font-bold mb-2" for="grid-city">City</label> 
-            <input id="grid-city" type="email" class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" value="New York"/></div></div> 
-        <div class="w-full lg:w-4/12 px-4"><div class="relative w-full mb-3"><label class="block uppercase text-blueGray-600 text-xs font-bold mb-2" for="grid-country">Country</label> 
-            <input id="grid-country" type="text" class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" value="United States"/></div></div> 
-        <div class="w-full lg:w-4/12 px-4"><div class="relative w-full mb-3"><label class="block uppercase text-blueGray-600 text-xs font-bold mb-2" for="grid-postal-code">Postal Code</label> 
-            <input id="grid-postal-code" type="text" class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" value="Postal Code"/></div></div></div> 
-
-      <hr class="mt-6 border-b-1 border-blueGray-300"/> 
-
-      <h6 class="text-blueGray-400 text-sm mt-3 mb-6 font-bold uppercase">About Me</h6> 
-      <div class="flex flex-wrap"><div class="w-full lg:w-12/12 px-4"><div class="relative w-full mb-3"><label class="block uppercase text-blueGray-600 text-xs font-bold mb-2" for="grid-about-me">About me</label> 
-            <textarea id="grid-about-me" type="text" class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" rows="4">A beautiful UI Kit and Admin for Svelte &amp; Tailwind CSS. It is Free
-                and Open Source.</textarea></div></div></div></form></div>`;
-
-    			attr(div24, "class", "relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-blueGray-100 border-0");
-    		},
-    		m(target, anchor) {
-    			insert(target, div24, anchor);
-    		},
-    		p: noop$1,
-    		i: noop$1,
-    		o: noop$1,
-    		d(detaching) {
-    			if (detaching) detach(div24);
-    		}
-    	};
-    }
-
-    class CardSettings extends SvelteComponent {
-    	constructor(options) {
-    		super();
-    		init(this, options, null, create_fragment$u, safe_not_equal, {});
-    	}
-    }
-
-    /* src\components\Cards\CardProfile.svelte generated by Svelte v3.59.2 */
-
     function create_fragment$t(ctx) {
-    	let div16;
-    	let div15;
-    	let div7;
+    	let div13;
     	let div1;
     	let div0;
-    	let img;
-    	let img_src_value;
-    	let t0;
-    	let div6;
-    	let t12;
-    	let div11;
-    	let t20;
-    	let div14;
-    	let div13;
+    	let h60;
+    	let t1;
+    	let button0;
+    	let t3;
     	let div12;
-    	let p;
-    	let t22;
-    	let a;
+    	let form;
+    	let h61;
+    	let t5;
+    	let div6;
+    	let div3;
+    	let div2;
+    	let label0;
+    	let t7;
+    	let input0;
+    	let t8;
+    	let div5;
+    	let div4;
+    	let label1;
+    	let t10;
+    	let input1;
+    	let t11;
+    	let hr;
+    	let t12;
+    	let h62;
+    	let t14;
+    	let div11;
+    	let div8;
+    	let div7;
+    	let label2;
+    	let t15;
+    	let input2;
+    	let t16;
+    	let div10;
+    	let div9;
+    	let label3;
+    	let t17;
+    	let button1;
     	let mounted;
     	let dispose;
 
     	return {
     		c() {
-    			div16 = element("div");
-    			div15 = element("div");
-    			div7 = element("div");
+    			div13 = element("div");
     			div1 = element("div");
     			div0 = element("div");
-    			img = element("img");
-    			t0 = space();
-    			div6 = element("div");
-
-    			div6.innerHTML = `<div class="flex justify-center py-4 lg:pt-4 pt-8"><div class="mr-4 p-3 text-center"><span class="text-xl font-bold block uppercase tracking-wide text-blueGray-600">22</span> 
-            <span class="text-sm text-blueGray-400">Friends</span></div> 
-          <div class="mr-4 p-3 text-center"><span class="text-xl font-bold block uppercase tracking-wide text-blueGray-600">10</span> 
-            <span class="text-sm text-blueGray-400">Photos</span></div> 
-          <div class="lg:mr-4 p-3 text-center"><span class="text-xl font-bold block uppercase tracking-wide text-blueGray-600">89</span> 
-            <span class="text-sm text-blueGray-400">Comments</span></div></div>`;
-
-    			t12 = space();
-    			div11 = element("div");
-
-    			div11.innerHTML = `<h3 class="text-xl font-semibold leading-normal mb-2 text-blueGray-700 mb-2">Jenna Stones</h3> 
-      <div class="text-sm leading-normal mt-0 mb-2 text-blueGray-400 font-bold uppercase"><i class="fas fa-map-marker-alt mr-2 text-lg text-blueGray-400"></i>
-        Los Angeles, California</div> 
-      <div class="mb-2 text-blueGray-600 mt-10"><i class="fas fa-briefcase mr-2 text-lg text-blueGray-400"></i>
-        Solution Manager - Creative Tim Officer</div> 
-      <div class="mb-2 text-blueGray-600"><i class="fas fa-university mr-2 text-lg text-blueGray-400"></i>
-        University of Computer Science</div>`;
-
-    			t20 = space();
-    			div14 = element("div");
-    			div13 = element("div");
+    			h60 = element("h6");
+    			h60.textContent = "My account";
+    			t1 = space();
+    			button0 = element("button");
+    			button0.textContent = "Save";
+    			t3 = space();
     			div12 = element("div");
-    			p = element("p");
-    			p.textContent = "An artist of considerable range, Jenna the name taken by\r\n            Melbourne-raised, Brooklyn-based Nick Murphy writes, performs and\r\n            records all of his own music, giving it a warm, intimate feel with a\r\n            solid groove structure. An artist of considerable range.";
-    			t22 = space();
-    			a = element("a");
-    			a.textContent = "Show more";
-    			attr(img, "alt", "...");
-    			if (!src_url_equal(img.src, img_src_value = team2$2)) attr(img, "src", img_src_value);
-    			attr(img, "class", "shadow-xl rounded-full h-auto align-middle border-none absolute -m-16 -ml-20 lg:-ml-16 max-w-150-px");
-    			attr(div0, "class", "relative");
-    			attr(div1, "class", "w-full px-4 flex justify-center");
-    			attr(div6, "class", "w-full px-4 text-center mt-20");
-    			attr(div7, "class", "flex flex-wrap justify-center");
-    			attr(div11, "class", "text-center mt-12");
-    			attr(p, "class", "mb-4 text-lg leading-relaxed text-blueGray-700");
-    			attr(a, "href", "#pablo");
-    			attr(a, "class", "font-normal text-red-500");
-    			attr(div12, "class", "w-full lg:w-9/12 px-4");
-    			attr(div13, "class", "flex flex-wrap justify-center");
-    			attr(div14, "class", "mt-10 py-10 border-t border-blueGray-200 text-center");
-    			attr(div15, "class", "px-6");
-    			attr(div16, "class", "relative flex flex-col min-w-0 break-words bg-white w-full mb-6 shadow-xl rounded-lg mt-16");
+    			form = element("form");
+    			h61 = element("h6");
+    			h61.textContent = "User Information";
+    			t5 = space();
+    			div6 = element("div");
+    			div3 = element("div");
+    			div2 = element("div");
+    			label0 = element("label");
+    			label0.textContent = "Email address";
+    			t7 = space();
+    			input0 = element("input");
+    			t8 = space();
+    			div5 = element("div");
+    			div4 = element("div");
+    			label1 = element("label");
+    			label1.textContent = "Name";
+    			t10 = space();
+    			input1 = element("input");
+    			t11 = space();
+    			hr = element("hr");
+    			t12 = space();
+    			h62 = element("h6");
+    			h62.textContent = "Wallet Address";
+    			t14 = space();
+    			div11 = element("div");
+    			div8 = element("div");
+    			div7 = element("div");
+    			label2 = element("label");
+    			t15 = space();
+    			input2 = element("input");
+    			t16 = space();
+    			div10 = element("div");
+    			div9 = element("div");
+    			label3 = element("label");
+    			t17 = space();
+    			button1 = element("button");
+    			button1.textContent = "Load Wallet";
+    			attr(h60, "class", "text-blueGray-700 text-xl font-bold");
+    			attr(button0, "class", "bg-red-400 text-white active:bg-red-500 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150");
+    			attr(button0, "type", "button");
+    			attr(div0, "class", "text-center flex justify-between");
+    			attr(div1, "class", "rounded-t bg-white mb-0 px-6 py-6");
+    			attr(h61, "class", "text-blueGray-400 text-sm mt-3 mb-6 font-bold uppercase");
+    			attr(label0, "class", "block uppercase text-blueGray-600 text-xs font-bold mb-2");
+    			attr(label0, "for", "grid-email");
+    			attr(input0, "id", "grid-email");
+    			attr(input0, "type", "email");
+    			attr(input0, "class", "border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150");
+    			attr(div2, "class", "relative w-full mb-3");
+    			attr(div3, "class", "w-full lg:w-12/12 px-4");
+    			attr(label1, "class", "block uppercase text-blueGray-600 text-xs font-bold mb-2");
+    			attr(label1, "for", "grid-first-name");
+    			attr(input1, "id", "grid-first-name");
+    			attr(input1, "type", "text");
+    			attr(input1, "class", "border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150");
+    			attr(div4, "class", "relative w-full mb-3");
+    			attr(div5, "class", "w-full lg:w-12/12 px-4");
+    			attr(div6, "class", "flex flex-wrap");
+    			attr(hr, "class", "mt-6 border-b-1 border-blueGray-300");
+    			attr(h62, "class", "text-blueGray-400 text-sm mt-3 mb-6 font-bold uppercase");
+    			attr(label2, "class", "block uppercase text-blueGray-600 text-xs font-bold mb-2");
+    			attr(label2, "for", "grid-address");
+    			attr(input2, "id", "grid-address");
+    			attr(input2, "type", "text");
+    			attr(input2, "class", "border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150");
+    			attr(div7, "class", "relative w-full mb-3");
+    			attr(div8, "class", "w-full lg:w-8/12 px-4");
+    			attr(label3, "class", "block uppercase text-blueGray-600 text-xs font-bold mb-2");
+    			attr(label3, "for", "grid-address");
+    			attr(button1, "class", "bg-red-400 text-white active:bg-red-500 font-bold uppercase text-xs px-6 py-3 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150");
+    			attr(button1, "type", "button");
+    			attr(div9, "class", "relative w-full mb-3");
+    			attr(div10, "class", "w-full lg:w-4/12 px-4");
+    			attr(div11, "class", "flex flex-wrap");
+    			attr(div12, "class", "flex-auto px-4 lg:px-10 py-10 pt-0");
+    			attr(div13, "class", "relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-blueGray-100 border-0");
     		},
     		m(target, anchor) {
-    			insert(target, div16, anchor);
-    			append(div16, div15);
-    			append(div15, div7);
-    			append(div7, div1);
+    			insert(target, div13, anchor);
+    			append(div13, div1);
     			append(div1, div0);
-    			append(div0, img);
-    			append(div7, t0);
-    			append(div7, div6);
-    			append(div15, t12);
-    			append(div15, div11);
-    			append(div15, t20);
-    			append(div15, div14);
-    			append(div14, div13);
+    			append(div0, h60);
+    			append(div0, t1);
+    			append(div0, button0);
+    			append(div13, t3);
     			append(div13, div12);
-    			append(div12, p);
-    			append(div12, t22);
-    			append(div12, a);
+    			append(div12, form);
+    			append(form, h61);
+    			append(form, t5);
+    			append(form, div6);
+    			append(div6, div3);
+    			append(div3, div2);
+    			append(div2, label0);
+    			append(div2, t7);
+    			append(div2, input0);
+    			set_input_value(input0, /*email*/ ctx[0]);
+    			append(div6, t8);
+    			append(div6, div5);
+    			append(div5, div4);
+    			append(div4, label1);
+    			append(div4, t10);
+    			append(div4, input1);
+    			set_input_value(input1, /*name*/ ctx[1]);
+    			append(form, t11);
+    			append(form, hr);
+    			append(form, t12);
+    			append(form, h62);
+    			append(form, t14);
+    			append(form, div11);
+    			append(div11, div8);
+    			append(div8, div7);
+    			append(div7, label2);
+    			append(div7, t15);
+    			append(div7, input2);
+    			set_input_value(input2, /*wallet*/ ctx[2]);
+    			append(div11, t16);
+    			append(div11, div10);
+    			append(div10, div9);
+    			append(div9, label3);
+    			append(div9, t17);
+    			append(div9, button1);
 
     			if (!mounted) {
-    				dispose = listen(a, "click", click_handler$3);
+    				dispose = [
+    					listen(button0, "click", /*saveProfile*/ ctx[4]),
+    					listen(input0, "input", /*input0_input_handler*/ ctx[5]),
+    					listen(input1, "input", /*input1_input_handler*/ ctx[6]),
+    					listen(input2, "input", /*input2_input_handler*/ ctx[7]),
+    					listen(button1, "click", /*getWalletAddress*/ ctx[3])
+    				];
+
     				mounted = true;
     			}
     		},
-    		p: noop$1,
+    		p(ctx, [dirty]) {
+    			if (dirty & /*email*/ 1 && input0.value !== /*email*/ ctx[0]) {
+    				set_input_value(input0, /*email*/ ctx[0]);
+    			}
+
+    			if (dirty & /*name*/ 2 && input1.value !== /*name*/ ctx[1]) {
+    				set_input_value(input1, /*name*/ ctx[1]);
+    			}
+
+    			if (dirty & /*wallet*/ 4 && input2.value !== /*wallet*/ ctx[2]) {
+    				set_input_value(input2, /*wallet*/ ctx[2]);
+    			}
+    		},
     		i: noop$1,
     		o: noop$1,
     		d(detaching) {
-    			if (detaching) detach(div16);
+    			if (detaching) detach(div13);
     			mounted = false;
-    			dispose();
+    			run_all(dispose);
     		}
     	};
     }
 
-    const team2$2 = "../assets/img/team-2-800x800.jpg";
-    const click_handler$3 = e => e.preventDefault();
+    function instance$u($$self, $$props, $$invalidate) {
+    	let userID = sessionStorage.getItem("userID");
+    	let email = "";
+    	let name = "";
+    	let wallet = "";
 
-    class CardProfile extends SvelteComponent {
+    	async function getWalletAddress() {
+    		try {
+    			if (typeof window.ethereum !== 'undefined') {
+    				const accs = await ethereum.request({ method: 'eth_requestAccounts' });
+    				$$invalidate(2, wallet = accs[0]);
+    			}
+    		} catch(error) {
+    			console.error("Error fetching wallet address:", error);
+    			$$invalidate(2, wallet = "");
+    		}
+    	}
+
+    	async function saveProfile() {
+    		let data = { name, email, wallet };
+
+    		let response = await fetch(`http://localhost:9000/user/${userID}`, {
+    			method: 'PATCH',
+    			headers: { 'Content-Type': 'application/json' },
+    			body: JSON.stringify(data)
+    		});
+
+    		console.log(response.status);
+    	}
+
+    	onMount(async () => {
+    		const response = await fetch(`http://localhost:9000/user/${userID}`);
+    		const jsonData = await response.json();
+    		let data = jsonData;
+    		$$invalidate(0, email = data.email);
+    		$$invalidate(1, name = data.name);
+    		$$invalidate(2, wallet = data.wallet);
+    	});
+
+    	function input0_input_handler() {
+    		email = this.value;
+    		$$invalidate(0, email);
+    	}
+
+    	function input1_input_handler() {
+    		name = this.value;
+    		$$invalidate(1, name);
+    	}
+
+    	function input2_input_handler() {
+    		wallet = this.value;
+    		$$invalidate(2, wallet);
+    	}
+
+    	return [
+    		email,
+    		name,
+    		wallet,
+    		getWalletAddress,
+    		saveProfile,
+    		input0_input_handler,
+    		input1_input_handler,
+    		input2_input_handler
+    	];
+    }
+
+    class CardSettings extends SvelteComponent {
     	constructor(options) {
     		super();
-    		init(this, options, null, create_fragment$t, safe_not_equal, {});
+    		init(this, options, instance$u, create_fragment$t, safe_not_equal, {});
     	}
     }
 
     /* src\views\admin\Settings.svelte generated by Svelte v3.59.2 */
 
     function create_fragment$s(ctx) {
-    	let div2;
+    	let div1;
     	let adminnavbar;
-    	let t0;
+    	let t;
     	let div0;
     	let cardsettings;
-    	let t1;
-    	let div1;
-    	let cardprofile;
     	let current;
     	adminnavbar = new AdminNavbar({});
     	cardsettings = new CardSettings({});
-    	cardprofile = new CardProfile({});
 
     	return {
     		c() {
-    			div2 = element("div");
+    			div1 = element("div");
     			create_component(adminnavbar.$$.fragment);
-    			t0 = space();
+    			t = space();
     			div0 = element("div");
     			create_component(cardsettings.$$.fragment);
-    			t1 = space();
-    			div1 = element("div");
-    			create_component(cardprofile.$$.fragment);
     			attr(div0, "class", "w-full lg:w-8/12 px-4");
-    			attr(div1, "class", "w-full lg:w-4/12 px-4");
-    			attr(div2, "class", "flex flex-wrap");
+    			attr(div1, "class", "flex flex-wrap justify-center");
     		},
     		m(target, anchor) {
-    			insert(target, div2, anchor);
-    			mount_component(adminnavbar, div2, null);
-    			append(div2, t0);
-    			append(div2, div0);
+    			insert(target, div1, anchor);
+    			mount_component(adminnavbar, div1, null);
+    			append(div1, t);
+    			append(div1, div0);
     			mount_component(cardsettings, div0, null);
-    			append(div2, t1);
-    			append(div2, div1);
-    			mount_component(cardprofile, div1, null);
     			current = true;
     		},
     		p: noop$1,
@@ -32995,20 +33204,17 @@ var app = (function () {
     			if (current) return;
     			transition_in(adminnavbar.$$.fragment, local);
     			transition_in(cardsettings.$$.fragment, local);
-    			transition_in(cardprofile.$$.fragment, local);
     			current = true;
     		},
     		o(local) {
     			transition_out(adminnavbar.$$.fragment, local);
     			transition_out(cardsettings.$$.fragment, local);
-    			transition_out(cardprofile.$$.fragment, local);
     			current = false;
     		},
     		d(detaching) {
-    			if (detaching) detach(div2);
+    			if (detaching) detach(div1);
     			destroy_component(adminnavbar);
     			destroy_component(cardsettings);
-    			destroy_component(cardprofile);
     		}
     	};
     }
@@ -33484,7 +33690,246 @@ var app = (function () {
 
     /* src\components\Cards\CardLineChartMarket.svelte generated by Svelte v3.59.2 */
 
+    function create_if_block_2(ctx) {
+    	let h2;
+    	let t_value = /*cardData*/ ctx[2].name.toUpperCase() + "";
+    	let t;
+
+    	return {
+    		c() {
+    			h2 = element("h2");
+    			t = text(t_value);
+    			attr(h2, "class", "uppercase text-blueGray-400 mb-1 text-xs font-semibold");
+    		},
+    		m(target, anchor) {
+    			insert(target, h2, anchor);
+    			append(h2, t);
+    		},
+    		p(ctx, dirty) {
+    			if (dirty & /*cardData*/ 4 && t_value !== (t_value = /*cardData*/ ctx[2].name.toUpperCase() + "")) set_data(t, t_value);
+    		},
+    		d(detaching) {
+    			if (detaching) detach(h2);
+    		}
+    	};
+    }
+
+    // (309:6) {#if cardData!=null}
+    function create_if_block_1$2(ctx) {
+    	let img;
+    	let img_src_value;
+
+    	return {
+    		c() {
+    			img = element("img");
+    			if (!src_url_equal(img.src, img_src_value = /*cardData*/ ctx[2].logo)) attr(img, "src", img_src_value);
+    			attr(img, "class", "ml-3 h-10 w-10 bg-white rounded-full border");
+    			attr(img, "alt", "...");
+    		},
+    		m(target, anchor) {
+    			insert(target, img, anchor);
+    		},
+    		p(ctx, dirty) {
+    			if (dirty & /*cardData*/ 4 && !src_url_equal(img.src, img_src_value = /*cardData*/ ctx[2].logo)) {
+    				attr(img, "src", img_src_value);
+    			}
+    		},
+    		d(detaching) {
+    			if (detaching) detach(img);
+    		}
+    	};
+    }
+
+    // (327:8) {#if cardData != null}
+    function create_if_block$8(ctx) {
+    	let table;
+    	let thead;
+    	let t0;
+    	let tbody;
+    	let tr0;
+    	let th0;
+    	let span0;
+    	let t2;
+    	let td0;
+    	let t3_value = /*cardData*/ ctx[2].circulatingSupply + "";
+    	let t3;
+    	let t4;
+    	let tr1;
+    	let th1;
+    	let span1;
+    	let t6;
+    	let td1;
+    	let t7_value = /*cardData*/ ctx[2].currentPrice + "";
+    	let t7;
+    	let t8;
+    	let tr2;
+    	let th2;
+    	let span2;
+    	let t10;
+    	let td2;
+    	let t11_value = /*cardData*/ ctx[2].volume + "";
+    	let t11;
+    	let t12;
+    	let tr3;
+    	let th3;
+    	let span3;
+    	let t14;
+    	let td3;
+    	let t15_value = /*cardData*/ ctx[2].change24h + "";
+    	let t15;
+    	let t16;
+    	let tr4;
+    	let th4;
+    	let span4;
+    	let t18;
+    	let td4;
+    	let t19_value = /*cardData*/ ctx[2].high24 + "";
+    	let t19;
+    	let t20;
+    	let tr5;
+    	let th5;
+    	let span5;
+    	let t22;
+    	let td5;
+    	let t23_value = /*cardData*/ ctx[2].low24 + "";
+    	let t23;
+
+    	return {
+    		c() {
+    			table = element("table");
+    			thead = element("thead");
+    			t0 = space();
+    			tbody = element("tbody");
+    			tr0 = element("tr");
+    			th0 = element("th");
+    			span0 = element("span");
+    			span0.textContent = `${"Circulating Supply"}`;
+    			t2 = space();
+    			td0 = element("td");
+    			t3 = text(t3_value);
+    			t4 = space();
+    			tr1 = element("tr");
+    			th1 = element("th");
+    			span1 = element("span");
+    			span1.textContent = `${"Current Price"}`;
+    			t6 = space();
+    			td1 = element("td");
+    			t7 = text(t7_value);
+    			t8 = space();
+    			tr2 = element("tr");
+    			th2 = element("th");
+    			span2 = element("span");
+    			span2.textContent = `${"Volume"}`;
+    			t10 = space();
+    			td2 = element("td");
+    			t11 = text(t11_value);
+    			t12 = space();
+    			tr3 = element("tr");
+    			th3 = element("th");
+    			span3 = element("span");
+    			span3.textContent = `${"Change 24H"}`;
+    			t14 = space();
+    			td3 = element("td");
+    			t15 = text(t15_value);
+    			t16 = space();
+    			tr4 = element("tr");
+    			th4 = element("th");
+    			span4 = element("span");
+    			span4.textContent = `${"High 24H"}`;
+    			t18 = space();
+    			td4 = element("td");
+    			t19 = text(t19_value);
+    			t20 = space();
+    			tr5 = element("tr");
+    			th5 = element("th");
+    			span5 = element("span");
+    			span5.textContent = `${"Low 24H"}`;
+    			t22 = space();
+    			td5 = element("td");
+    			t23 = text(t23_value);
+    			attr(span0, "class", "ml-3 font-bold " + 'btext-blueGray-600');
+    			attr(th0, "class", "border-t-0 px-6 align-middle border-l-0 border-r-0 text-s whitespace-nowrap p-4 text-left flex items-center");
+    			attr(td0, "class", "border-t-0 px-6 align-middle border-l-0 border-r-0 text-s whitespace-nowrap p-4");
+    			attr(span1, "class", "ml-3 font-bold " + 'btext-blueGray-600');
+    			attr(th1, "class", "border-t-0 px-6 align-middle border-l-0 border-r-0 text-s whitespace-nowrap p-4 text-left flex items-center");
+    			attr(td1, "class", "border-t-0 px-6 align-middle border-l-0 border-r-0 text-s whitespace-nowrap p-4");
+    			attr(span2, "class", "ml-3 font-bold " + 'btext-blueGray-600');
+    			attr(th2, "class", "border-t-0 px-6 align-middle border-l-0 border-r-0 text-s whitespace-nowrap p-4 text-left flex items-center");
+    			attr(td2, "class", "border-t-0 px-6 align-middle border-l-0 border-r-0 text-s whitespace-nowrap p-4");
+    			attr(span3, "class", "ml-3 font-bold " + 'btext-blueGray-600');
+    			attr(th3, "class", "border-t-0 px-6 align-middle border-l-0 border-r-0 text-s whitespace-nowrap p-4 text-left flex items-center");
+    			attr(td3, "class", "border-t-0 px-6 align-middle border-l-0 border-r-0 text-s whitespace-nowrap p-4");
+    			attr(span4, "class", "ml-3 font-bold " + 'btext-blueGray-600');
+    			attr(th4, "class", "border-t-0 px-6 align-middle border-l-0 border-r-0 text-s whitespace-nowrap p-4 text-left flex items-center");
+    			attr(td4, "class", "border-t-0 px-6 align-middle border-l-0 border-r-0 text-s whitespace-nowrap p-4");
+    			attr(span5, "class", "ml-3 font-bold " + 'btext-blueGray-600');
+    			attr(th5, "class", "border-t-0 px-6 align-middle border-l-0 border-r-0 text-s whitespace-nowrap p-4 text-left flex items-center");
+    			attr(td5, "class", "border-t-0 px-6 align-middle border-l-0 border-r-0 text-s whitespace-nowrap p-4");
+    			attr(table, "class", "items-center w-full bg-transparent border-collapse");
+    		},
+    		m(target, anchor) {
+    			insert(target, table, anchor);
+    			append(table, thead);
+    			append(table, t0);
+    			append(table, tbody);
+    			append(tbody, tr0);
+    			append(tr0, th0);
+    			append(th0, span0);
+    			append(tr0, t2);
+    			append(tr0, td0);
+    			append(td0, t3);
+    			append(tbody, t4);
+    			append(tbody, tr1);
+    			append(tr1, th1);
+    			append(th1, span1);
+    			append(tr1, t6);
+    			append(tr1, td1);
+    			append(td1, t7);
+    			append(tbody, t8);
+    			append(tbody, tr2);
+    			append(tr2, th2);
+    			append(th2, span2);
+    			append(tr2, t10);
+    			append(tr2, td2);
+    			append(td2, t11);
+    			append(tbody, t12);
+    			append(tbody, tr3);
+    			append(tr3, th3);
+    			append(th3, span3);
+    			append(tr3, t14);
+    			append(tr3, td3);
+    			append(td3, t15);
+    			append(tbody, t16);
+    			append(tbody, tr4);
+    			append(tr4, th4);
+    			append(th4, span4);
+    			append(tr4, t18);
+    			append(tr4, td4);
+    			append(td4, t19);
+    			append(tbody, t20);
+    			append(tbody, tr5);
+    			append(tr5, th5);
+    			append(th5, span5);
+    			append(tr5, t22);
+    			append(tr5, td5);
+    			append(td5, t23);
+    		},
+    		p(ctx, dirty) {
+    			if (dirty & /*cardData*/ 4 && t3_value !== (t3_value = /*cardData*/ ctx[2].circulatingSupply + "")) set_data(t3, t3_value);
+    			if (dirty & /*cardData*/ 4 && t7_value !== (t7_value = /*cardData*/ ctx[2].currentPrice + "")) set_data(t7, t7_value);
+    			if (dirty & /*cardData*/ 4 && t11_value !== (t11_value = /*cardData*/ ctx[2].volume + "")) set_data(t11, t11_value);
+    			if (dirty & /*cardData*/ 4 && t15_value !== (t15_value = /*cardData*/ ctx[2].change24h + "")) set_data(t15, t15_value);
+    			if (dirty & /*cardData*/ 4 && t19_value !== (t19_value = /*cardData*/ ctx[2].high24 + "")) set_data(t19, t19_value);
+    			if (dirty & /*cardData*/ 4 && t23_value !== (t23_value = /*cardData*/ ctx[2].low24 + "")) set_data(t23, t23_value);
+    		},
+    		d(detaching) {
+    			if (detaching) detach(table);
+    		}
+    	};
+    }
+
     function create_fragment$q(ctx) {
+    	let div17;
     	let div10;
     	let div4;
     	let div3;
@@ -33495,26 +33940,46 @@ var app = (function () {
     	let div0;
     	let button0;
     	let t3;
-    	let h2;
+    	let h20;
     	let t4;
-    	let t5;
     	let div6;
-    	let t6;
+    	let t5;
     	let div9;
     	let div7;
     	let button1;
-    	let t7;
+    	let t6;
     	let button1_class_value;
-    	let t8;
+    	let t7;
     	let div8;
     	let button2;
-    	let t9;
+    	let t8;
     	let button2_class_value;
+    	let t9;
+    	let div16;
+    	let div13;
+    	let div12;
+    	let div11;
+    	let br0;
+    	let t10;
+    	let t11;
+    	let br1;
+    	let br2;
+    	let t12;
+    	let h21;
+    	let t13;
+    	let span;
+    	let t15;
+    	let div15;
+    	let div14;
     	let mounted;
     	let dispose;
+    	let if_block0 = /*cardData*/ ctx[2] != null && create_if_block_2(ctx);
+    	let if_block1 = /*cardData*/ ctx[2] != null && create_if_block_1$2(ctx);
+    	let if_block2 = /*cardData*/ ctx[2] != null && create_if_block$8(ctx);
 
     	return {
     		c() {
+    			div17 = element("div");
     			div10 = element("div");
     			div4 = element("div");
     			div3 = element("div");
@@ -33527,27 +33992,47 @@ var app = (function () {
     			button0 = element("button");
     			button0.textContent = "close";
     			t3 = space();
-    			h2 = element("h2");
-    			t4 = text(/*coinName*/ ctx[2]);
-    			t5 = space();
+    			h20 = element("h2");
+    			t4 = space();
     			div6 = element("div");
-    			div6.innerHTML = `<div class="relative h-350-px"><canvas id="line-chart"></canvas></div>`;
-    			t6 = space();
+    			div6.innerHTML = `<div class="relative h-350-px w-8\/12"><canvas id="line-chart"></canvas></div>`;
+    			t5 = space();
     			div9 = element("div");
     			div7 = element("div");
     			button1 = element("button");
-    			t7 = text("yearly");
-    			t8 = space();
+    			t6 = text("yearly");
+    			t7 = space();
     			div8 = element("div");
     			button2 = element("button");
-    			t9 = text("monthly");
+    			t8 = text("monthly");
+    			t9 = space();
+    			div16 = element("div");
+    			div13 = element("div");
+    			div12 = element("div");
+    			div11 = element("div");
+    			br0 = element("br");
+    			t10 = space();
+    			if (if_block0) if_block0.c();
+    			t11 = space();
+    			br1 = element("br");
+    			br2 = element("br");
+    			t12 = space();
+    			h21 = element("h2");
+    			if (if_block1) if_block1.c();
+    			t13 = space();
+    			span = element("span");
+    			span.textContent = `${/*coinName*/ ctx[3].toUpperCase()}`;
+    			t15 = space();
+    			div15 = element("div");
+    			div14 = element("div");
+    			if (if_block2) if_block2.c();
     			attr(h6, "class", "uppercase text-blueGray-100 mb-1 text-xs font-semibold");
     			attr(button0, "class", "bg-indigo-500 text-white active:bg-indigo-600 text-xs font-bold uppercase px-3 py-1 rounded outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150");
     			attr(button0, "type", "button");
     			attr(div0, "class", "relative w-full px-4 max-w-full flex-grow flex-1 text-right");
     			attr(div1, "class", "flex flex-wrap");
-    			attr(h2, "class", "text-white text-xl font-semibold");
-    			attr(div2, "class", "relative w-2\\/5 max-w-full flex-grow flex-1");
+    			attr(h20, "class", "text-white text-xl font-semibold");
+    			attr(div2, "class", "relative w-full max-w-full flex-grow flex-1");
     			attr(div3, "class", "flex flex-wrap items-center");
     			attr(div4, "class", "rounded-t mb-0 px-4 py-3 bg-transparent");
     			attr(div6, "class", "p-4 flex-auto");
@@ -33558,10 +34043,20 @@ var app = (function () {
     			attr(button2, "type", "button");
     			attr(div8, "class", "relative w-full px-4 max-w-full flex-grow flex-1 text-center");
     			attr(div9, "class", "flex flex-wrap");
-    			attr(div10, "class", "relative flex flex-col min-w-0 break-words w-2\\/5 mb-6 shadow-lg rounded bg-blueGray-700");
+    			attr(div10, "class", "relative flex flex-col w-full lg:w-8/12 px-4 break-words w-full mb-6 shadow-lg rounded bg-blueGray-700");
+    			attr(span, "class", "ml-3 font-bold " + 'btext-blueGray-600');
+    			attr(h21, "class", "border-t-0 px-6 align-middle border-l-0 border-r-0 text-s whitespace-nowrap p-4 text-left flex items-center");
+    			attr(div11, "class", "relative w-full max-w-full flex-grow flex-1");
+    			attr(div12, "class", "flex flex-wrap items-center");
+    			attr(div13, "class", "rounded-t mb-0 mr-4 px-4 py-3 bg-transparent");
+    			attr(div14, "class", "relative h-350-px");
+    			attr(div15, "class", "p-4 flex-auto");
+    			attr(div16, "class", "relative min-w-0 w-full lg:w-4/12 px-4 break-words bg-white mb-6 shadow-lg rounded");
+    			attr(div17, "class", "flex flex-wrap");
     		},
     		m(target, anchor) {
-    			insert(target, div10, anchor);
+    			insert(target, div17, anchor);
+    			append(div17, div10);
     			append(div10, div4);
     			append(div4, div3);
     			append(div3, div2);
@@ -33571,33 +34066,50 @@ var app = (function () {
     			append(div1, div0);
     			append(div0, button0);
     			append(div2, t3);
-    			append(div2, h2);
-    			append(h2, t4);
-    			append(div10, t5);
+    			append(div2, h20);
+    			append(div10, t4);
     			append(div10, div6);
-    			append(div10, t6);
+    			append(div10, t5);
     			append(div10, div9);
     			append(div9, div7);
     			append(div7, button1);
-    			append(button1, t7);
-    			append(div9, t8);
+    			append(button1, t6);
+    			append(div9, t7);
     			append(div9, div8);
     			append(div8, button2);
-    			append(button2, t9);
+    			append(button2, t8);
+    			append(div17, t9);
+    			append(div17, div16);
+    			append(div16, div13);
+    			append(div13, div12);
+    			append(div12, div11);
+    			append(div11, br0);
+    			append(div11, t10);
+    			if (if_block0) if_block0.m(div11, null);
+    			append(div11, t11);
+    			append(div11, br1);
+    			append(div11, br2);
+    			append(div11, t12);
+    			append(div11, h21);
+    			if (if_block1) if_block1.m(h21, null);
+    			append(h21, t13);
+    			append(h21, span);
+    			append(div16, t15);
+    			append(div16, div15);
+    			append(div15, div14);
+    			if (if_block2) if_block2.m(div14, null);
 
     			if (!mounted) {
     				dispose = [
-    					listen(button0, "click", /*switchToMarket*/ ctx[3]),
-    					listen(button1, "click", /*showYearly*/ ctx[4]),
-    					listen(button2, "click", /*showMonthly*/ ctx[5])
+    					listen(button0, "click", /*switchToMarket*/ ctx[4]),
+    					listen(button1, "click", /*showYearly*/ ctx[5]),
+    					listen(button2, "click", /*showMonthly*/ ctx[6])
     				];
 
     				mounted = true;
     			}
     		},
     		p(ctx, [dirty]) {
-    			if (dirty & /*coinName*/ 4) set_data(t4, /*coinName*/ ctx[2]);
-
     			if (dirty & /*yearButtonColor*/ 1 && button1_class_value !== (button1_class_value = "" + (/*yearButtonColor*/ ctx[0] + " text-white active:bg-indigo-600 text-xs font-bold uppercase px-3 py-1 rounded outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"))) {
     				attr(button1, "class", button1_class_value);
     			}
@@ -33605,11 +34117,53 @@ var app = (function () {
     			if (dirty & /*monthlyButtonColor*/ 2 && button2_class_value !== (button2_class_value = "" + (/*monthlyButtonColor*/ ctx[1] + " text-white active:bg-indigo-600 text-xs font-bold uppercase px-3 py-1 rounded outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"))) {
     				attr(button2, "class", button2_class_value);
     			}
+
+    			if (/*cardData*/ ctx[2] != null) {
+    				if (if_block0) {
+    					if_block0.p(ctx, dirty);
+    				} else {
+    					if_block0 = create_if_block_2(ctx);
+    					if_block0.c();
+    					if_block0.m(div11, t11);
+    				}
+    			} else if (if_block0) {
+    				if_block0.d(1);
+    				if_block0 = null;
+    			}
+
+    			if (/*cardData*/ ctx[2] != null) {
+    				if (if_block1) {
+    					if_block1.p(ctx, dirty);
+    				} else {
+    					if_block1 = create_if_block_1$2(ctx);
+    					if_block1.c();
+    					if_block1.m(h21, t13);
+    				}
+    			} else if (if_block1) {
+    				if_block1.d(1);
+    				if_block1 = null;
+    			}
+
+    			if (/*cardData*/ ctx[2] != null) {
+    				if (if_block2) {
+    					if_block2.p(ctx, dirty);
+    				} else {
+    					if_block2 = create_if_block$8(ctx);
+    					if_block2.c();
+    					if_block2.m(div14, null);
+    				}
+    			} else if (if_block2) {
+    				if_block2.d(1);
+    				if_block2 = null;
+    			}
     		},
     		i: noop$1,
     		o: noop$1,
     		d(detaching) {
-    			if (detaching) detach(div10);
+    			if (detaching) detach(div17);
+    			if (if_block0) if_block0.d();
+    			if (if_block1) if_block1.d();
+    			if (if_block2) if_block2.d();
     			mounted = false;
     			run_all(dispose);
     		}
@@ -33618,6 +34172,7 @@ var app = (function () {
 
     function instance$r($$self, $$props, $$invalidate) {
     	let { showMarket } = $$props;
+    	let coinName = sessionStorage.getItem("showCoin");
     	let yearButtonColor = 'bg-red-500';
     	let monthlyButtonColor = 'bg-indigo-500';
     	let config;
@@ -33638,8 +34193,6 @@ var app = (function () {
     	function switchToMarket() {
     		showMarket();
     	}
-
-    	let coinName;
 
     	let yearlyLabels = [
     		"March '23",
@@ -33712,8 +34265,9 @@ var app = (function () {
     		updateChart();
     	}
 
+    	let cardData;
+
     	onMount(async () => {
-    		$$invalidate(2, coinName = sessionStorage.getItem("showCoin"));
     		const response = await fetch(`http://localhost:9000/market/${coinName}/yearly`);
     		const jsonData = await response.json();
     		yearlyData = jsonData.yearlyPrice;
@@ -33797,16 +34351,35 @@ var app = (function () {
     		};
 
     		updateChart();
-    	}); // var ctx = document.getElementById("line-chart").getContext("2d");
-    	// window.myLine = new Chart(ctx, config);
+
+    		// var ctx = document.getElementById("line-chart").getContext("2d");
+    		// window.myLine = new Chart(ctx, config);
+    		let res = await fetch(`http://localhost:9000/market/${coinName}`);
+
+    		let jData = await res.json();
+    		let res2 = await fetch(`http://localhost:9000/token/${coinName}`);
+    		let jData2 = await res2.json();
+
+    		$$invalidate(2, cardData = {
+    			name: jData2.name,
+    			currentPrice: jData.currentPrice,
+    			change24h: jData.change24h,
+    			circulatingSupply: jData.circulatingSupply,
+    			volume: jData.volume,
+    			low24: jData.low24,
+    			high24: jData.high24,
+    			logo: jData2.logo
+    		});
+    	});
 
     	$$self.$$set = $$props => {
-    		if ('showMarket' in $$props) $$invalidate(6, showMarket = $$props.showMarket);
+    		if ('showMarket' in $$props) $$invalidate(7, showMarket = $$props.showMarket);
     	};
 
     	return [
     		yearButtonColor,
     		monthlyButtonColor,
+    		cardData,
     		coinName,
     		switchToMarket,
     		showYearly,
@@ -33818,7 +34391,7 @@ var app = (function () {
     class CardLineChartMarket extends SvelteComponent {
     	constructor(options) {
     		super();
-    		init(this, options, instance$r, create_fragment$q, safe_not_equal, { showMarket: 6 });
+    		init(this, options, instance$r, create_fragment$q, safe_not_equal, { showMarket: 7 });
     	}
     }
 
@@ -33862,7 +34435,7 @@ var app = (function () {
     	};
     }
 
-    // (71:2) {#if showChart}
+    // (78:2) {#if showChart}
     function create_if_block$7(ctx) {
     	let div;
     	let cardlinechartmarket;
@@ -33876,7 +34449,7 @@ var app = (function () {
     		c() {
     			div = element("div");
     			create_component(cardlinechartmarket.$$.fragment);
-    			attr(div, "class", "w-full xl:w-8/12 mb-12 xl:mb-0 px-4 items-start");
+    			attr(div, "class", "w-full mb-12 xl:mb-0 px-4 items-start");
     		},
     		m(target, anchor) {
     			insert(target, div, anchor);
@@ -33987,6 +34560,10 @@ var app = (function () {
     	function showMarket() {
     		$$invalidate(0, showChart = false);
     	}
+
+    	onMount(() => {
+    		sessionStorage.setItem('currentPage', 'Market');
+    	});
 
     	$$self.$$set = $$props => {
     		if ('location' in $$props) $$invalidate(3, location = $$props.location);
@@ -34180,7 +34757,7 @@ var app = (function () {
     	return child_ctx;
     }
 
-    // (319:16) {#if filteredItems.length > 0}
+    // (326:16) {#if filteredItems.length > 0}
     function create_if_block$6(ctx) {
     	let ul;
     	let each_value = /*filteredItems*/ ctx[2];
@@ -34240,7 +34817,7 @@ var app = (function () {
     	};
     }
 
-    // (321:24) {#each filteredItems as item}
+    // (328:24) {#each filteredItems as item}
     function create_each_block$5(ctx) {
     	let li;
     	let img;
@@ -34269,7 +34846,8 @@ var app = (function () {
     			attr(img, "class", "ml-3 h-10 w-10 bg-white rounded-full border");
     			attr(img, "alt", "...");
     			attr(span, "class", "ml-3 mr-3 font-bold " + 'btext-blueGray-600');
-    			attr(li, "class", "border-t-0 px-6 align-middle border-l-0 border-r-0 text-s whitespace-nowrap p-4 text-left flex items-center hover:bg-gray-500");
+    			attr(li, "class", "border-t-0 px-6 align-middle border-l-0 border-r-0 text-s whitespace-nowrap p-4 text-left flex items-center hover:shadow-lg:hover");
+    			set_style(li, "cursor", "pointer");
     		},
     		m(target, anchor) {
     			insert(target, li, anchor);
@@ -34442,9 +35020,9 @@ var app = (function () {
     			attr(img, "alt", "...");
     			attr(span1, "class", "ml-3 font-bold " + 'btext-blueGray-600');
     			attr(h20, "class", "border-t-0 px-6 align-middle border-l-0 border-r-0 text-s whitespace-nowrap p-4 text-left flex items-center");
-    			attr(div1, "class", "relative w-full max-w-full flex-grow flex-1");
-    			attr(div2, "class", "flex flex-wrap items-center");
-    			attr(div3, "class", "rounded-t mb-0 mr-4 px-4 py-3 bg-transparent");
+    			attr(div1, "class", "relative w-full max-w-full flex-grow flex-1 ");
+    			attr(div2, "class", "flex flex-wrap items-center ");
+    			attr(div3, "class", "rounded-t mb-0 mr-4 px-4 py-3 bg-transparent ");
     			attr(span2, "class", "ml-3 font-bold " + 'btext-blueGray-600');
     			attr(th0, "class", "border-t-0 px-6 align-middle border-l-0 border-r-0 text-s whitespace-nowrap p-4 text-left flex items-center");
     			attr(td0, "class", "border-t-0 px-6 align-middle border-l-0 border-r-0 text-s whitespace-nowrap p-4");
@@ -34457,9 +35035,9 @@ var app = (function () {
     			attr(table, "class", "items-center w-full bg-transparent border-collapse");
     			attr(div4, "class", "relative h-350-px");
     			attr(div5, "class", "p-4 flex-auto");
-    			attr(div6, "class", "relative min-w-0 w-full px-4 break-words bg-white mb-6 shadow-lg rounded");
-    			attr(div12, "class", "relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded bg-blueGray-700");
-    			attr(div13, "class", "grid grid-cols-2 gap-4");
+    			attr(div6, "class", "relative min-w-0 w-full lg:w-4/12 px-4 break-words bg-white mb-6 shadow-lg rounded p-2");
+    			attr(div12, "class", "relative flex flex-col w-full lg:w-8/12 px-4 break-words w-full mb-6 shadow-lg rounded bg-blueGray-700");
+    			attr(div13, "class", "flex flex-wrap");
     		},
     		m(target, anchor) {
     			insert(target, div13, anchor);
@@ -34673,8 +35251,15 @@ var app = (function () {
 
     	function updateChart() {
     		if (!config) return;
-    		var ctx = document.getElementById("line-chart").getContext("2d");
-    		window.myLine = new Chart$1(ctx, config);
+    		var canvas = document.getElementById("line-chart");
+    		var ctx = canvas.getContext("2d");
+
+    		// Check if there's an existing Chart instance
+    		if (window.myLine) {
+    			window.myLine.destroy(); // Destroy the existing Chart instance
+    		}
+
+    		window.myLine = new Chart$1(ctx, config); // Create a new Chart instance
     	}
 
     	async function fetchChartData() {
@@ -34889,8 +35474,8 @@ var app = (function () {
     function instance$m($$self, $$props, $$invalidate) {
     	let { location } = $$props;
 
-    	onMount(async () => {
-    		
+    	onMount(() => {
+    		sessionStorage.setItem('currentPage', 'AI Prediction');
     	});
 
     	$$self.$$set = $$props => {
@@ -35541,7 +36126,7 @@ var app = (function () {
     			td2 = element("td");
     			t9 = text(t9_value);
     			t10 = space();
-    			if (!src_url_equal(img.src, img_src_value = team1$3)) attr(img, "src", img_src_value);
+    			if (!src_url_equal(img.src, img_src_value = team1$4)) attr(img, "src", img_src_value);
     			attr(img, "class", "h-12 w-12 bg-white rounded-full border");
     			attr(img, "alt", "...");
     			attr(span0, "class", "ml-3 font-bold " + 'btext-blueGray-600');
@@ -35558,6 +36143,7 @@ var app = (function () {
 
     			attr(td1, "class", "border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4");
     			attr(td2, "class", "border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4");
+    			set_style(tr, "cursor", "pointer");
     		},
     		m(target, anchor) {
     			insert(target, tr, anchor);
@@ -35617,40 +36203,39 @@ var app = (function () {
 
     // (300:4) {#if selectedPanel != null}
     function create_if_block$4(ctx) {
-    	let div11;
+    	let div13;
     	let div2;
-    	let t3;
-    	let div10;
-    	let div9;
+    	let t1;
+    	let div12;
+    	let div11;
     	let div3;
-    	let span1;
     	let img;
     	let img_src_value;
-    	let t4;
-    	let span0;
-    	let t5_value = "  " + /*selectedPanel*/ ctx[1].name.toUpperCase() + "";
-    	let t5;
-    	let t6;
-    	let div6;
-    	let br;
-    	let t7;
+    	let t2;
     	let div4;
-    	let t9;
-    	let div5;
-    	let input0;
-    	let t10;
+    	let t3_value = "  " + /*selectedPanel*/ ctx[1].name.toUpperCase() + "";
+    	let t3;
+    	let t4;
     	let div7;
-    	let p;
-    	let t12;
+    	let br;
+    	let t5;
+    	let div5;
+    	let t7;
+    	let div6;
+    	let input0;
+    	let t8;
+    	let div8;
+    	let t10;
+    	let div9;
     	let label0;
     	let input1;
-    	let t13;
-    	let t14;
+    	let t11;
+    	let t12;
     	let label1;
     	let input2;
-    	let t15;
-    	let t16;
-    	let div8;
+    	let t13;
+    	let t14;
+    	let div10;
     	let button;
     	let binding_group;
     	let mounted;
@@ -35659,115 +36244,113 @@ var app = (function () {
 
     	return {
     		c() {
-    			div11 = element("div");
+    			div13 = element("div");
     			div2 = element("div");
-
-    			div2.innerHTML = `<div class="flex flex-wrap items-center"><div class="relative w-full max-w-full flex-grow flex-1"><h6 class="uppercase text-blueGray-100 mb-1 text-xs font-semibold">Overview</h6> 
-                <h2 class="text-white text-xl font-semibold">Staking Details</h2></div></div>`;
-
-    			t3 = space();
-    			div10 = element("div");
-    			div9 = element("div");
+    			div2.innerHTML = `<div class="flex flex-wrap items-center"><div class="relative w-full max-w-full flex-grow flex-1"><h2 class="text-white text-xl font-semibold">Staking Details</h2></div></div>`;
+    			t1 = space();
+    			div12 = element("div");
+    			div11 = element("div");
     			div3 = element("div");
-    			span1 = element("span");
     			img = element("img");
-    			t4 = space();
-    			span0 = element("span");
-    			t5 = text(t5_value);
-    			t6 = space();
-    			div6 = element("div");
-    			br = element("br");
-    			t7 = space();
+    			t2 = space();
     			div4 = element("div");
-    			div4.textContent = "Amount";
-    			t9 = space();
-    			div5 = element("div");
-    			input0 = element("input");
-    			t10 = space();
+    			t3 = text(t3_value);
+    			t4 = space();
     			div7 = element("div");
-    			p = element("p");
-    			p.textContent = "Percentage";
-    			t12 = space();
+    			br = element("br");
+    			t5 = space();
+    			div5 = element("div");
+    			div5.textContent = "Amount";
+    			t7 = space();
+    			div6 = element("div");
+    			input0 = element("input");
+    			t8 = space();
+    			div8 = element("div");
+    			div8.innerHTML = `<p>Percentage</p>`;
+    			t10 = space();
+    			div9 = element("div");
     			label0 = element("label");
     			input1 = element("input");
-    			t13 = text(" 5% APR for 1 Month");
-    			t14 = space();
+    			t11 = text(" 5% APR for 1 Month");
+    			t12 = space();
     			label1 = element("label");
     			input2 = element("input");
-    			t15 = text("  10% APR for 6 Months");
-    			t16 = space();
-    			div8 = element("div");
+    			t13 = text("  10% APR for 6 Months");
+    			t14 = space();
+    			div10 = element("div");
     			button = element("button");
     			button.textContent = "Confirm";
     			attr(div2, "class", "rounded-t ml-4 mb-0 px-4 py-3 bg-transparent");
-    			if (!src_url_equal(img.src, img_src_value = team1$3)) attr(img, "src", img_src_value);
-    			attr(img, "class", "h-12 w-12 bg-white rounded-full border");
+    			if (!src_url_equal(img.src, img_src_value = team1$4)) attr(img, "src", img_src_value);
+    			attr(img, "class", "h-12 w-12 bg-white rounded-full border self-center");
     			attr(img, "alt", "...");
-    			attr(span0, "class", "uppercase text-blueGray-100 mb-1 text-xs font-semibold");
-    			attr(span1, "class", "border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left flex items-center");
-    			attr(div4, "class", "uppercase text-blueGray-100 mb-1 text-xs font-semibold");
+    			attr(div3, "class", "border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-2 flex justify-items-center justify-center");
+    			attr(div4, "class", "border-t-0 px-6 align-middle border-l-0 border-r-0 text-s whitespace-nowrap p-1 flex justify-items-center justify-center uppercase text-blueGray-100 mb-1 text-xs font-semibold self-center");
+    			attr(div5, "class", "uppercase text-blueGray-100 mb-1 text-xs font-semibold");
     			attr(input0, "type", "number");
     			attr(input0, "id", "amount");
     			attr(input0, "min", "0");
-    			attr(div6, "class", "grid grid-col-2");
+    			attr(div7, "class", "grid grid-col-2 border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-2 flex justify-items-center justify-center");
+    			attr(div8, "class", "uppercase text-blueGray-100 mb-1 text-xs font-semibold border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-2 flex justify-items-center justify-center");
     			attr(input1, "type", "radio");
     			attr(input1, "id", "percentage1");
     			attr(input1, "name", "percentage");
     			input1.__value = "5%";
     			input1.value = input1.__value;
+    			attr(label0, "class", "uppercase text-blueGray-100 mb-1 text-xs font-semibold border-t-0 px-6");
     			attr(label0, "for", "percentage1");
     			attr(input2, "type", "radio");
     			attr(input2, "id", "percentage2");
     			attr(input2, "name", "percentage");
     			input2.__value = "10%";
     			input2.value = input2.__value;
+    			attr(label1, "class", "uppercase text-blueGray-100 mb-1 text-xs font-semibold border-t-0 px-6");
     			attr(label1, "for", "percentage2");
-    			attr(div7, "class", "uppercase text-blueGray-100 mb-1 text-xs font-semibold");
+    			attr(div9, "class", "border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-2 flex justify-items-center justify-center");
     			attr(button, "class", "bg-red-400 text-white active:bg-red-500 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150");
     			attr(button, "type", "button");
-    			attr(div8, "class", "uppercase text-blueGray-100 mb-1 text-xs font-semibold");
-    			attr(div9, "class", "relative h-350-px");
-    			attr(div10, "class", "p-4 flex-auto");
-    			attr(div11, "class", "relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded bg-blueGray-700");
+    			attr(div10, "class", "uppercase text-blueGray-100 mb-1 text-xs font-semibold border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-2 flex justify-items-center justify-center");
+    			attr(div11, "class", "relative h-350-px items-center content-center");
+    			attr(div12, "class", "p-4 flex-auto");
+    			attr(div13, "class", "relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded bg-blueGray-700");
     			binding_group.p(input1, input2);
     		},
     		m(target, anchor) {
-    			insert(target, div11, anchor);
-    			append(div11, div2);
-    			append(div11, t3);
-    			append(div11, div10);
-    			append(div10, div9);
-    			append(div9, div3);
-    			append(div3, span1);
-    			append(span1, img);
-    			append(span1, t4);
-    			append(span1, span0);
-    			append(span0, t5);
-    			append(div9, t6);
-    			append(div9, div6);
-    			append(div6, br);
-    			append(div6, t7);
-    			append(div6, div4);
-    			append(div6, t9);
-    			append(div6, div5);
-    			append(div5, input0);
+    			insert(target, div13, anchor);
+    			append(div13, div2);
+    			append(div13, t1);
+    			append(div13, div12);
+    			append(div12, div11);
+    			append(div11, div3);
+    			append(div3, img);
+    			append(div11, t2);
+    			append(div11, div4);
+    			append(div4, t3);
+    			append(div11, t4);
+    			append(div11, div7);
+    			append(div7, br);
+    			append(div7, t5);
+    			append(div7, div5);
+    			append(div7, t7);
+    			append(div7, div6);
+    			append(div6, input0);
     			set_input_value(input0, /*amount*/ ctx[2]);
-    			append(div9, t10);
-    			append(div9, div7);
-    			append(div7, p);
-    			append(div7, t12);
-    			append(div7, label0);
+    			append(div11, t8);
+    			append(div11, div8);
+    			append(div11, t10);
+    			append(div11, div9);
+    			append(div9, label0);
     			append(label0, input1);
     			input1.checked = input1.__value === /*selectedPercentage*/ ctx[3];
-    			append(label0, t13);
-    			append(div7, t14);
-    			append(div7, label1);
+    			append(label0, t11);
+    			append(div9, t12);
+    			append(div9, label1);
     			append(label1, input2);
     			input2.checked = input2.__value === /*selectedPercentage*/ ctx[3];
-    			append(label1, t15);
-    			append(div9, t16);
-    			append(div9, div8);
-    			append(div8, button);
+    			append(label1, t13);
+    			append(div11, t14);
+    			append(div11, div10);
+    			append(div10, button);
 
     			if (!mounted) {
     				dispose = [
@@ -35781,7 +36364,7 @@ var app = (function () {
     			}
     		},
     		p(ctx, dirty) {
-    			if (dirty & /*selectedPanel*/ 2 && t5_value !== (t5_value = "  " + /*selectedPanel*/ ctx[1].name.toUpperCase() + "")) set_data(t5, t5_value);
+    			if (dirty & /*selectedPanel*/ 2 && t3_value !== (t3_value = "  " + /*selectedPanel*/ ctx[1].name.toUpperCase() + "")) set_data(t3, t3_value);
 
     			if (dirty & /*amount*/ 4 && to_number(input0.value) !== /*amount*/ ctx[2]) {
     				set_input_value(input0, /*amount*/ ctx[2]);
@@ -35796,7 +36379,7 @@ var app = (function () {
     			}
     		},
     		d(detaching) {
-    			if (detaching) detach(div11);
+    			if (detaching) detach(div13);
     			binding_group.r();
     			mounted = false;
     			run_all(dispose);
@@ -35804,7 +36387,7 @@ var app = (function () {
     	};
     }
 
-    // (432:8) {#each requests as request, index}
+    // (434:8) {#each requests as request, index}
     function create_each_block$3(ctx) {
     	let tr;
     	let th;
@@ -35871,7 +36454,7 @@ var app = (function () {
     			td5 = element("td");
     			t15 = text(t15_value);
     			t16 = space();
-    			if (!src_url_equal(img.src, img_src_value = team1$3)) attr(img, "src", img_src_value);
+    			if (!src_url_equal(img.src, img_src_value = team1$4)) attr(img, "src", img_src_value);
     			attr(img, "class", "h-12 w-12 bg-white rounded-full border");
     			attr(img, "alt", "...");
     			attr(span, "class", "ml-3 font-bold " + 'btext-blueGray-600');
@@ -36132,7 +36715,7 @@ var app = (function () {
     	};
     }
 
-    const team1$3 = "/assets/img/team-1-800x800.jpg";
+    const team1$4 = "/assets/img/team-1-800x800.jpg";
 
     async function getWalletAddress$1() {
     	try {
@@ -36445,7 +37028,7 @@ var app = (function () {
     }
 
     // (368:12) {#if parseFloat(request.amount)===parseFloat(request.currentAmount) && request.status==="accepted"}
-    function create_if_block_1$2(ctx) {
+    function create_if_block_1$1(ctx) {
     	let button;
     	let mounted;
     	let dispose;
@@ -36511,7 +37094,7 @@ var app = (function () {
     	let t12;
     	let mounted;
     	let dispose;
-    	let if_block = show_if && create_if_block_1$2(ctx);
+    	let if_block = show_if && create_if_block_1$1(ctx);
 
     	function click_handler_1() {
     		return /*click_handler_1*/ ctx[5](/*request*/ ctx[15]);
@@ -36591,7 +37174,7 @@ var app = (function () {
     				if (if_block) {
     					if_block.p(ctx, dirty);
     				} else {
-    					if_block = create_if_block_1$2(ctx);
+    					if_block = create_if_block_1$1(ctx);
     					if_block.c();
     					if_block.m(td4, null);
     				}
@@ -37210,7 +37793,7 @@ var app = (function () {
     			td2 = element("td");
     			t7 = text(t7_value);
     			t8 = space();
-    			if (!src_url_equal(img.src, img_src_value = team1$2)) attr(img, "src", img_src_value);
+    			if (!src_url_equal(img.src, img_src_value = team1$3)) attr(img, "src", img_src_value);
     			attr(img, "class", "h-12 w-12 bg-white rounded-full border");
     			attr(img, "alt", "...");
     			attr(span, "class", "ml-3 font-bold " + 'btext-blueGray-600');
@@ -37391,7 +37974,7 @@ var app = (function () {
     			button = element("button");
     			button.textContent = "Confirm";
     			attr(div2, "class", "rounded-t ml-4 mb-0 px-4 py-3 bg-transparent");
-    			if (!src_url_equal(img.src, img_src_value = team1$2)) attr(img, "src", img_src_value);
+    			if (!src_url_equal(img.src, img_src_value = team1$3)) attr(img, "src", img_src_value);
     			attr(img, "class", "h-12 w-12 bg-white rounded-full border");
     			attr(img, "alt", "...");
     			attr(span0, "class", "border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left flex items-center");
@@ -37616,7 +38199,7 @@ var app = (function () {
     	};
     }
 
-    const team1$2 = "/assets/img/team-1-800x800.jpg";
+    const team1$3 = "/assets/img/team-1-800x800.jpg";
 
     async function getClientInfo(id) {
     	try {
@@ -37830,7 +38413,7 @@ var app = (function () {
     }
 
     // (291:50) 
-    function create_if_block_1$1(ctx) {
+    function create_if_block_1(ctx) {
     	let p;
 
     	return {
@@ -37982,7 +38565,7 @@ var app = (function () {
 
     	function select_block_type(ctx, dirty) {
     		if (/*submitStatus*/ ctx[3] === "success") return create_if_block$1;
-    		if (/*submitStatus*/ ctx[3] === "fail") return create_if_block_1$1;
+    		if (/*submitStatus*/ ctx[3] === "fail") return create_if_block_1;
     	}
 
     	let current_block_type = select_block_type(ctx);
@@ -38067,7 +38650,7 @@ var app = (function () {
     			}
 
     			attr(div2, "class", "rounded-t ml-4 mb-0 px-4 py-3 bg-transparent");
-    			if (!src_url_equal(img.src, img_src_value = team1$1)) attr(img, "src", img_src_value);
+    			if (!src_url_equal(img.src, img_src_value = team1$2)) attr(img, "src", img_src_value);
     			attr(img, "class", "h-12 w-12 bg-white rounded-full border");
     			attr(img, "alt", "...");
     			attr(span, "class", "border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left flex items-center");
@@ -38236,7 +38819,7 @@ var app = (function () {
     	};
     }
 
-    const team1$1 = "/assets/img/team-1-800x800.jpg";
+    const team1$2 = "/assets/img/team-1-800x800.jpg";
 
     function instance$d($$self, $$props, $$invalidate) {
     	let amount = 0;
@@ -38402,6 +38985,543 @@ var app = (function () {
     	}
     }
 
+    /* src\components\Footers\Footer.svelte generated by Svelte v3.59.2 */
+
+    function create_fragment$a(ctx) {
+    	let footer;
+    	let div0;
+    	let t0;
+    	let div11;
+    	let div7;
+    	let t28;
+    	let hr;
+    	let t29;
+    	let div10;
+    	let div9;
+    	let div8;
+    	let t30;
+    	let t31;
+    	let t32;
+    	let a8;
+
+    	return {
+    		c() {
+    			footer = element("footer");
+    			div0 = element("div");
+    			div0.innerHTML = `<svg class="absolute bottom-0 overflow-hidden" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" version="1.1" viewBox="0 0 2560 100" x="0" y="0"><polygon class="text-blueGray-200 fill-current" points="2560 0 2560 100 0 100"></polygon></svg>`;
+    			t0 = space();
+    			div11 = element("div");
+    			div7 = element("div");
+
+    			div7.innerHTML = `<div class="w-full lg:w-6/12 px-4"><h4 class="text-3xl font-semibold">Let&#39;s keep in touch!</h4> 
+        <h5 class="text-lg mt-0 mb-2 text-blueGray-600">Find us on any of these platforms, we respond 1-2 business days.</h5> 
+        <div class="mt-6 lg:mb-0 mb-6"><button class="bg-white text-lightBlue-400 shadow-lg font-normal h-10 w-10 items-center justify-center align-center rounded-full outline-none focus:outline-none mr-2" type="button"><i class="fab fa-twitter"></i></button> 
+          <button class="bg-white text-lightBlue-600 shadow-lg font-normal h-10 w-10 items-center justify-center align-center rounded-full outline-none focus:outline-none mr-2" type="button"><i class="fab fa-facebook-square"></i></button> 
+          <button class="bg-white text-pink-400 shadow-lg font-normal h-10 w-10 items-center justify-center align-center rounded-full outline-none focus:outline-none mr-2" type="button"><i class="fab fa-dribbble"></i></button> 
+          <button class="bg-white text-blueGray-800 shadow-lg font-normal h-10 w-10 items-center justify-center align-center rounded-full outline-none focus:outline-none mr-2" type="button"><i class="fab fa-github"></i></button></div></div> 
+      <div class="w-full lg:w-6/12 px-4"><div class="flex flex-wrap items-top mb-6"><div class="w-full lg:w-4/12 px-4 ml-auto"><span class="block uppercase text-blueGray-500 text-sm font-semibold mb-2">Useful Links</span> 
+            <ul class="list-unstyled"><li><a class="text-blueGray-600 hover:text-blueGray-800 font-semibold block pb-2 text-sm" href="https://www.creative-tim.com/presentation?ref=ns-footer">About Us</a></li> 
+              <li><a class="text-blueGray-600 hover:text-blueGray-800 font-semibold block pb-2 text-sm" href="https://blog.creative-tim.com?ref=ns-footer">Blog</a></li> 
+              <li><a class="text-blueGray-600 hover:text-blueGray-800 font-semibold block pb-2 text-sm" href="https://www.github.com/creativetimofficial?ref=ns-footer">Github</a></li> 
+              <li><a class="text-blueGray-600 hover:text-blueGray-800 font-semibold block pb-2 text-sm" href="https://www.creative-tim.com/bootstrap-themes/free?ref=ns-footer">Free Products</a></li></ul></div> 
+          <div class="w-full lg:w-4/12 px-4"><span class="block uppercase text-blueGray-500 text-sm font-semibold mb-2">Other Resources</span> 
+            <ul class="list-unstyled"><li><a class="text-blueGray-600 hover:text-blueGray-800 font-semibold block pb-2 text-sm" href="https://github.com/creativetimofficial/notus-svelte/blob/main/LICENSE.md?ref=ns-footer">MIT License</a></li> 
+              <li><a class="text-blueGray-600 hover:text-blueGray-800 font-semibold block pb-2 text-sm" href="https://creative-tim.com/terms?ref=ns-footer">Terms &amp; Conditions</a></li> 
+              <li><a class="text-blueGray-600 hover:text-blueGray-800 font-semibold block pb-2 text-sm" href="https://creative-tim.com/privacy?ref=ns-footer">Privacy Policy</a></li> 
+              <li><a class="text-blueGray-600 hover:text-blueGray-800 font-semibold block pb-2 text-sm" href="https://creative-tim.com/contact-us?ref=ns-footer">Contact Us</a></li></ul></div></div></div>`;
+
+    			t28 = space();
+    			hr = element("hr");
+    			t29 = space();
+    			div10 = element("div");
+    			div9 = element("div");
+    			div8 = element("div");
+    			t30 = text("Copyright © ");
+    			t31 = text(/*date*/ ctx[0]);
+    			t32 = space();
+    			a8 = element("a");
+    			a8.textContent = "FundMan";
+    			attr(div0, "class", "bottom-auto top-0 left-0 right-0 w-full absolute pointer-events-none overflow-hidden -mt-20 h-20");
+    			set_style(div0, "transform", "translateZ(0)");
+    			attr(div7, "class", "flex flex-wrap text-center lg:text-left");
+    			attr(hr, "class", "my-6 border-blueGray-300");
+    			attr(a8, "href", "https://www.creative-tim.com?ref=ns-footer");
+    			attr(a8, "class", "text-blueGray-500 hover:text-blueGray-800");
+    			attr(div8, "class", "text-sm text-blueGray-500 font-semibold py-1");
+    			attr(div9, "class", "w-full md:w-4/12 px-4 mx-auto text-center");
+    			attr(div10, "class", "flex flex-wrap items-center md:justify-between justify-center");
+    			attr(div11, "class", "container mx-auto px-4");
+    			attr(footer, "class", "relative bg-blueGray-200 pt-8 pb-6");
+    		},
+    		m(target, anchor) {
+    			insert(target, footer, anchor);
+    			append(footer, div0);
+    			append(footer, t0);
+    			append(footer, div11);
+    			append(div11, div7);
+    			append(div11, t28);
+    			append(div11, hr);
+    			append(div11, t29);
+    			append(div11, div10);
+    			append(div10, div9);
+    			append(div9, div8);
+    			append(div8, t30);
+    			append(div8, t31);
+    			append(div8, t32);
+    			append(div8, a8);
+    		},
+    		p: noop$1,
+    		i: noop$1,
+    		o: noop$1,
+    		d(detaching) {
+    			if (detaching) detach(footer);
+    		}
+    	};
+    }
+
+    function instance$b($$self) {
+    	let date = new Date().getFullYear();
+    	return [date];
+    }
+
+    class Footer extends SvelteComponent {
+    	constructor(options) {
+    		super();
+    		init(this, options, instance$b, create_fragment$a, safe_not_equal, {});
+    	}
+    }
+
+    /* src\components\Cards\HoldingCard.svelte generated by Svelte v3.59.2 */
+
+    function create_fragment$9(ctx) {
+    	let div6;
+    	let div5;
+    	let div4;
+    	let div3;
+    	let div0;
+    	let cardstats0;
+    	let t0;
+    	let div1;
+    	let cardstats1;
+    	let t1;
+    	let div2;
+    	let cardstats2;
+    	let current;
+
+    	cardstats0 = new CardStats({
+    			props: {
+    				statSubtitle: "Total Asset",
+    				statTitle: /*totalAssetValue*/ ctx[0].toLocaleString(),
+    				statArrow: "up",
+    				statPercent: "3.48",
+    				statPercentColor: "text-emerald-500",
+    				statDescripiron: "Since last month",
+    				statIconName: "far fa-chart-bar",
+    				statIconColor: "bg-red-500"
+    			}
+    		});
+
+    	cardstats1 = new CardStats({
+    			props: {
+    				statSubtitle: "CHANGE SINCE YESTERDAY",
+    				statTitle: /*changeValue*/ ctx[1],
+    				statArrow: "down",
+    				statPercent: "3.48",
+    				statPercentColor: "text-red-500",
+    				statDescripiron: "Since last week",
+    				statIconName: "fas fa-chart-pie",
+    				statIconColor: "bg-orange-500"
+    			}
+    		});
+
+    	cardstats2 = new CardStats({
+    			props: {
+    				statSubtitle: "TOTAL TOKENS",
+    				statTitle: /*coins*/ ctx[2].length,
+    				statArrow: "down",
+    				statPercent: "1.10",
+    				statPercentColor: "text-orange-500",
+    				statDescripiron: "Since yesterday",
+    				statIconName: "fas fa-users",
+    				statIconColor: "bg-pink-500"
+    			}
+    		});
+
+    	return {
+    		c() {
+    			div6 = element("div");
+    			div5 = element("div");
+    			div4 = element("div");
+    			div3 = element("div");
+    			div0 = element("div");
+    			create_component(cardstats0.$$.fragment);
+    			t0 = space();
+    			div1 = element("div");
+    			create_component(cardstats1.$$.fragment);
+    			t1 = space();
+    			div2 = element("div");
+    			create_component(cardstats2.$$.fragment);
+    			attr(div0, "class", "w-1/3 lg:w-1/3 xl:w-1/3 px-4");
+    			attr(div1, "class", "w-1/3 lg:w-1/3 xl:w-1/3 px-4");
+    			attr(div2, "class", "w-1/3 lg:w-1/3 xl:w-1/3 px-4");
+    			attr(div3, "class", "flex flex-wrap");
+    			attr(div5, "class", "px-4 md:px-10 mx-auto w-full");
+    			attr(div6, "class", "relative md:ml-64 bg-red-500 pb-6 pt-12");
+    		},
+    		m(target, anchor) {
+    			insert(target, div6, anchor);
+    			append(div6, div5);
+    			append(div5, div4);
+    			append(div4, div3);
+    			append(div3, div0);
+    			mount_component(cardstats0, div0, null);
+    			append(div3, t0);
+    			append(div3, div1);
+    			mount_component(cardstats1, div1, null);
+    			append(div3, t1);
+    			append(div3, div2);
+    			mount_component(cardstats2, div2, null);
+    			current = true;
+    		},
+    		p(ctx, [dirty]) {
+    			const cardstats0_changes = {};
+    			if (dirty & /*totalAssetValue*/ 1) cardstats0_changes.statTitle = /*totalAssetValue*/ ctx[0].toLocaleString();
+    			cardstats0.$set(cardstats0_changes);
+    			const cardstats1_changes = {};
+    			if (dirty & /*changeValue*/ 2) cardstats1_changes.statTitle = /*changeValue*/ ctx[1];
+    			cardstats1.$set(cardstats1_changes);
+    			const cardstats2_changes = {};
+    			if (dirty & /*coins*/ 4) cardstats2_changes.statTitle = /*coins*/ ctx[2].length;
+    			cardstats2.$set(cardstats2_changes);
+    		},
+    		i(local) {
+    			if (current) return;
+    			transition_in(cardstats0.$$.fragment, local);
+    			transition_in(cardstats1.$$.fragment, local);
+    			transition_in(cardstats2.$$.fragment, local);
+    			current = true;
+    		},
+    		o(local) {
+    			transition_out(cardstats0.$$.fragment, local);
+    			transition_out(cardstats1.$$.fragment, local);
+    			transition_out(cardstats2.$$.fragment, local);
+    			current = false;
+    		},
+    		d(detaching) {
+    			if (detaching) detach(div6);
+    			destroy_component(cardstats0);
+    			destroy_component(cardstats1);
+    			destroy_component(cardstats2);
+    		}
+    	};
+    }
+
+    async function fetchCoinData(address, decimal) {
+    	try {
+    		const wallet = sessionStorage.getItem('walletAddress');
+
+    		const bal = await ethereum.request({
+    			method: 'eth_call',
+    			params: [
+    				{
+    					to: address,
+    					data: "0x70a08231" + "000000000000000000000000" + wallet.substring(2)
+    				},
+    				'latest'
+    			]
+    		});
+
+    		const value = parseInt(bal, 16) / 10 ** decimal;
+    		return value;
+    	} catch(error) {
+    		console.error("Error fetching coin data:", error);
+    		return 0;
+    	}
+    }
+
+    function getRandomReal(min, max) {
+    	return Math.random() * (max - min) + min;
+    }
+
+    function instance$a($$self, $$props, $$invalidate) {
+    	let totalAssetValue = 0;
+    	let changeValue = 0;
+    	let coins = [];
+
+    	onMount(async () => {
+    		try {
+    			let response = await fetch('http://localhost:9000/market');
+    			let jsonData = await response.json();
+    			let data = jsonData;
+
+    			$$invalidate(2, coins = await Promise.all(data.map(async obj => {
+    				const response = await fetch(`http://localhost:9000/token/${obj.token}`);
+    				const jsonData = await response.json();
+    				let dat = jsonData;
+    				let tokenAddress = dat.address;
+    				let decimal = dat.decimal;
+    				let logo = dat.logo;
+    				let holdingValue = await fetchCoinData(tokenAddress, decimal);
+    				let marketcoin = await fetch(`http://localhost:9000/market/${obj.token}`);
+    				marketcoin = await marketcoin.json();
+
+    				//console.log(marketcoin.currentPrice);
+    				$$invalidate(0, totalAssetValue += holdingValue * marketcoin.currentPrice);
+
+    				return {
+    					name: dat.name,
+    					code: obj.token.toUpperCase(),
+    					price: marketcoin.currentPrice,
+    					amount: parseFloat(holdingValue.toFixed(7)),
+    					usd: parseFloat((holdingValue * marketcoin.currentPrice).toFixed(7)),
+    					change24h: marketcoin.change24h,
+    					logo
+    				};
+    			})));
+
+    			let userID = await sessionStorage.getItem("userID");
+    			let valueUpdate = { value: totalAssetValue.toFixed(2) };
+
+    			response = await fetch(`http://localhost:9000/holding/${userID}/asset`, {
+    				method: 'PATCH',
+    				headers: { 'Content-Type': 'application/json' },
+    				body: JSON.stringify(valueUpdate)
+    			});
+
+    			sessionStorage.setItem("coins", JSON.stringify(coins));
+    			response = await fetch(`http://localhost:9000/holding/${userID}`);
+    			jsonData = await response.json();
+    			let assets = jsonData.assets;
+    			sessionStorage.setItem("assets", JSON.stringify(assets));
+    			$$invalidate(2, coins = coins.filter(coin => coin.amount > 0));
+    			$$invalidate(1, changeValue = (getRandomReal(0, 10) - 5) * totalAssetValue / 100);
+    			$$invalidate(1, changeValue = changeValue.toFixed(5));
+    		} catch(error) {
+    			console.error("Error fetching token data:", error);
+    		}
+    	});
+
+    	return [totalAssetValue, changeValue, coins];
+    }
+
+    class HoldingCard extends SvelteComponent {
+    	constructor(options) {
+    		super();
+    		init(this, options, instance$a, create_fragment$9, safe_not_equal, {});
+    	}
+    }
+
+    /* src\views\admin\Profile.svelte generated by Svelte v3.59.2 */
+
+    function create_fragment$8(ctx) {
+    	let div13;
+    	let div1;
+    	let div0;
+    	let holdingcard;
+    	let t0;
+    	let main;
+    	let section0;
+    	let t2;
+    	let section1;
+    	let div12;
+    	let div11;
+    	let div10;
+    	let div6;
+    	let div5;
+    	let div4;
+    	let img;
+    	let img_src_value;
+    	let t3;
+    	let div9;
+    	let br0;
+    	let br1;
+    	let t4;
+    	let h3;
+    	let t5;
+    	let t6;
+    	let div7;
+    	let i0;
+    	let t7;
+    	let t8;
+    	let t9;
+    	let div8;
+    	let i1;
+    	let t10;
+    	let t11;
+    	let t12;
+    	let br2;
+    	let t13;
+    	let br3;
+    	let t14;
+    	let footer;
+    	let current;
+    	holdingcard = new HoldingCard({});
+    	footer = new Footer({});
+
+    	return {
+    		c() {
+    			div13 = element("div");
+    			div1 = element("div");
+    			div0 = element("div");
+    			create_component(holdingcard.$$.fragment);
+    			t0 = space();
+    			main = element("main");
+    			section0 = element("section");
+
+    			section0.innerHTML = `<div class="absolute top-0 w-full h-full bg-center bg-cover" style="background-image: url(https://images.unsplash.com/photo-1499336315816-097655dcfbda?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=2710&amp;q=80); "><span id="blackOverlay" class="w-full h-full absolute opacity-50 bg-black"></span></div> 
+      <div class="top-auto bottom-0 left-0 right-0 w-full absolute pointer-events-none overflow-hidden h-70-px" style="transform: translateZ(0);"><svg class="absolute bottom-0 overflow-hidden" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" version="1.1" viewBox="0 0 2560 100" x="0" y="0"><polygon class="text-blueGray-200 fill-current" points="2560 0 2560 100 0 100"></polygon></svg></div>`;
+
+    			t2 = space();
+    			section1 = element("section");
+    			div12 = element("div");
+    			div11 = element("div");
+    			div10 = element("div");
+    			div6 = element("div");
+    			div5 = element("div");
+    			div4 = element("div");
+    			img = element("img");
+    			t3 = space();
+    			div9 = element("div");
+    			br0 = element("br");
+    			br1 = element("br");
+    			t4 = space();
+    			h3 = element("h3");
+    			t5 = text(/*name*/ ctx[1]);
+    			t6 = space();
+    			div7 = element("div");
+    			i0 = element("i");
+    			t7 = space();
+    			t8 = text(/*email*/ ctx[0]);
+    			t9 = space();
+    			div8 = element("div");
+    			i1 = element("i");
+    			t10 = space();
+    			t11 = text(/*wallet*/ ctx[2]);
+    			t12 = space();
+    			br2 = element("br");
+    			t13 = space();
+    			br3 = element("br");
+    			t14 = space();
+    			create_component(footer.$$.fragment);
+    			attr(div0, "class", "w-full justify-center mb-12 xl:mb-0 px-4 -m-24");
+    			attr(div1, "class", "flex flex-wrap");
+    			attr(section0, "class", "relative block h-500-px");
+    			attr(img, "alt", "...");
+    			if (!src_url_equal(img.src, img_src_value = team1$1)) attr(img, "src", img_src_value);
+    			attr(img, "class", "shadow-xl rounded-full h-auto align-middle border-none absolute -m-16 -ml-20 lg:-ml-16 max-w-150-px");
+    			attr(div4, "class", "relative");
+    			attr(div5, "class", "w-full lg:w-3/12 px-4 lg:order-2 flex justify-center");
+    			attr(div6, "class", "flex flex-wrap justify-center");
+    			attr(h3, "class", "text-4xl font-semibold leading-normal mb-2 text-blueGray-700 mb-2");
+    			attr(i0, "class", "fas fa-envelope mr-2 text-lg text-blueGray-400");
+    			attr(div7, "class", "text-sm leading-normal mt-0 mb-2 text-blueGray-400 font-bold uppercase");
+    			attr(i1, "class", "fas fa-map-marker-alt mr-2 text-lg text-blueGray-400");
+    			attr(div8, "class", "mb-2 text-blueGray-600 mt-10");
+    			attr(div9, "class", "text-center mt-12");
+    			attr(div10, "class", "px-6");
+    			attr(div11, "class", "relative flex flex-col min-w-0 break-words bg-white w-full mb-6 shadow-xl rounded-lg -mt-64");
+    			attr(div12, "class", "container mx-auto px-4");
+    			attr(section1, "class", "relative py-16 bg-blueGray-200");
+    			attr(main, "class", "profile-page");
+    		},
+    		m(target, anchor) {
+    			insert(target, div13, anchor);
+    			append(div13, div1);
+    			append(div1, div0);
+    			mount_component(holdingcard, div0, null);
+    			append(div13, t0);
+    			append(div13, main);
+    			append(main, section0);
+    			append(main, t2);
+    			append(main, section1);
+    			append(section1, div12);
+    			append(div12, div11);
+    			append(div11, div10);
+    			append(div10, div6);
+    			append(div6, div5);
+    			append(div5, div4);
+    			append(div4, img);
+    			append(div10, t3);
+    			append(div10, div9);
+    			append(div9, br0);
+    			append(div9, br1);
+    			append(div9, t4);
+    			append(div9, h3);
+    			append(h3, t5);
+    			append(div9, t6);
+    			append(div9, div7);
+    			append(div7, i0);
+    			append(div7, t7);
+    			append(div7, t8);
+    			append(div9, t9);
+    			append(div9, div8);
+    			append(div8, i1);
+    			append(div8, t10);
+    			append(div8, t11);
+    			append(div9, t12);
+    			append(div9, br2);
+    			append(div9, t13);
+    			append(div9, br3);
+    			append(div13, t14);
+    			mount_component(footer, div13, null);
+    			current = true;
+    		},
+    		p(ctx, [dirty]) {
+    			if (!current || dirty & /*name*/ 2) set_data(t5, /*name*/ ctx[1]);
+    			if (!current || dirty & /*email*/ 1) set_data(t8, /*email*/ ctx[0]);
+    			if (!current || dirty & /*wallet*/ 4) set_data(t11, /*wallet*/ ctx[2]);
+    		},
+    		i(local) {
+    			if (current) return;
+    			transition_in(holdingcard.$$.fragment, local);
+    			transition_in(footer.$$.fragment, local);
+    			current = true;
+    		},
+    		o(local) {
+    			transition_out(holdingcard.$$.fragment, local);
+    			transition_out(footer.$$.fragment, local);
+    			current = false;
+    		},
+    		d(detaching) {
+    			if (detaching) detach(div13);
+    			destroy_component(holdingcard);
+    			destroy_component(footer);
+    		}
+    	};
+    }
+
+    const team1$1 = "/assets/img/team-1-800x800.jpg";
+
+    function instance$9($$self, $$props, $$invalidate) {
+    	let { location } = $$props;
+    	let email = "";
+    	let name = "";
+    	let wallet = "";
+    	let userID = sessionStorage.getItem("userID");
+
+    	onMount(async () => {
+    		const response = await fetch(`http://localhost:9000/user/${userID}`);
+    		const jsonData = await response.json();
+    		let data = jsonData;
+    		$$invalidate(0, email = data.email);
+    		$$invalidate(1, name = data.name);
+    		$$invalidate(2, wallet = data.wallet);
+    	});
+
+    	$$self.$$set = $$props => {
+    		if ('location' in $$props) $$invalidate(3, location = $$props.location);
+    	};
+
+    	return [email, name, wallet, location];
+    }
+
+    class Profile extends SvelteComponent {
+    	constructor(options) {
+    		super();
+    		init(this, options, instance$9, create_fragment$8, safe_not_equal, { location: 3 });
+    	}
+    }
+
     /* src\layouts\Admin.svelte generated by Svelte v3.59.2 */
 
     function create_default_slot$2(ctx) {
@@ -38424,6 +39544,8 @@ var app = (function () {
     	let route8;
     	let t8;
     	let route9;
+    	let t9;
+    	let route10;
     	let current;
 
     	route0 = new Route({
@@ -38470,6 +39592,10 @@ var app = (function () {
     			}
     		});
 
+    	route10 = new Route({
+    			props: { path: "profile", component: Profile }
+    		});
+
     	return {
     		c() {
     			create_component(route0.$$.fragment);
@@ -38491,6 +39617,8 @@ var app = (function () {
     			create_component(route8.$$.fragment);
     			t8 = space();
     			create_component(route9.$$.fragment);
+    			t9 = space();
+    			create_component(route10.$$.fragment);
     		},
     		m(target, anchor) {
     			mount_component(route0, target, anchor);
@@ -38512,6 +39640,8 @@ var app = (function () {
     			mount_component(route8, target, anchor);
     			insert(target, t8, anchor);
     			mount_component(route9, target, anchor);
+    			insert(target, t9, anchor);
+    			mount_component(route10, target, anchor);
     			current = true;
     		},
     		p: noop$1,
@@ -38527,6 +39657,7 @@ var app = (function () {
     			transition_in(route7.$$.fragment, local);
     			transition_in(route8.$$.fragment, local);
     			transition_in(route9.$$.fragment, local);
+    			transition_in(route10.$$.fragment, local);
     			current = true;
     		},
     		o(local) {
@@ -38540,6 +39671,7 @@ var app = (function () {
     			transition_out(route7.$$.fragment, local);
     			transition_out(route8.$$.fragment, local);
     			transition_out(route9.$$.fragment, local);
+    			transition_out(route10.$$.fragment, local);
     			current = false;
     		},
     		d(detaching) {
@@ -38562,11 +39694,13 @@ var app = (function () {
     			destroy_component(route8, detaching);
     			if (detaching) detach(t8);
     			destroy_component(route9, detaching);
+    			if (detaching) detach(t9);
+    			destroy_component(route10, detaching);
     		}
     	};
     }
 
-    function create_fragment$a(ctx) {
+    function create_fragment$7(ctx) {
     	let div2;
     	let sidebar;
     	let t0;
@@ -38666,7 +39800,7 @@ var app = (function () {
     	};
     }
 
-    function instance$b($$self, $$props, $$invalidate) {
+    function instance$8($$self, $$props, $$invalidate) {
     	let { location } = $$props;
     	let { admin = "" } = $$props;
 
@@ -38681,263 +39815,12 @@ var app = (function () {
     class Admin extends SvelteComponent {
     	constructor(options) {
     		super();
-    		init(this, options, instance$b, create_fragment$a, safe_not_equal, { location: 0, admin: 1 });
-    	}
-    }
-
-    /* src\components\Dropdowns\PagesDropdown.svelte generated by Svelte v3.59.2 */
-
-    function create_fragment$9(ctx) {
-    	let div3;
-    	let a0;
-    	let t1;
-    	let div2;
-    	let span0;
-    	let t3;
-    	let a1;
-    	let t5;
-    	let a2;
-    	let t7;
-    	let a3;
-    	let t9;
-    	let a4;
-    	let t11;
-    	let div0;
-    	let t12;
-    	let span1;
-    	let t14;
-    	let a5;
-    	let t16;
-    	let a6;
-    	let t18;
-    	let div1;
-    	let t19;
-    	let span2;
-    	let t21;
-    	let a7;
-    	let t23;
-    	let a8;
-    	let div2_class_value;
-    	let mounted;
-    	let dispose;
-
-    	return {
-    		c() {
-    			div3 = element("div");
-    			a0 = element("a");
-    			a0.textContent = "quick access";
-    			t1 = space();
-    			div2 = element("div");
-    			span0 = element("span");
-    			span0.textContent = "Admin Layout";
-    			t3 = space();
-    			a1 = element("a");
-    			a1.textContent = "Dashboard";
-    			t5 = space();
-    			a2 = element("a");
-    			a2.textContent = "Settings";
-    			t7 = space();
-    			a3 = element("a");
-    			a3.textContent = "Tables";
-    			t9 = space();
-    			a4 = element("a");
-    			a4.textContent = "Maps";
-    			t11 = space();
-    			div0 = element("div");
-    			t12 = space();
-    			span1 = element("span");
-    			span1.textContent = "Auth Layout";
-    			t14 = space();
-    			a5 = element("a");
-    			a5.textContent = "Login";
-    			t16 = space();
-    			a6 = element("a");
-    			a6.textContent = "Register";
-    			t18 = space();
-    			div1 = element("div");
-    			t19 = space();
-    			span2 = element("span");
-    			span2.textContent = "No Layout";
-    			t21 = space();
-    			a7 = element("a");
-    			a7.textContent = "Landing";
-    			t23 = space();
-    			a8 = element("a");
-    			a8.textContent = "Profile";
-    			attr(a0, "class", "lg:text-white lg:hover:text-blueGray-200 text-blueGray-700 px-3 py-4 lg:py-2 flex items-center text-xs uppercase font-bold");
-    			attr(a0, "href", "#pablo");
-    			attr(span0, "class", "text-sm pt-2 pb-0 px-4 font-bold block w-full whitespace-nowrap bg-transparent text-blueGray-400");
-    			attr(a1, "href", "/admin/dashboard");
-    			attr(a1, "class", "text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700");
-    			attr(a2, "href", "/admin/settings");
-    			attr(a2, "class", "text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700");
-    			attr(a3, "href", "/admin/tables");
-    			attr(a3, "class", "text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700");
-    			attr(a4, "href", "/admin/maps");
-    			attr(a4, "class", "text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700");
-    			attr(div0, "class", "h-0 mx-4 my-2 border border-solid border-blueGray-100");
-    			attr(span1, "class", "text-sm pt-2 pb-0 px-4 font-bold block w-full whitespace-nowrap bg-transparent text-blueGray-400");
-    			attr(a5, "href", "/auth/login");
-    			attr(a5, "class", "text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700");
-    			attr(a6, "href", "/auth/register");
-    			attr(a6, "class", "text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700");
-    			attr(div1, "class", "h-0 mx-4 my-2 border border-solid border-blueGray-100");
-    			attr(span2, "class", "text-sm pt-2 pb-0 px-4 font-bold block w-full whitespace-nowrap bg-transparent text-blueGray-400");
-    			attr(a7, "href", "/landing");
-    			attr(a7, "class", "text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700");
-    			attr(a8, "href", "/profile");
-    			attr(a8, "class", "text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700");
-    			attr(div2, "class", div2_class_value = "bg-white text-base z-50 float-left py-2 list-none text-left rounded shadow-lg min-w-48 " + (/*dropdownPopoverShow*/ ctx[0] ? 'block' : 'hidden'));
-    		},
-    		m(target, anchor) {
-    			insert(target, div3, anchor);
-    			append(div3, a0);
-    			/*a0_binding*/ ctx[4](a0);
-    			append(div3, t1);
-    			append(div3, div2);
-    			append(div2, span0);
-    			append(div2, t3);
-    			append(div2, a1);
-    			append(div2, t5);
-    			append(div2, a2);
-    			append(div2, t7);
-    			append(div2, a3);
-    			append(div2, t9);
-    			append(div2, a4);
-    			append(div2, t11);
-    			append(div2, div0);
-    			append(div2, t12);
-    			append(div2, span1);
-    			append(div2, t14);
-    			append(div2, a5);
-    			append(div2, t16);
-    			append(div2, a6);
-    			append(div2, t18);
-    			append(div2, div1);
-    			append(div2, t19);
-    			append(div2, span2);
-    			append(div2, t21);
-    			append(div2, a7);
-    			append(div2, t23);
-    			append(div2, a8);
-    			/*div2_binding*/ ctx[5](div2);
-
-    			if (!mounted) {
-    				dispose = [
-    					listen(a0, "click", /*toggleDropdown*/ ctx[3]),
-    					action_destroyer(link.call(null, a1)),
-    					action_destroyer(link.call(null, a2)),
-    					action_destroyer(link.call(null, a3)),
-    					action_destroyer(link.call(null, a4)),
-    					action_destroyer(link.call(null, a5)),
-    					action_destroyer(link.call(null, a6)),
-    					action_destroyer(link.call(null, a7)),
-    					action_destroyer(link.call(null, a8))
-    				];
-
-    				mounted = true;
-    			}
-    		},
-    		p(ctx, [dirty]) {
-    			if (dirty & /*dropdownPopoverShow*/ 1 && div2_class_value !== (div2_class_value = "bg-white text-base z-50 float-left py-2 list-none text-left rounded shadow-lg min-w-48 " + (/*dropdownPopoverShow*/ ctx[0] ? 'block' : 'hidden'))) {
-    				attr(div2, "class", div2_class_value);
-    			}
-    		},
-    		i: noop$1,
-    		o: noop$1,
-    		d(detaching) {
-    			if (detaching) detach(div3);
-    			/*a0_binding*/ ctx[4](null);
-    			/*div2_binding*/ ctx[5](null);
-    			mounted = false;
-    			run_all(dispose);
-    		}
-    	};
-    }
-
-    function instance$a($$self, $$props, $$invalidate) {
-    	let dropdownPopoverShow = false;
-    	let btnDropdownRef;
-    	let popoverDropdownRef;
-
-    	const toggleDropdown = event => {
-    		event.preventDefault();
-
-    		if (dropdownPopoverShow) {
-    			$$invalidate(0, dropdownPopoverShow = false);
-    		} else {
-    			$$invalidate(0, dropdownPopoverShow = true);
-    			createPopper(btnDropdownRef, popoverDropdownRef, { placement: "bottom-start" });
-    		}
-    	};
-
-    	function a0_binding($$value) {
-    		binding_callbacks[$$value ? 'unshift' : 'push'](() => {
-    			btnDropdownRef = $$value;
-    			$$invalidate(1, btnDropdownRef);
-    		});
-    	}
-
-    	function div2_binding($$value) {
-    		binding_callbacks[$$value ? 'unshift' : 'push'](() => {
-    			popoverDropdownRef = $$value;
-    			$$invalidate(2, popoverDropdownRef);
-    		});
-    	}
-
-    	return [
-    		dropdownPopoverShow,
-    		btnDropdownRef,
-    		popoverDropdownRef,
-    		toggleDropdown,
-    		a0_binding,
-    		div2_binding
-    	];
-    }
-
-    class PagesDropdown extends SvelteComponent {
-    	constructor(options) {
-    		super();
-    		init(this, options, instance$a, create_fragment$9, safe_not_equal, {});
+    		init(this, options, instance$8, create_fragment$7, safe_not_equal, { location: 0, admin: 1 });
     	}
     }
 
     /* src\components\Navbars\AuthNavbar.svelte generated by Svelte v3.59.2 */
 
-    function create_if_block_1(ctx) {
-    	let li;
-    	let pagesdropdown;
-    	let current;
-    	pagesdropdown = new PagesDropdown({});
-
-    	return {
-    		c() {
-    			li = element("li");
-    			create_component(pagesdropdown.$$.fragment);
-    			attr(li, "class", "flex items-center");
-    		},
-    		m(target, anchor) {
-    			insert(target, li, anchor);
-    			mount_component(pagesdropdown, li, null);
-    			current = true;
-    		},
-    		i(local) {
-    			if (current) return;
-    			transition_in(pagesdropdown.$$.fragment, local);
-    			current = true;
-    		},
-    		o(local) {
-    			transition_out(pagesdropdown.$$.fragment, local);
-    			current = false;
-    		},
-    		d(detaching) {
-    			if (detaching) detach(li);
-    			destroy_component(pagesdropdown);
-    		}
-    	};
-    }
-
-    // (125:8) {:else}
     function create_else_block(ctx) {
     	let li0;
     	let t1;
@@ -38967,7 +39850,7 @@ var app = (function () {
     	};
     }
 
-    // (107:8) {#if isLoggedIn}
+    // (102:8) {#if isLoggedIn}
     function create_if_block(ctx) {
     	let li0;
     	let button;
@@ -39020,7 +39903,7 @@ var app = (function () {
     	};
     }
 
-    function create_fragment$8(ctx) {
+    function create_fragment$6(ctx) {
     	let nav;
     	let div2;
     	let div0;
@@ -39030,18 +39913,15 @@ var app = (function () {
     	let t2;
     	let div1;
     	let ul;
-    	let t3;
     	let li0;
-    	let t6;
+    	let t5;
     	let li1;
-    	let t9;
+    	let t8;
     	let li2;
-    	let t12;
+    	let t11;
     	let div1_class_value;
-    	let current;
     	let mounted;
     	let dispose;
-    	let if_block0 = /*isLoggedIn*/ ctx[1] && create_if_block_1();
 
     	function select_block_type(ctx, dirty) {
     		if (/*isLoggedIn*/ ctx[1]) return create_if_block;
@@ -39049,7 +39929,7 @@ var app = (function () {
     	}
 
     	let current_block_type = select_block_type(ctx);
-    	let if_block1 = current_block_type(ctx);
+    	let if_block = current_block_type(ctx);
 
     	return {
     		c() {
@@ -39064,27 +39944,25 @@ var app = (function () {
     			t2 = space();
     			div1 = element("div");
     			ul = element("ul");
-    			if (if_block0) if_block0.c();
-    			t3 = space();
     			li0 = element("li");
 
     			li0.innerHTML = `<a class="lg:text-white lg:hover:text-blueGray-200 text-blueGray-700 px-3 py-4 lg:py-2 flex items-center text-xs uppercase font-bold" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdemos.creative-tim.com%2Fnotus-svelte%2F%23%2F" target="_blank"><i class="lg:text-blueGray-200 text-blueGray-400 fab fa-facebook text-lg leading-lg"></i> 
             <span class="lg:hidden inline-block ml-2">Share</span></a>`;
 
-    			t6 = space();
+    			t5 = space();
     			li1 = element("li");
 
     			li1.innerHTML = `<a class="lg:text-white lg:hover:text-blueGray-200 text-blueGray-700 px-3 py-4 lg:py-2 flex items-center text-xs uppercase font-bold" href="https://twitter.com/intent/tweet?url=https%3A%2F%2Fdemos.creative-tim.com%2Fnotus-svelte%2F&amp;text=Start%20your%20development%20with%20a%20Free%20Tailwind%20CSS%20and%20Svelte%20UI%20Kit%20and%20Admin.%20Let%20Notus%20Svelte%20amaze%20you%20with%20its%20cool%20features%20and%20build%20tools%20and%20get%20your%20project%20to%20a%20whole%20new%20level." target="_blank"><i class="lg:text-blueGray-200 text-blueGray-400 fab fa-twitter text-lg leading-lg"></i> 
             <span class="lg:hidden inline-block ml-2">Tweet</span></a>`;
 
-    			t9 = space();
+    			t8 = space();
     			li2 = element("li");
 
     			li2.innerHTML = `<a class="lg:text-white lg:hover:text-blueGray-200 text-blueGray-700 px-3 py-4 lg:py-2 flex items-center text-xs uppercase font-bold" href="https://github.com/creativetimofficial/notus-svelte?ref=ns-auth-navbar" target="_blank"><i class="lg:text-blueGray-200 text-blueGray-400 fab fa-github text-lg leading-lg"></i> 
             <span class="lg:hidden inline-block ml-2">Star</span></a>`;
 
-    			t12 = space();
-    			if_block1.c();
+    			t11 = space();
+    			if_block.c();
     			attr(a0, "class", "text-white text-sm font-bold leading-relaxed inline-block mr-4 py-2 whitespace-nowrap uppercase");
     			attr(a0, "href", "/");
     			attr(button, "class", "cursor-pointer text-xl leading-none px-3 py-1 border border-solid border-transparent rounded bg-transparent block lg:hidden outline-none focus:outline-none");
@@ -39109,16 +39987,13 @@ var app = (function () {
     			append(div2, t2);
     			append(div2, div1);
     			append(div1, ul);
-    			if (if_block0) if_block0.m(ul, null);
-    			append(ul, t3);
     			append(ul, li0);
-    			append(ul, t6);
+    			append(ul, t5);
     			append(ul, li1);
-    			append(ul, t9);
+    			append(ul, t8);
     			append(ul, li2);
-    			append(ul, t12);
-    			if_block1.m(ul, null);
-    			current = true;
+    			append(ul, t11);
+    			if_block.m(ul, null);
 
     			if (!mounted) {
     				dispose = [
@@ -39130,56 +40005,27 @@ var app = (function () {
     			}
     		},
     		p(ctx, [dirty]) {
-    			if (/*isLoggedIn*/ ctx[1]) {
-    				if (if_block0) {
-    					if (dirty & /*isLoggedIn*/ 2) {
-    						transition_in(if_block0, 1);
-    					}
-    				} else {
-    					if_block0 = create_if_block_1();
-    					if_block0.c();
-    					transition_in(if_block0, 1);
-    					if_block0.m(ul, t3);
-    				}
-    			} else if (if_block0) {
-    				group_outros();
-
-    				transition_out(if_block0, 1, 1, () => {
-    					if_block0 = null;
-    				});
-
-    				check_outros();
-    			}
-
-    			if (current_block_type === (current_block_type = select_block_type(ctx)) && if_block1) {
-    				if_block1.p(ctx, dirty);
+    			if (current_block_type === (current_block_type = select_block_type(ctx)) && if_block) {
+    				if_block.p(ctx, dirty);
     			} else {
-    				if_block1.d(1);
-    				if_block1 = current_block_type(ctx);
+    				if_block.d(1);
+    				if_block = current_block_type(ctx);
 
-    				if (if_block1) {
-    					if_block1.c();
-    					if_block1.m(ul, null);
+    				if (if_block) {
+    					if_block.c();
+    					if_block.m(ul, null);
     				}
     			}
 
-    			if (!current || dirty & /*navbarOpen*/ 1 && div1_class_value !== (div1_class_value = "lg:flex flex-grow items-center bg-white lg:bg-opacity-0 lg:shadow-none rounded shadow-lg " + (/*navbarOpen*/ ctx[0] ? 'block' : 'hidden'))) {
+    			if (dirty & /*navbarOpen*/ 1 && div1_class_value !== (div1_class_value = "lg:flex flex-grow items-center bg-white lg:bg-opacity-0 lg:shadow-none rounded shadow-lg " + (/*navbarOpen*/ ctx[0] ? 'block' : 'hidden'))) {
     				attr(div1, "class", div1_class_value);
     			}
     		},
-    		i(local) {
-    			if (current) return;
-    			transition_in(if_block0);
-    			current = true;
-    		},
-    		o(local) {
-    			transition_out(if_block0);
-    			current = false;
-    		},
+    		i: noop$1,
+    		o: noop$1,
     		d(detaching) {
     			if (detaching) detach(nav);
-    			if (if_block0) if_block0.d();
-    			if_block1.d();
+    			if_block.d();
     			mounted = false;
     			run_all(dispose);
     		}
@@ -39193,7 +40039,7 @@ var app = (function () {
     	location.reload();
     }
 
-    function instance$9($$self, $$props, $$invalidate) {
+    function instance$7($$self, $$props, $$invalidate) {
     	let navbarOpen = false;
 
     	function setNavbarOpen() {
@@ -39213,13 +40059,13 @@ var app = (function () {
     class AuthNavbar extends SvelteComponent {
     	constructor(options) {
     		super();
-    		init(this, options, instance$9, create_fragment$8, safe_not_equal, {});
+    		init(this, options, instance$7, create_fragment$6, safe_not_equal, {});
     	}
     }
 
     /* src\components\Footers\FooterSmall.svelte generated by Svelte v3.59.2 */
 
-    function create_fragment$7(ctx) {
+    function create_fragment$5(ctx) {
     	let footer;
     	let div4;
     	let hr;
@@ -39300,7 +40146,7 @@ var app = (function () {
     	};
     }
 
-    function instance$8($$self, $$props, $$invalidate) {
+    function instance$6($$self, $$props, $$invalidate) {
     	let date = new Date().getFullYear();
     	let { absolute = false } = $$props;
 
@@ -39314,13 +40160,13 @@ var app = (function () {
     class FooterSmall extends SvelteComponent {
     	constructor(options) {
     		super();
-    		init(this, options, instance$8, create_fragment$7, safe_not_equal, { absolute: 0 });
+    		init(this, options, instance$6, create_fragment$5, safe_not_equal, { absolute: 0 });
     	}
     }
 
     /* src\views\auth\Login.svelte generated by Svelte v3.59.2 */
 
-    function create_fragment$6(ctx) {
+    function create_fragment$4(ctx) {
     	let div15;
     	let div14;
     	let div13;
@@ -39522,7 +40368,7 @@ var app = (function () {
     					listen(input0, "input", /*input0_input_handler*/ ctx[4]),
     					listen(input1, "input", /*input1_input_handler*/ ctx[5]),
     					listen(button2, "click", /*sendData*/ ctx[2]),
-    					listen(a0, "click", click_handler$2),
+    					listen(a0, "click", click_handler$1),
     					action_destroyer(link.call(null, a1))
     				];
 
@@ -39565,9 +40411,9 @@ var app = (function () {
     	}
     }
 
-    const click_handler$2 = e => e.preventDefault();
+    const click_handler$1 = e => e.preventDefault();
 
-    function instance$7($$self, $$props, $$invalidate) {
+    function instance$5($$self, $$props, $$invalidate) {
     	let username = '';
     	let password = '';
 
@@ -39635,13 +40481,13 @@ var app = (function () {
     class Login extends SvelteComponent {
     	constructor(options) {
     		super();
-    		init(this, options, instance$7, create_fragment$6, safe_not_equal, { location: 3 });
+    		init(this, options, instance$5, create_fragment$4, safe_not_equal, { location: 3 });
     	}
     }
 
     /* src\views\auth\Register.svelte generated by Svelte v3.59.2 */
 
-    function create_fragment$5(ctx) {
+    function create_fragment$3(ctx) {
     	let div13;
     	let div12;
     	let div11;
@@ -39712,7 +40558,7 @@ var app = (function () {
     			form = element("form");
     			div4 = element("div");
 
-    			div4.innerHTML = `<label class="block uppercase text-blueGray-600 text-xs font-bold mb-2" for="grid-name">Name</label> 
+    			div4.innerHTML = `<label class="block uppercase text-blueGray-600 text-xs font-bold mb-2" for="grid-name">Username</label> 
               <input id="grid-name" type="email" class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" placeholder="Name"/>`;
 
     			t11 = space();
@@ -39811,7 +40657,7 @@ var app = (function () {
     			append(form, div8);
 
     			if (!mounted) {
-    				dispose = listen(a, "click", click_handler$1);
+    				dispose = listen(a, "click", click_handler);
     				mounted = true;
     			}
     		},
@@ -39828,9 +40674,9 @@ var app = (function () {
 
     const github = "../assets/img/github.svg";
     const google = "../assets/img/google.svg";
-    const click_handler$1 = e => e.preventDefault();
+    const click_handler = e => e.preventDefault();
 
-    function instance$6($$self, $$props, $$invalidate) {
+    function instance$4($$self, $$props, $$invalidate) {
     	let { location } = $$props;
 
     	$$self.$$set = $$props => {
@@ -39843,7 +40689,7 @@ var app = (function () {
     class Register extends SvelteComponent {
     	constructor(options) {
     		super();
-    		init(this, options, instance$6, create_fragment$5, safe_not_equal, { location: 0 });
+    		init(this, options, instance$4, create_fragment$3, safe_not_equal, { location: 0 });
     	}
     }
 
@@ -39895,7 +40741,7 @@ var app = (function () {
     	};
     }
 
-    function create_fragment$4(ctx) {
+    function create_fragment$2(ctx) {
     	let div1;
     	let authnavbar;
     	let t0;
@@ -39981,7 +40827,7 @@ var app = (function () {
 
     const registerBg2 = "../assets/img/register_bg_2.png";
 
-    function instance$5($$self, $$props, $$invalidate) {
+    function instance$3($$self, $$props, $$invalidate) {
     	let { location } = $$props;
     	let { auth = "" } = $$props;
 
@@ -39996,119 +40842,13 @@ var app = (function () {
     class Auth extends SvelteComponent {
     	constructor(options) {
     		super();
-    		init(this, options, instance$5, create_fragment$4, safe_not_equal, { location: 0, auth: 1 });
-    	}
-    }
-
-    /* src\components\Footers\Footer.svelte generated by Svelte v3.59.2 */
-
-    function create_fragment$3(ctx) {
-    	let footer;
-    	let div0;
-    	let t0;
-    	let div11;
-    	let div7;
-    	let t28;
-    	let hr;
-    	let t29;
-    	let div10;
-    	let div9;
-    	let div8;
-    	let t30;
-    	let t31;
-    	let t32;
-    	let a8;
-
-    	return {
-    		c() {
-    			footer = element("footer");
-    			div0 = element("div");
-    			div0.innerHTML = `<svg class="absolute bottom-0 overflow-hidden" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" version="1.1" viewBox="0 0 2560 100" x="0" y="0"><polygon class="text-blueGray-200 fill-current" points="2560 0 2560 100 0 100"></polygon></svg>`;
-    			t0 = space();
-    			div11 = element("div");
-    			div7 = element("div");
-
-    			div7.innerHTML = `<div class="w-full lg:w-6/12 px-4"><h4 class="text-3xl font-semibold">Let&#39;s keep in touch!</h4> 
-        <h5 class="text-lg mt-0 mb-2 text-blueGray-600">Find us on any of these platforms, we respond 1-2 business days.</h5> 
-        <div class="mt-6 lg:mb-0 mb-6"><button class="bg-white text-lightBlue-400 shadow-lg font-normal h-10 w-10 items-center justify-center align-center rounded-full outline-none focus:outline-none mr-2" type="button"><i class="fab fa-twitter"></i></button> 
-          <button class="bg-white text-lightBlue-600 shadow-lg font-normal h-10 w-10 items-center justify-center align-center rounded-full outline-none focus:outline-none mr-2" type="button"><i class="fab fa-facebook-square"></i></button> 
-          <button class="bg-white text-pink-400 shadow-lg font-normal h-10 w-10 items-center justify-center align-center rounded-full outline-none focus:outline-none mr-2" type="button"><i class="fab fa-dribbble"></i></button> 
-          <button class="bg-white text-blueGray-800 shadow-lg font-normal h-10 w-10 items-center justify-center align-center rounded-full outline-none focus:outline-none mr-2" type="button"><i class="fab fa-github"></i></button></div></div> 
-      <div class="w-full lg:w-6/12 px-4"><div class="flex flex-wrap items-top mb-6"><div class="w-full lg:w-4/12 px-4 ml-auto"><span class="block uppercase text-blueGray-500 text-sm font-semibold mb-2">Useful Links</span> 
-            <ul class="list-unstyled"><li><a class="text-blueGray-600 hover:text-blueGray-800 font-semibold block pb-2 text-sm" href="https://www.creative-tim.com/presentation?ref=ns-footer">About Us</a></li> 
-              <li><a class="text-blueGray-600 hover:text-blueGray-800 font-semibold block pb-2 text-sm" href="https://blog.creative-tim.com?ref=ns-footer">Blog</a></li> 
-              <li><a class="text-blueGray-600 hover:text-blueGray-800 font-semibold block pb-2 text-sm" href="https://www.github.com/creativetimofficial?ref=ns-footer">Github</a></li> 
-              <li><a class="text-blueGray-600 hover:text-blueGray-800 font-semibold block pb-2 text-sm" href="https://www.creative-tim.com/bootstrap-themes/free?ref=ns-footer">Free Products</a></li></ul></div> 
-          <div class="w-full lg:w-4/12 px-4"><span class="block uppercase text-blueGray-500 text-sm font-semibold mb-2">Other Resources</span> 
-            <ul class="list-unstyled"><li><a class="text-blueGray-600 hover:text-blueGray-800 font-semibold block pb-2 text-sm" href="https://github.com/creativetimofficial/notus-svelte/blob/main/LICENSE.md?ref=ns-footer">MIT License</a></li> 
-              <li><a class="text-blueGray-600 hover:text-blueGray-800 font-semibold block pb-2 text-sm" href="https://creative-tim.com/terms?ref=ns-footer">Terms &amp; Conditions</a></li> 
-              <li><a class="text-blueGray-600 hover:text-blueGray-800 font-semibold block pb-2 text-sm" href="https://creative-tim.com/privacy?ref=ns-footer">Privacy Policy</a></li> 
-              <li><a class="text-blueGray-600 hover:text-blueGray-800 font-semibold block pb-2 text-sm" href="https://creative-tim.com/contact-us?ref=ns-footer">Contact Us</a></li></ul></div></div></div>`;
-
-    			t28 = space();
-    			hr = element("hr");
-    			t29 = space();
-    			div10 = element("div");
-    			div9 = element("div");
-    			div8 = element("div");
-    			t30 = text("Copyright © ");
-    			t31 = text(/*date*/ ctx[0]);
-    			t32 = space();
-    			a8 = element("a");
-    			a8.textContent = "FundMan";
-    			attr(div0, "class", "bottom-auto top-0 left-0 right-0 w-full absolute pointer-events-none overflow-hidden -mt-20 h-20");
-    			set_style(div0, "transform", "translateZ(0)");
-    			attr(div7, "class", "flex flex-wrap text-center lg:text-left");
-    			attr(hr, "class", "my-6 border-blueGray-300");
-    			attr(a8, "href", "https://www.creative-tim.com?ref=ns-footer");
-    			attr(a8, "class", "text-blueGray-500 hover:text-blueGray-800");
-    			attr(div8, "class", "text-sm text-blueGray-500 font-semibold py-1");
-    			attr(div9, "class", "w-full md:w-4/12 px-4 mx-auto text-center");
-    			attr(div10, "class", "flex flex-wrap items-center md:justify-between justify-center");
-    			attr(div11, "class", "container mx-auto px-4");
-    			attr(footer, "class", "relative bg-blueGray-200 pt-8 pb-6");
-    		},
-    		m(target, anchor) {
-    			insert(target, footer, anchor);
-    			append(footer, div0);
-    			append(footer, t0);
-    			append(footer, div11);
-    			append(div11, div7);
-    			append(div11, t28);
-    			append(div11, hr);
-    			append(div11, t29);
-    			append(div11, div10);
-    			append(div10, div9);
-    			append(div9, div8);
-    			append(div8, t30);
-    			append(div8, t31);
-    			append(div8, t32);
-    			append(div8, a8);
-    		},
-    		p: noop$1,
-    		i: noop$1,
-    		o: noop$1,
-    		d(detaching) {
-    			if (detaching) detach(footer);
-    		}
-    	};
-    }
-
-    function instance$4($$self) {
-    	let date = new Date().getFullYear();
-    	return [date];
-    }
-
-    class Footer extends SvelteComponent {
-    	constructor(options) {
-    		super();
-    		init(this, options, instance$4, create_fragment$3, safe_not_equal, {});
+    		init(this, options, instance$3, create_fragment$2, safe_not_equal, { location: 0, auth: 1 });
     	}
     }
 
     /* src\views\Index.svelte generated by Svelte v3.59.2 */
 
-    function instance$3($$self, $$props, $$invalidate) {
+    function instance$2($$self, $$props, $$invalidate) {
     	let { location } = $$props;
 
     	onMount(async () => {
@@ -40125,13 +40865,13 @@ var app = (function () {
     class Index extends SvelteComponent {
     	constructor(options) {
     		super();
-    		init(this, options, instance$3, null, safe_not_equal, { location: 0 });
+    		init(this, options, instance$2, null, safe_not_equal, { location: 0 });
     	}
     }
 
     /* src\views\Landing.svelte generated by Svelte v3.59.2 */
 
-    function create_fragment$2(ctx) {
+    function create_fragment$1(ctx) {
     	let div79;
     	let authnavbar;
     	let t0;
@@ -40394,7 +41134,7 @@ var app = (function () {
     			attr(div46, "class", "px-6");
     			attr(div47, "class", "w-full md:w-6/12 lg:w-3/12 lg:mb-0 mb-12 px-4");
     			attr(img3, "alt", "...");
-    			if (!src_url_equal(img3.src, img3_src_value = team2$1)) attr(img3, "src", img3_src_value);
+    			if (!src_url_equal(img3.src, img3_src_value = team2)) attr(img3, "src", img3_src_value);
     			attr(img3, "class", "shadow-lg rounded-full mx-auto max-w-120-px");
     			attr(div49, "class", "pt-6 text-center");
     			attr(div50, "class", "px-6");
@@ -40507,205 +41247,10 @@ var app = (function () {
     	};
     }
 
-    const team1 = "/assets/img/team-1-800x800.jpg";
-    const team2$1 = "/assets/img/team-2-800x800.jpg";
-    const team3 = "/assets/img/team-3-800x800.jpg";
-    const team4 = "/assets/img/team-4-470x470.png";
-
-    function instance$2($$self, $$props, $$invalidate) {
-    	let { location } = $$props;
-
-    	$$self.$$set = $$props => {
-    		if ('location' in $$props) $$invalidate(0, location = $$props.location);
-    	};
-
-    	return [location];
-    }
-
-    class Landing extends SvelteComponent {
-    	constructor(options) {
-    		super();
-    		init(this, options, instance$2, create_fragment$2, safe_not_equal, { location: 0 });
-    	}
-    }
-
-    /* src\views\Profile.svelte generated by Svelte v3.59.2 */
-
-    function create_fragment$1(ctx) {
-    	let div22;
-    	let authnavbar;
-    	let t0;
-    	let main;
-    	let section0;
-    	let t2;
-    	let section1;
-    	let div21;
-    	let div20;
-    	let div19;
-    	let div11;
-    	let div3;
-    	let div2;
-    	let img;
-    	let img_src_value;
-    	let t3;
-    	let div5;
-    	let t5;
-    	let div10;
-    	let t17;
-    	let div15;
-    	let t25;
-    	let div18;
-    	let div17;
-    	let div16;
-    	let p;
-    	let t27;
-    	let a;
-    	let t29;
-    	let footer;
-    	let current;
-    	let mounted;
-    	let dispose;
-    	authnavbar = new AuthNavbar({});
-    	footer = new Footer({});
-
-    	return {
-    		c() {
-    			div22 = element("div");
-    			create_component(authnavbar.$$.fragment);
-    			t0 = space();
-    			main = element("main");
-    			section0 = element("section");
-
-    			section0.innerHTML = `<div class="absolute top-0 w-full h-full bg-center bg-cover" style="background-image: url(https://images.unsplash.com/photo-1499336315816-097655dcfbda?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=2710&amp;q=80); "><span id="blackOverlay" class="w-full h-full absolute opacity-50 bg-black"></span></div> 
-      <div class="top-auto bottom-0 left-0 right-0 w-full absolute pointer-events-none overflow-hidden h-70-px" style="transform: translateZ(0);"><svg class="absolute bottom-0 overflow-hidden" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" version="1.1" viewBox="0 0 2560 100" x="0" y="0"><polygon class="text-blueGray-200 fill-current" points="2560 0 2560 100 0 100"></polygon></svg></div>`;
-
-    			t2 = space();
-    			section1 = element("section");
-    			div21 = element("div");
-    			div20 = element("div");
-    			div19 = element("div");
-    			div11 = element("div");
-    			div3 = element("div");
-    			div2 = element("div");
-    			img = element("img");
-    			t3 = space();
-    			div5 = element("div");
-    			div5.innerHTML = `<div class="py-6 px-3 mt-32 sm:mt-0"><button class="bg-red-400 active:bg-red-500 uppercase text-white font-bold hover:shadow-md shadow text-xs px-4 py-2 rounded outline-none focus:outline-none sm:mr-2 mb-1 ease-linear transition-all duration-150" type="button">Connect</button></div>`;
-    			t5 = space();
-    			div10 = element("div");
-
-    			div10.innerHTML = `<div class="flex justify-center py-4 lg:pt-4 pt-8"><div class="mr-4 p-3 text-center"><span class="text-xl font-bold block uppercase tracking-wide text-blueGray-600">22</span> 
-                    <span class="text-sm text-blueGray-400">Friends</span></div> 
-                  <div class="mr-4 p-3 text-center"><span class="text-xl font-bold block uppercase tracking-wide text-blueGray-600">10</span> 
-                    <span class="text-sm text-blueGray-400">Photos</span></div> 
-                  <div class="lg:mr-4 p-3 text-center"><span class="text-xl font-bold block uppercase tracking-wide text-blueGray-600">89</span> 
-                    <span class="text-sm text-blueGray-400">Comments</span></div></div>`;
-
-    			t17 = space();
-    			div15 = element("div");
-
-    			div15.innerHTML = `<h3 class="text-4xl font-semibold leading-normal mb-2 text-blueGray-700 mb-2">Jenna Stones</h3> 
-              <div class="text-sm leading-normal mt-0 mb-2 text-blueGray-400 font-bold uppercase"><i class="fas fa-map-marker-alt mr-2 text-lg text-blueGray-400"></i>
-                Los Angeles, California</div> 
-              <div class="mb-2 text-blueGray-600 mt-10"><i class="fas fa-briefcase mr-2 text-lg text-blueGray-400"></i>
-                Solution Manager - Creative Tim Officer</div> 
-              <div class="mb-2 text-blueGray-600"><i class="fas fa-university mr-2 text-lg text-blueGray-400"></i>
-                University of Computer Science</div>`;
-
-    			t25 = space();
-    			div18 = element("div");
-    			div17 = element("div");
-    			div16 = element("div");
-    			p = element("p");
-    			p.textContent = "An artist of considerable range, Jenna the name taken by\r\n                    Melbourne-raised, Brooklyn-based Nick Murphy writes,\r\n                    performs and records all of his own music, giving it a warm,\r\n                    intimate feel with a solid groove structure. An artist of\r\n                    considerable range.";
-    			t27 = space();
-    			a = element("a");
-    			a.textContent = "Show more";
-    			t29 = space();
-    			create_component(footer.$$.fragment);
-    			attr(section0, "class", "relative block h-500-px");
-    			attr(img, "alt", "...");
-    			if (!src_url_equal(img.src, img_src_value = team2)) attr(img, "src", img_src_value);
-    			attr(img, "class", "shadow-xl rounded-full h-auto align-middle border-none absolute -m-16 -ml-20 lg:-ml-16 max-w-150-px");
-    			attr(div2, "class", "relative");
-    			attr(div3, "class", "w-full lg:w-3/12 px-4 lg:order-2 flex justify-center");
-    			attr(div5, "class", "w-full lg:w-4/12 px-4 lg:order-3 lg:text-right lg:self-center");
-    			attr(div10, "class", "w-full lg:w-4/12 px-4 lg:order-1");
-    			attr(div11, "class", "flex flex-wrap justify-center");
-    			attr(div15, "class", "text-center mt-12");
-    			attr(p, "class", "mb-4 text-lg leading-relaxed text-blueGray-700");
-    			attr(a, "href", "#pablo");
-    			attr(a, "class", "font-normal text-red-500");
-    			attr(div16, "class", "w-full lg:w-9/12 px-4");
-    			attr(div17, "class", "flex flex-wrap justify-center");
-    			attr(div18, "class", "mt-10 py-10 border-t border-blueGray-200 text-center");
-    			attr(div19, "class", "px-6");
-    			attr(div20, "class", "relative flex flex-col min-w-0 break-words bg-white w-full mb-6 shadow-xl rounded-lg -mt-64");
-    			attr(div21, "class", "container mx-auto px-4");
-    			attr(section1, "class", "relative py-16 bg-blueGray-200");
-    			attr(main, "class", "profile-page");
-    		},
-    		m(target, anchor) {
-    			insert(target, div22, anchor);
-    			mount_component(authnavbar, div22, null);
-    			append(div22, t0);
-    			append(div22, main);
-    			append(main, section0);
-    			append(main, t2);
-    			append(main, section1);
-    			append(section1, div21);
-    			append(div21, div20);
-    			append(div20, div19);
-    			append(div19, div11);
-    			append(div11, div3);
-    			append(div3, div2);
-    			append(div2, img);
-    			append(div11, t3);
-    			append(div11, div5);
-    			append(div11, t5);
-    			append(div11, div10);
-    			append(div19, t17);
-    			append(div19, div15);
-    			append(div19, t25);
-    			append(div19, div18);
-    			append(div18, div17);
-    			append(div17, div16);
-    			append(div16, p);
-    			append(div16, t27);
-    			append(div16, a);
-    			append(div22, t29);
-    			mount_component(footer, div22, null);
-    			current = true;
-
-    			if (!mounted) {
-    				dispose = listen(a, "click", click_handler);
-    				mounted = true;
-    			}
-    		},
-    		p: noop$1,
-    		i(local) {
-    			if (current) return;
-    			transition_in(authnavbar.$$.fragment, local);
-    			transition_in(footer.$$.fragment, local);
-    			current = true;
-    		},
-    		o(local) {
-    			transition_out(authnavbar.$$.fragment, local);
-    			transition_out(footer.$$.fragment, local);
-    			current = false;
-    		},
-    		d(detaching) {
-    			if (detaching) detach(div22);
-    			destroy_component(authnavbar);
-    			destroy_component(footer);
-    			mounted = false;
-    			dispose();
-    		}
-    	};
-    }
-
-    const team2 = "/assets/img/team-2-800x800.jpg";
-    const click_handler = e => e.preventDefault();
+    const team1 = "/assets/img/Arko.jpg";
+    const team2 = "/assets/img/Asad.png";
+    const team3 = "/assets/img/Arnob.jpg";
+    const team4 = "/assets/img/MTZ.png";
 
     function instance$1($$self, $$props, $$invalidate) {
     	let { location } = $$props;
@@ -40717,7 +41262,7 @@ var app = (function () {
     	return [location];
     }
 
-    class Profile extends SvelteComponent {
+    class Landing extends SvelteComponent {
     	constructor(options) {
     		super();
     		init(this, options, instance$1, create_fragment$1, safe_not_equal, { location: 0 });
@@ -40734,8 +41279,6 @@ var app = (function () {
     	let route2;
     	let t2;
     	let route3;
-    	let t3;
-    	let route4;
     	let current;
 
     	route0 = new Route({
@@ -40750,11 +41293,7 @@ var app = (function () {
     			props: { path: "landing", component: Landing }
     		});
 
-    	route3 = new Route({
-    			props: { path: "profile", component: Profile }
-    		});
-
-    	route4 = new Route({ props: { path: "/", component: Index } });
+    	route3 = new Route({ props: { path: "/", component: Index } });
 
     	return {
     		c() {
@@ -40765,8 +41304,6 @@ var app = (function () {
     			create_component(route2.$$.fragment);
     			t2 = space();
     			create_component(route3.$$.fragment);
-    			t3 = space();
-    			create_component(route4.$$.fragment);
     		},
     		m(target, anchor) {
     			mount_component(route0, target, anchor);
@@ -40776,8 +41313,6 @@ var app = (function () {
     			mount_component(route2, target, anchor);
     			insert(target, t2, anchor);
     			mount_component(route3, target, anchor);
-    			insert(target, t3, anchor);
-    			mount_component(route4, target, anchor);
     			current = true;
     		},
     		p: noop$1,
@@ -40787,7 +41322,6 @@ var app = (function () {
     			transition_in(route1.$$.fragment, local);
     			transition_in(route2.$$.fragment, local);
     			transition_in(route3.$$.fragment, local);
-    			transition_in(route4.$$.fragment, local);
     			current = true;
     		},
     		o(local) {
@@ -40795,7 +41329,6 @@ var app = (function () {
     			transition_out(route1.$$.fragment, local);
     			transition_out(route2.$$.fragment, local);
     			transition_out(route3.$$.fragment, local);
-    			transition_out(route4.$$.fragment, local);
     			current = false;
     		},
     		d(detaching) {
@@ -40806,8 +41339,6 @@ var app = (function () {
     			destroy_component(route2, detaching);
     			if (detaching) detach(t2);
     			destroy_component(route3, detaching);
-    			if (detaching) detach(t3);
-    			destroy_component(route4, detaching);
     		}
     	};
     }

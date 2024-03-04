@@ -107,7 +107,7 @@ setInterval(async () => {
         database.collection('market')
         .updateOne(
             { "token":  obj.symbol},
-            { $set: { "currentPrice": obj.current_price } }
+            { $set: { "currentPrice": obj.current_price, "high24": obj.high_24h, "low24": obj.low_24h} }
         )
         .then(result => {
             if(result.matchedCount)
@@ -417,7 +417,7 @@ app.get("/market",(req,res)=>{
 app.get("/market/:token",(req,res)=>{
 
     database.collection('market')
-    .findOne({token: req.params.token}, {projection: {currentPrice: 1, _id: 0, change24h: 1}}) //cursor
+    .findOne({token: req.params.token}, {projection: {currentPrice: 1, _id: 0, change24h: 1, circulatingSupply: 1, volume: 1, low24: 1, high24: 1}}) //cursor
     .then((entry)=>{
         console.log(entry)
         res.status(200).json(entry)
@@ -1010,9 +1010,43 @@ app.get("/user/:userid", async (req, res) => {
             return res.status(400).json({ error: 'Invalid user ID' });
         }
         
-        const existingUser = await database.collection('user').findOne({ '_id': new ObjectId(userId) },{projection:{username:1,name:1,email:1}});
+        const existingUser = await database.collection('user').findOne({ '_id': new ObjectId(userId) },{projection:{username:1,name:1,email:1,wallet:1}});
         if (existingUser) {
             res.status(200).json(existingUser);
+        } else {
+            res.status(404).json({ error: 'User not found' });
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+app.patch("/user/:userid", async (req, res) => {
+    let data = req.body;
+    try {
+        const userId = req.params.userid;
+        if (!ObjectId.isValid(userId)) {
+            return res.status(400).json({ error: 'Invalid user ID' });
+        }
+        
+        const existingUser = await database.collection('user').findOne({ '_id': new ObjectId(userId) },{projection:{username:1,name:1,email:1,wallet:1}});
+        if (existingUser) {
+            // console.log(data.email);
+
+            database.collection('user')
+            .updateOne(
+                { '_id': new ObjectId(userId) },
+                { $set : {
+                    "name" : data.name,
+                    "email" : data.email,
+                    "wallet" : data.wallet
+                }}
+            )
+            .then(result => {
+                res.status(200).json({success:"patched"})
+                console.log(`Matched ${result.matchedCount} document(s) and modified ${result.modifiedCount} document(s)`);
+            })
         } else {
             res.status(404).json({ error: 'User not found' });
         }

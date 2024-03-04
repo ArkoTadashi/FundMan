@@ -9,6 +9,7 @@
   import PieChart from '../../components/Cards/PieChart.svelte';
   import CardStats from "components/Cards/CardStats.svelte";
   import AdminNavbar from "components/Navbars/AdminNavbar.svelte";
+  import HoldingCard from '../../components/Cards/HoldingCard.svelte';
   export let location;
 
   let isLoggedIn=false;
@@ -16,6 +17,8 @@
 
   let coins = [];
   onMount (async () => {
+
+    sessionStorage.setItem('currentPage','dashboard');
 
     isLoggedIn = JSON.parse(sessionStorage.getItem('isLoggedIn'));
     if(!isLoggedIn){
@@ -33,6 +36,11 @@
 
 
 <div>
+  <div class="flex flex-wrap">
+    <div class="w-full justify-center mb-12 xl:mb-0 px-4 -m-24">
+      <HoldingCard />
+    </div>
+  </div>
   <div class="flex flex-wrap">
     <div class="w-full xl:w-8/12 mb-12 xl:mb-0 px-4">
       <CardLineChart />

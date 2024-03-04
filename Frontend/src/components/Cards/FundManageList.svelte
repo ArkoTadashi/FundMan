@@ -99,11 +99,11 @@
                     }
 
                 response = await fetch(`http://localhost:9000/umanagement/${userID}`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
                 });
                 
                 console.log(response.status)
@@ -254,7 +254,7 @@ class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded 
         <tbody>
             {#each panels as panel, index}
             <tr 
-                on:click={() => handleInput(panel)}
+                on:click={() => handleInput(panel)} style="cursor: pointer;"
             >
                 <th
                 class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left flex items-center"
@@ -305,9 +305,6 @@ class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded 
             <div class="flex flex-wrap items-center">
             <div class="relative w-full max-w-full flex-grow flex-1">
                 
-                <h6 class="uppercase text-blueGray-100 mb-1 text-xs font-semibold">
-                    Overview
-                </h6>
                 <h2 class="text-white text-xl font-semibold">
                     Staking Details
                 </h2>
@@ -316,24 +313,26 @@ class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded 
             </div>
         </div>
         <div class="p-4 flex-auto">
-            <div class="relative h-350-px">
-                <div>
-                    <span
-                    class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left flex items-center"
+            <div class="relative h-350-px items-center content-center">
+                <div
+                    
+                    class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-2 flex justify-items-center justify-center"
                     >
+                    
                     <img
                         src="{team1}"
-                        class="h-12 w-12 bg-white rounded-full border"
+                        class="h-12 w-12 bg-white rounded-full border self-center"
                         alt="..."
                     />
-                    <span
-                        class="uppercase text-blueGray-100 mb-1 text-xs font-semibold"
+                    
+                    
+                </div>
+                <div
+                        class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-s whitespace-nowrap p-1 flex justify-items-center justify-center uppercase text-blueGray-100 mb-1 text-xs font-semibold self-center"
                     >
                         {"  " + selectedPanel.name.toUpperCase()}
-                    </span>
-                    </span>
-                </div>
-                <div class="grid grid-col-2">
+                    </div>
+                <div class="grid grid-col-2 border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-2 flex justify-items-center justify-center">
                     <br>
                     <div class="uppercase text-blueGray-100 mb-1 text-xs font-semibold">
                         Amount
@@ -342,14 +341,17 @@ class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded 
                         <input type="number" id="amount" min=0 bind:value={amount} />
                     </div>
                 </div>
-                <div  class="uppercase text-blueGray-100 mb-1 text-xs font-semibold">
+                <div  class="uppercase text-blueGray-100 mb-1 text-xs font-semibold border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-2 flex justify-items-center justify-center">
                     <p> Percentage </p>
-                    <label for="percentage1"><input type="radio" id="percentage1" name="percentage" value="5%" bind:group={selectedPercentage} /> 5% APR for 1 Month </label>
-                    <label for="percentage2"><input type="radio" id="percentage2" name="percentage" value="10%" bind:group={selectedPercentage} />  10% APR for 6 Months </label>
+                    
                 
                 </div>
+                <div class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-2 flex justify-items-center justify-center">
+                    <label class="uppercase text-blueGray-100 mb-1 text-xs font-semibold border-t-0 px-6" for="percentage1"><input type="radio" id="percentage1" name="percentage" value="5%" bind:group={selectedPercentage} /> 5% APR for 1 Month </label>
+                    <label class="uppercase text-blueGray-100 mb-1 text-xs font-semibold border-t-0 px-6" for="percentage2"><input type="radio" id="percentage2" name="percentage" value="10%" bind:group={selectedPercentage} />  10% APR for 6 Months </label>
+                </div>
 
-                <div  class="uppercase text-blueGray-100 mb-1 text-xs font-semibold">
+                <div  class="uppercase text-blueGray-100 mb-1 text-xs font-semibold border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-2 flex justify-items-center justify-center">
                     <button
                         class="bg-red-400 text-white active:bg-red-500 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
                         type="button"

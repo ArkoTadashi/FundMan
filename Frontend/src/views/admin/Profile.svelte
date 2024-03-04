@@ -1,14 +1,38 @@
 <script>
   // core components
-  import AuthNavbar from "components/Navbars/AuthNavbar.svelte";
+  import AdminNavbar from "components/Navbars/AdminNavbar.svelte";
   import Footer from "components/Footers/Footer.svelte";
+  import HoldingCard from "components/Cards/HoldingCard.svelte";
+  import { onMount } from "svelte";
 
-  const team2 = "/assets/img/team-2-800x800.jpg";
+  const team1 = "/assets/img/team-1-800x800.jpg";
   export let location;
+
+  let email = "";
+  let name = "";
+  let wallet = "";
+
+  let userID = sessionStorage.getItem("userID");
+
+  onMount(async () => {
+    const response = await fetch(`http://localhost:9000/user/${userID}`);
+    const jsonData = await response.json();
+    let data = jsonData;
+
+    email = data.email;
+    name = data.name;
+    wallet = data.wallet;
+  })
+
+
 </script>
 
 <div>
-  <AuthNavbar />
+  <div class="flex flex-wrap">
+    <div class="w-full justify-center mb-12 xl:mb-0 px-4 -m-24">
+      <HoldingCard />
+    </div>
+  </div>
   <main class="profile-page">
     <section class="relative block h-500-px">
       <div
@@ -53,12 +77,12 @@
                 <div class="relative">
                   <img
                     alt="..."
-                    src="{team2}"
+                    src="{team1}"
                     class="shadow-xl rounded-full h-auto align-middle border-none absolute -m-16 -ml-20 lg:-ml-16 max-w-150-px"
                   />
                 </div>
               </div>
-              <div
+              <!-- <div
                 class="w-full lg:w-4/12 px-4 lg:order-3 lg:text-right lg:self-center"
               >
                 <div class="py-6 px-3 mt-32 sm:mt-0">
@@ -69,8 +93,8 @@
                     Connect
                   </button>
                 </div>
-              </div>
-              <div class="w-full lg:w-4/12 px-4 lg:order-1">
+              </div> -->
+              <!-- <div class="w-full lg:w-4/12 px-4 lg:order-1">
                 <div class="flex justify-center py-4 lg:pt-4 pt-8">
                   <div class="mr-4 p-3 text-center">
                     <span
@@ -79,16 +103,16 @@
                       22
                     </span>
                     <span class="text-sm text-blueGray-400">Friends</span>
-                  </div>
-                  <div class="mr-4 p-3 text-center">
+                  </div> -->
+                  <!-- <div class="mr-4 p-3 text-center">
                     <span
                       class="text-xl font-bold block uppercase tracking-wide text-blueGray-600"
                     >
                       10
                     </span>
                     <span class="text-sm text-blueGray-400">Photos</span>
-                  </div>
-                  <div class="lg:mr-4 p-3 text-center">
+                  </div> -->
+                  <!-- <div class="lg:mr-4 p-3 text-center">
                     <span
                       class="text-xl font-bold block uppercase tracking-wide text-blueGray-600"
                     >
@@ -97,30 +121,33 @@
                     <span class="text-sm text-blueGray-400">Comments</span>
                   </div>
                 </div>
-              </div>
+              </div> -->
             </div>
             <div class="text-center mt-12">
+              <br><br>
               <h3
                 class="text-4xl font-semibold leading-normal mb-2 text-blueGray-700 mb-2"
               >
-                Jenna Stones
+                {name}
               </h3>
               <div
                 class="text-sm leading-normal mt-0 mb-2 text-blueGray-400 font-bold uppercase"
               >
-                <i class="fas fa-map-marker-alt mr-2 text-lg text-blueGray-400"></i>
-                Los Angeles, California
+                <i class="fas fa-envelope mr-2 text-lg text-blueGray-400"></i>
+                {email}
               </div>
               <div class="mb-2 text-blueGray-600 mt-10">
-                <i class="fas fa-briefcase mr-2 text-lg text-blueGray-400"></i>
-                Solution Manager - Creative Tim Officer
+                <i class="fas fa-map-marker-alt mr-2 text-lg text-blueGray-400"></i>
+                {wallet}
               </div>
-              <div class="mb-2 text-blueGray-600">
+              <br>
+              <br>
+              <!-- <div class="mb-2 text-blueGray-600">
                 <i class="fas fa-university mr-2 text-lg text-blueGray-400"></i>
                 University of Computer Science
-              </div>
+              </div> -->
             </div>
-            <div class="mt-10 py-10 border-t border-blueGray-200 text-center">
+            <!-- <div class="mt-10 py-10 border-t border-blueGray-200 text-center">
               <div class="flex flex-wrap justify-center">
                 <div class="w-full lg:w-9/12 px-4">
                   <p class="mb-4 text-lg leading-relaxed text-blueGray-700">
@@ -139,7 +166,7 @@
                   </a>
                 </div>
               </div>
-            </div>
+            </div> -->
           </div>
         </div>
       </div>

@@ -81,6 +81,10 @@
       let assets = jsonData.assets;
 
       sessionStorage.setItem("assets", JSON.stringify(assets));
+
+
+      coins = coins.filter(coin => coin.amount > 0);
+
       
 
     } catch (error) {
@@ -99,7 +103,7 @@
     <div>
       <!-- Card stats -->
       <div class="flex flex-wrap">
-        <div class="w-full lg:w-6/12 xl:w-3/12 px-4">
+        <!-- <div class="w-full lg:w-6/12 xl:w-3/12 px-4">
           <CardStats
             statSubtitle="Total Asset"
             statTitle={totalAssetValue.toLocaleString()}
@@ -113,8 +117,8 @@
         </div>
         <div class="w-full lg:w-6/12 xl:w-3/12 px-4">
           <CardStats
-            statSubtitle="NEW USERS"
-            statTitle="2,356"
+            statSubtitle="CHANGE SINCE YESTERDAY"
+            statTitle={coins.length}
             statArrow="down"
             statPercent="3.48"
             statPercentColor="text-red-500"
@@ -125,8 +129,8 @@
         </div>
         <div class="w-full lg:w-6/12 xl:w-3/12 px-4">
           <CardStats
-            statSubtitle="SALES"
-            statTitle="924"
+            statSubtitle="TOTAL TOKENS"
+            statTitle={coins.length}
             statArrow="down"
             statPercent="1.10"
             statPercentColor="text-orange-500"
@@ -146,7 +150,7 @@
             statIconName="fas fa-percent"
             statIconColor="bg-emerald-500"
           />
-        </div>
+        </div> -->
         
       </div>
     </div>

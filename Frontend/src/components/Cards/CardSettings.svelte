@@ -1,3 +1,52 @@
+<script>
+  import { onMount } from "svelte";
+
+  let userID = sessionStorage.getItem("userID");
+
+  let email = "";
+  let name = "";
+  let wallet = "";
+
+
+  async function getWalletAddress() {
+    try {
+      if (typeof window.ethereum !== 'undefined') {
+        const accs = await ethereum.request({ method: 'eth_requestAccounts' });
+        wallet = accs[0];
+      }
+    } catch (error) {
+      console.error("Error fetching wallet address:", error);
+      wallet = "";
+    }
+  }
+
+  async function saveProfile() {
+    let data = {"name" : name, "email" : email, "wallet" : wallet};
+    let response = await fetch(`http://localhost:9000/user/${userID}`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    });
+
+    console.log(response.status);
+  }
+
+  onMount(async () => {
+    const response = await fetch(`http://localhost:9000/user/${userID}`);
+    const jsonData = await response.json();
+    let data = jsonData;
+
+    email = data.email;
+    name = data.name;
+    wallet = data.wallet;
+  })
+
+</script>
+
+
+
 <div
   class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-blueGray-100 border-0"
 >
@@ -7,8 +56,9 @@
       <button
         class="bg-red-400 text-white active:bg-red-500 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
         type="button"
+        on:click={saveProfile}
       >
-        Settings
+        Save
       </button>
     </div>
   </div>
@@ -18,7 +68,7 @@
         User Information
       </h6>
       <div class="flex flex-wrap">
-        <div class="w-full lg:w-6/12 px-4">
+        <!-- <div class="w-full lg:w-6/12 px-4">
           <div class="relative w-full mb-3">
             <label
               class="block uppercase text-blueGray-600 text-xs font-bold mb-2"
@@ -33,8 +83,8 @@
               value="lucky.jesse"
             />
           </div>
-        </div>
-        <div class="w-full lg:w-6/12 px-4">
+        </div> -->
+        <div class="w-full lg:w-12/12 px-4">
           <div class="relative w-full mb-3">
             <label
               class="block uppercase text-blueGray-600 text-xs font-bold mb-2"
@@ -46,27 +96,27 @@
               id="grid-email"
               type="email"
               class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-              value="jesse@example.com"
+              bind:value={email}
             />
           </div>
         </div>
-        <div class="w-full lg:w-6/12 px-4">
+        <div class="w-full lg:w-12/12 px-4">
           <div class="relative w-full mb-3">
             <label
               class="block uppercase text-blueGray-600 text-xs font-bold mb-2"
               for="grid-first-name"
             >
-              First Name
+              Name
             </label>
             <input
               id="grid-first-name"
               type="text"
               class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-              value="Lucky"
+              bind:value={name}
             />
           </div>
         </div>
-        <div class="w-full lg:w-6/12 px-4">
+        <!-- <div class="w-full lg:w-6/12 px-4">
           <div class="relative w-full mb-3">
             <label
               class="block uppercase text-blueGray-600 text-xs font-bold mb-2"
@@ -78,31 +128,31 @@
               id="grid-last-name"
               type="text"
               class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-              value="Jesse"
+              value=""
             />
-          </div>
-        </div>
+          </div> 
+        </div> -->
       </div>
 
       <hr class="mt-6 border-b-1 border-blueGray-300" />
 
       <h6 class="text-blueGray-400 text-sm mt-3 mb-6 font-bold uppercase">
-        Contact Information
+        Wallet Address
       </h6>
       <div class="flex flex-wrap">
-        <div class="w-full lg:w-12/12 px-4">
+        <div class="w-full lg:w-8/12 px-4">
           <div class="relative w-full mb-3">
             <label
               class="block uppercase text-blueGray-600 text-xs font-bold mb-2"
               for="grid-address"
             >
-              Address
+              <!-- Wallet Address -->
             </label>
             <input
               id="grid-address"
               type="text"
               class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-              value="Bld Mihail Kogalniceanu, nr. 8 Bl 1, Sc 1, Ap 09"
+              bind:value={wallet}
             />
           </div>
         </div>
@@ -110,19 +160,20 @@
           <div class="relative w-full mb-3">
             <label
               class="block uppercase text-blueGray-600 text-xs font-bold mb-2"
-              for="grid-city"
+              for="grid-address"
             >
-              City
+              
             </label>
-            <input
-              id="grid-city"
-              type="email"
-              class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-              value="New York"
-            />
+            <button
+              class="bg-red-400 text-white active:bg-red-500 font-bold uppercase text-xs px-6 py-3 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
+              type="button"
+              on:click={getWalletAddress}
+            >
+              Load Wallet
+            </button>
           </div>
         </div>
-        <div class="w-full lg:w-4/12 px-4">
+        <!-- <div class="w-full lg:w-4/12 px-4">
           <div class="relative w-full mb-3">
             <label
               class="block uppercase text-blueGray-600 text-xs font-bold mb-2"
@@ -152,10 +203,10 @@
               class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
               value="Postal Code"
             />
-          </div>
-        </div>
+          </div> -->
+        <!-- </div> -->
       </div>
-
+<!-- 
       <hr class="mt-6 border-b-1 border-blueGray-300" />
 
       <h6 class="text-blueGray-400 text-sm mt-3 mb-6 font-bold uppercase">
@@ -180,7 +231,7 @@
             />
           </div>
         </div>
-      </div>
+      </div> -->
     </form>
   </div>
 </div>

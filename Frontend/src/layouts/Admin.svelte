@@ -18,6 +18,7 @@
   import FundRaiseOverview from "../views/admin/FundRaiseOverview.svelte";
   import FundRaise from "../views/admin/FundRaise.svelte";
   import FundRaiseRequest from "../views/admin/FundRaiseRequest.svelte";
+  import Profile from "views/admin/Profile.svelte";
 
   export let location;
   export let admin = "";
@@ -40,6 +41,7 @@
         <Route path="fundraiseoverview" component="{FundRaiseOverview}" />
         <Route path="fundraise" component="{FundRaise}" />
         <Route path="fundraiserequest" component="{FundRaiseRequest}" />
+        <Route path="profile" component="{Profile}" />
       </Router>
       <FooterAdmin />
     </div>
