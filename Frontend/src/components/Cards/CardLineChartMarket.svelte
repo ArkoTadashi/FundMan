@@ -4,7 +4,7 @@
     import Chart from "chart.js";
   
     export let showMarket;
-    
+    let coinName = sessionStorage.getItem("showCoin");
     let yearButtonColor = 'bg-red-500';
     let monthlyButtonColor = 'bg-indigo-500';
     let config;
@@ -27,7 +27,6 @@
 
     
   
-    let coinName;
     let yearlyLabels = [
             "March '23",
             "April '23",
@@ -96,10 +95,13 @@
       monthlyButtonColor = 'bg-red-500';
       updateChart();
     }
+
+
+    let cardData;
     onMount(async () => {
   
       
-      coinName = sessionStorage.getItem("showCoin");
+      
       const response = await fetch(`http://localhost:9000/market/${coinName}/yearly`);
       const jsonData = await response.json();
       yearlyData = jsonData.yearlyPrice;
@@ -198,63 +200,238 @@
       updateChart();
       // var ctx = document.getElementById("line-chart").getContext("2d");
       // window.myLine = new Chart(ctx, config);
+      
+
+      let res = await fetch(`http://localhost:9000/market/${coinName}`);
+      let jData = await res.json();
+      
+      let res2 = await fetch(`http://localhost:9000/token/${coinName}`);
+      let jData2 = await res2.json();
+        
+      cardData = {
+        name: jData2.name,
+        currentPrice: jData.currentPrice,
+        change24h: jData.change24h,
+        circulatingSupply: jData.circulatingSupply,
+        volume: jData.volume,
+        low24: jData.low24,
+        high24: jData.high24,
+        logo: jData2.logo
+      }
+
+      
+
+      
+
+
     });
   
     
   </script>
-  
-  <div
-    class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded bg-blueGray-700"
-  >
-    <div class="rounded-t mb-0 px-4 py-3 bg-transparent">
-      <div class="flex flex-wrap items-center">
-        <div class="relative w-full max-w-full flex-grow flex-1">
-            <div class="flex flex-wrap">
-                <h6 class="uppercase text-blueGray-100 mb-1 text-xs font-semibold">
-                    Price History
-                </h6>
-                <div class="relative w-full px-4 max-w-full flex-grow flex-1 text-right">
-                <button
-                    class="bg-indigo-500 text-white active:bg-indigo-600 text-xs font-bold uppercase px-3 py-1 rounded outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
-                    type="button"
-                    on:click={switchToMarket}
-                  >
-                  close
-                </button>
-                </div>
+
+<div class="flex flex-wrap">
+
+
+<div
+class="relative flex flex-col w-full lg:w-8/12 px-4 break-words w-full mb-6 shadow-lg rounded bg-blueGray-700"
+>
+<div class="rounded-t mb-0 px-4 py-3 bg-transparent">
+  <div class="flex flex-wrap items-center">
+    <div class="relative w-full max-w-full flex-grow flex-1">
+        <div class="flex flex-wrap">
+            <h6 class="uppercase text-blueGray-100 mb-1 text-xs font-semibold">
+                Price History
+            </h6>
+            <div class="relative w-full px-4 max-w-full flex-grow flex-1 text-right">
+            <button
+                class="bg-indigo-500 text-white active:bg-indigo-600 text-xs font-bold uppercase px-3 py-1 rounded outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+                type="button"
+                on:click={switchToMarket}
+              >
+              close
+            </button>
             </div>
-          <h2 class="text-white text-xl font-semibold">
-            {coinName}
-          </h2>
-          
         </div>
-      </div>
+      <h2 class="text-white text-xl font-semibold">
+        <!-- {coinName} -->
+      </h2>
+      
     </div>
-    <div class="p-4 flex-auto">
-      <!-- Chart -->
+  </div>
+</div>
+<div class="p-4 flex-auto">
+  <!-- Chart -->
+  <div class="relative h-350-px w-8\/12">
+    <canvas id="line-chart"></canvas>
+  </div>
+</div>
+<div class="flex flex-wrap">
+  <div class="relative w-full px-4 max-w-full flex-grow flex-1 text-center">
+    <button
+        class="{yearButtonColor} text-white active:bg-indigo-600 text-xs font-bold uppercase px-3 py-1 rounded outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+        type="button"
+        on:click={showYearly}
+      >
+      yearly
+    </button>
+    </div>
+  <div class="relative w-full px-4 max-w-full flex-grow flex-1 text-center">
+  <button
+      class="{monthlyButtonColor} text-white active:bg-indigo-600 text-xs font-bold uppercase px-3 py-1 rounded outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+      type="button"
+      on:click={showMonthly}
+    >
+    monthly
+  </button>
+  </div>
+</div>
+
+
+
+</div>
+
+
+
+  <div
+    class="relative min-w-0 w-full lg:w-4/12 px-4 break-words bg-white mb-6 shadow-lg rounded"
+>
+    <div class="rounded-t mb-0 mr-4 px-4 py-3 bg-transparent">
+      <div class="flex flex-wrap items-center">
+      <div class="relative w-full max-w-full flex-grow flex-1">
+      <br>
+      {#if cardData!= null}
+      <h2 class="uppercase text-blueGray-400 mb-1 text-xs font-semibold">
+      {cardData.name.toUpperCase()}
+      </h2>
+      {/if}
+      <br><br>
+      <h2 class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-s whitespace-nowrap p-4 text-left flex items-center">
+      {#if cardData!=null}
+      <img
+          src="{cardData.logo}"
+          class="ml-3 h-10 w-10 bg-white rounded-full border"
+          alt="..."
+      />
+      {/if}
+      <span
+          class="ml-3 font-bold {'btext-blueGray-600'}"
+      >
+          {coinName.toUpperCase()}
+      </span> 
+      </h2>
+      </div>
+      </div>
+      </div>
+      <div class="p-4 flex-auto">
       <div class="relative h-350-px">
-        <canvas id="line-chart"></canvas>
-      </div>
-    </div>
-    <div class="flex flex-wrap">
-      <div class="relative w-full px-4 max-w-full flex-grow flex-1 text-center">
-        <button
-            class="{yearButtonColor} text-white active:bg-indigo-600 text-xs font-bold uppercase px-3 py-1 rounded outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
-            type="button"
-            on:click={showYearly}
+        {#if cardData != null}
+      <table class="items-center w-full bg-transparent border-collapse">
+      <thead>
+      </thead>
+      <tbody>
+          <tr>
+              <th
+              class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-s whitespace-nowrap p-4 text-left flex items-center"
+              >
+              <span
+                  class="ml-3 font-bold {'btext-blueGray-600'}"
+              >
+                  {"Circulating Supply"}
+              </span>
+              </th>
+              <td
+              class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-s whitespace-nowrap p-4"
+              >
+                  {cardData.circulatingSupply}
+              </td>
+          </tr>
+          <tr>
+              <th
+              class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-s whitespace-nowrap p-4 text-left flex items-center"
+              >
+              <span
+                  class="ml-3 font-bold {'btext-blueGray-600'}"
+              >
+                  {"Current Price"}
+              </span>
+              </th>
+              <td
+              class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-s whitespace-nowrap p-4"
+              >
+                  {cardData.currentPrice}
+              </td>
+          </tr>
+          <tr>
+              <th
+              class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-s whitespace-nowrap p-4 text-left flex items-center"
+              >
+              <span
+                  class="ml-3 font-bold {'btext-blueGray-600'}"
+              >
+                  {"Volume"}
+              </span>
+              </th>
+              <td
+              class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-s whitespace-nowrap p-4"
+              >
+                  {cardData.volume}
+              </td>
+          </tr>
+          <tr>
+            <th
+            class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-s whitespace-nowrap p-4 text-left flex items-center"
+            >
+            <span
+                class="ml-3 font-bold {'btext-blueGray-600'}"
+            >
+                {"Change 24H"}
+            </span>
+            </th>
+            <td
+            class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-s whitespace-nowrap p-4"
+            >
+                {cardData.change24h}
+            </td>
+        </tr>
+          <tr>
+            <th
+            class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-s whitespace-nowrap p-4 text-left flex items-center"
+            >
+            <span
+                class="ml-3 font-bold {'btext-blueGray-600'}"
+            >
+                {"High 24H"}
+            </span>
+            </th>
+            <td
+            class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-s whitespace-nowrap p-4"
+            >
+                {cardData.high24}
+            </td>
+        </tr>
+        <tr>
+          <th
+          class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-s whitespace-nowrap p-4 text-left flex items-center"
           >
-          yearly
-        </button>
-        </div>
-      <div class="relative w-full px-4 max-w-full flex-grow flex-1 text-center">
-      <button
-          class="{monthlyButtonColor} text-white active:bg-indigo-600 text-xs font-bold uppercase px-3 py-1 rounded outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
-          type="button"
-          on:click={showMonthly}
-        >
-        monthly
-      </button>
+          <span
+              class="ml-3 font-bold {'btext-blueGray-600'}"
+          >
+              {"Low 24H"}
+          </span>
+          </th>
+          <td
+          class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-s whitespace-nowrap p-4"
+          >
+              {cardData.low24}
+          </td>
+      </tr>
+      </tbody>    
+      </table>
+      {/if}
       </div>
-  </div>
-  </div>
+      </div>
+
+    </div>
+
+</div>
   

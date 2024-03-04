@@ -2,6 +2,7 @@
   // core components
   import AdminNavbar from "components/Navbars/AdminNavbar.svelte";
   import Footer from "components/Footers/Footer.svelte";
+  import HoldingCard from "components/Cards/HoldingCard.svelte";
   import { onMount } from "svelte";
 
   const team1 = "/assets/img/team-1-800x800.jpg";
@@ -27,7 +28,11 @@
 </script>
 
 <div>
-  <AdminNavbar />
+  <div class="flex flex-wrap">
+    <div class="w-full justify-center mb-12 xl:mb-0 px-4 -m-24">
+      <HoldingCard />
+    </div>
+  </div>
   <main class="profile-page">
     <section class="relative block h-500-px">
       <div

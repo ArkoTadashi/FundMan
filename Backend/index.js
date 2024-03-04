@@ -107,7 +107,7 @@ setInterval(async () => {
         database.collection('market')
         .updateOne(
             { "token":  obj.symbol},
-            { $set: { "currentPrice": obj.current_price } }
+            { $set: { "currentPrice": obj.current_price, "high24": obj.high_24h, "low24": obj.low_24h} }
         )
         .then(result => {
             if(result.matchedCount)
@@ -417,7 +417,7 @@ app.get("/market",(req,res)=>{
 app.get("/market/:token",(req,res)=>{
 
     database.collection('market')
-    .findOne({token: req.params.token}, {projection: {currentPrice: 1, _id: 0, change24h: 1}}) //cursor
+    .findOne({token: req.params.token}, {projection: {currentPrice: 1, _id: 0, change24h: 1, circulatingSupply: 1, volume: 1, low24: 1, high24: 1}}) //cursor
     .then((entry)=>{
         console.log(entry)
         res.status(200).json(entry)
@@ -997,7 +997,7 @@ app.patch("/user/:userid", async (req, res) => {
         const existingUser = await database.collection('user').findOne({ '_id': new ObjectId(userId) },{projection:{username:1,name:1,email:1,wallet:1}});
         if (existingUser) {
             // console.log(data.email);
-            
+
             database.collection('user')
             .updateOne(
                 { '_id': new ObjectId(userId) },

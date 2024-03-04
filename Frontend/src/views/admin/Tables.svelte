@@ -69,7 +69,7 @@
 <div>
 <div class="flex flex-wrap mt-4">
   {#if showChart}
-  <div class="w-full xl:w-8/12 mb-12 xl:mb-0 px-4 items-start">
+  <div class="w-full mb-12 xl:mb-0 px-4 items-start">
     <CardLineChartMarket {showMarket}/>
   </div>
   {:else}

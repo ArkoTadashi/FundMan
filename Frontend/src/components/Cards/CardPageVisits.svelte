@@ -2,7 +2,7 @@
 
   import { onMount } from "svelte";
 
-  let coins = [];
+  let coins = [{logo: "", name: "", price: 0, amount: 0, code: "", usd: 0, change24h: 0}];
   onMount(async () => {
     coins = await JSON.parse(sessionStorage.getItem("coins"));
     coins = await coins.filter(coin => coin.amount > 0);
@@ -65,6 +65,7 @@
       </thead>
       <tbody>
         {#each coins as coin, index}
+          {#if coin.usd != null || coin.amount != null}
           <tr>
             <th
               class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left flex items-center"
@@ -106,6 +107,7 @@
               </span>
             </td>
           </tr>
+          {/if}
         {/each}
       </tbody>
     </table>
