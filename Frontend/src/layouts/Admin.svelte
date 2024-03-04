@@ -13,6 +13,7 @@
   import Tables from "views/admin/Tables.svelte";
   import Maps from "views/admin/Maps.svelte";
   import AI from "views/admin/AI.svelte";
+  import Academy from "views/admin/Academy.svelte";
 
   export let location;
   export let admin = "";
@@ -30,6 +31,7 @@
         <Route path="tables" component="{Tables}" />
         <Route path="maps" component="{Maps}" />
         <Route path="ai" component="{AI}" />
+        <Route path="academy" component="{Academy}" />
       </Router>
       <FooterAdmin />
     </div>
