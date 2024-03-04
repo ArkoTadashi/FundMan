@@ -99,11 +99,11 @@
                     }
 
                 response = await fetch(`http://localhost:9000/umanagement/${userID}`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
                 });
                 
                 console.log(response.status)

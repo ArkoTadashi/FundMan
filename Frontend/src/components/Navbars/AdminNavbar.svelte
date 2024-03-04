@@ -1,6 +1,14 @@
 <script>
   // core components
   import UserDropdown from "components/Dropdowns/UserDropdown.svelte";
+  import { navigate } from "svelte-routing";
+  
+  
+  const image = "../assets/img/team-1-800x800.jpg";
+
+  function showProfile() {
+    navigate("./profile");
+  }
 </script>
 
 <!-- Navbar -->
@@ -36,7 +44,25 @@
     </form>
     <!-- User -->
     <ul class="flex-col md:flex-row list-none items-center hidden md:flex">
-      <UserDropdown />
+      <div>
+        <a
+          class="text-blueGray-500 block"
+          href="#pablo"
+          on:click={showProfile}
+        >
+          <div class="items-center flex">
+            <span
+              class="w-12 h-12 text-sm text-white bg-blueGray-200 inline-flex items-center justify-center rounded-full"
+            >
+              <img
+                alt="..."
+                class="w-full rounded-full align-middle border-none shadow-lg"
+                src="{image}"
+              />
+            </span>
+          </div>
+        </a>
+      </div>
     </ul>
   </div>
 </nav>

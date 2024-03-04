@@ -81,6 +81,9 @@
       let assets = jsonData.assets;
 
       sessionStorage.setItem("assets", JSON.stringify(assets));
+
+
+      c
       
 
     } catch (error) {

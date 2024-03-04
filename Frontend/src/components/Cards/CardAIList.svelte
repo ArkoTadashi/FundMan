@@ -288,9 +288,9 @@
   
 
 
-<div class="grid grid-cols-2 gap-4">
+<div class="flex flex-wrap">
 <div
-    class="relative min-w-0 w-full px-4 break-words bg-white mb-6 shadow-lg rounded"
+    class="relative min-w-0 w-full lg:w-4/12 px-4 break-words bg-white mb-6 shadow-lg rounded"
 >
     <div class="rounded-t mb-0 mr-4 px-4 py-3 bg-transparent">
         <div class="flex flex-wrap items-center">
@@ -415,7 +415,7 @@
 </div>
 
 <div
-    class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded bg-blueGray-700"
+    class="relative flex flex-col w-full lg:w-8/12 px-4 break-words w-full mb-6 shadow-lg rounded bg-blueGray-700"
 >
     <div class="rounded-t ml-4 mb-0 px-4 py-3 bg-transparent">
         <div class="flex flex-wrap items-center">
