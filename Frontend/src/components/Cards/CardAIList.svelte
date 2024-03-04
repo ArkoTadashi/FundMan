@@ -117,8 +117,15 @@
 
     function updateChart() {
         if (!config) return;
-        var ctx = document.getElementById("line-chart").getContext("2d");
-        window.myLine = new Chart(ctx, config);
+        var canvas = document.getElementById("line-chart");
+    var ctx = canvas.getContext("2d");
+    
+    // Check if there's an existing Chart instance
+    if (window.myLine) {
+        window.myLine.destroy(); // Destroy the existing Chart instance
+    }
+
+    window.myLine = new Chart(ctx, config); // Create a new Chart instance
     }
 
 
