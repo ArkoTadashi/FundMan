@@ -17,10 +17,10 @@
         >
           Copyright © {date}
           <a
-            href="https://www.creative-tim.com?ref=ns-footer-small"
+            href="/landing"
             class="text-white hover:text-blueGray-300 text-sm font-semibold py-1"
           >
-            Creative Tim
+          FundMan
           </a>
         </div>
       </div>
@@ -28,15 +28,15 @@
         <ul class="flex flex-wrap list-none md:justify-end justify-center">
           <li>
             <a
-              href="https://www.creative-tim.com?ref=ns-footer-small"
+              href="/landing"
               class="text-white hover:text-blueGray-300 text-sm font-semibold block py-1 px-3"
             >
-              Creative Tim
+            FundMan
             </a>
           </li>
           <li>
             <a
-              href="https://www.creative-tim.com/presentation?ref=ns-footer-small"
+              href="/landing"
               class="text-white hover:text-blueGray-300 text-sm font-semibold block py-1 px-3"
             >
               About Us
@@ -44,7 +44,7 @@
           </li>
           <li>
             <a
-              href="http://blog.creative-tim.com?ref=ns-footer-small"
+              href="/landing"
               class="text-white hover:text-blueGray-300 text-sm font-semibold block py-1 px-3"
             >
               Blog
@@ -52,7 +52,7 @@
           </li>
           <li>
             <a
-              href="https://github.com/creativetimofficial/notus-svelte/blob/main/LICENSE.md?ref=ns-footer-small"
+              href="/landing"
               class="text-white hover:text-blueGray-300 text-sm font-semibold block py-1 px-3"
             >
               MIT License
