@@ -52,6 +52,9 @@
         console.log('Amount:', amount);
         console.log('Percentage:', selectedPercentage);
         console.log('Panel Member Name:', panelMember.name);
+
+        let addTime = (selectedPercentage==="5%"? 30*24*60*60 : 30*24*60*60*6);
+        let percentage = (selectedPercentage==="5%"? 5 : 10);
         //pmem
 
         let walletAddress = await getWalletAddress();
@@ -72,8 +75,9 @@
                 "userID": userID,
                 "total":amount,
                 "starting": parseInt(Date.now()/1000),
-                "ending": parseInt(Date.now()/1000+30*24*60*60),
-                "wallet": walletAddress
+                "ending": parseInt(Date.now()/1000+addTime),
+                "wallet": walletAddress,
+                "percentage": percentage
                 }
                 console.log("----data",data)
 
@@ -94,8 +98,9 @@
                     "panelID": panelID,
                     "total":amount,
                     "starting": parseInt(Date.now()/1000),
-                    "ending": parseInt(Date.now()/1000+30*24*60*60),
-                    "wallet": walletAddress
+                    "ending": parseInt(Date.now()/1000+addTime),
+                    "wallet": walletAddress,
+                    "percentage": percentage
                     }
 
                 response = await fetch(`http://localhost:9000/umanagement/${userID}`, {
@@ -111,7 +116,21 @@
                 //go back
                 sessionStorage.setItem('panelMemberUsername', '');
                 sessionStorage.setItem('panelID', 0);
-                push('/FundManage')
+
+                response = await fetch(`http://localhost:9000/umanagement/${userID}`);
+                jsonData = await response.json();
+                data = jsonData;
+
+                requests = await Promise.all(data.funds.map(async fund => ({  
+                    panel: await getManagerInfo(fund.panelID),
+                    panelId: fund.panelID,
+                    total: fund.total,
+                    percentage: fund.percentage,
+                    starting: getTime(fund.starting),
+                    ending: getTime(fund.ending),
+                    time: getRemainingTime(fund.starting, fund.ending),
+                    status: getStatus(fund.ending)
+                })));
             }
             else {
                 alert("Transaction Failed");
