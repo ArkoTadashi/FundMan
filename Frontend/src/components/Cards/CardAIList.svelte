@@ -118,14 +118,14 @@
     function updateChart() {
         if (!config) return;
         var canvas = document.getElementById("line-chart");
-    var ctx = canvas.getContext("2d");
-    
-    // Check if there's an existing Chart instance
-    if (window.myLine) {
-        window.myLine.destroy(); // Destroy the existing Chart instance
-    }
+        var ctx = canvas.getContext("2d");
+        
+        // Check if there's an existing Chart instance
+        if (window.myLine) {
+            window.myLine.destroy(); // Destroy the existing Chart instance
+        }
 
-    window.myLine = new Chart(ctx, config); // Create a new Chart instance
+        window.myLine = new Chart(ctx, config); // Create a new Chart instance
     }
 
 
@@ -297,11 +297,11 @@
 
 <div class="flex flex-wrap">
 <div
-    class="relative min-w-0 w-full lg:w-4/12 px-4 break-words bg-white mb-6 shadow-lg rounded"
+    class="relative min-w-0 w-full lg:w-4/12 px-4 break-words bg-white mb-6 shadow-lg rounded p-2"
 >
-    <div class="rounded-t mb-0 mr-4 px-4 py-3 bg-transparent">
-        <div class="flex flex-wrap items-center">
-        <div class="relative w-full max-w-full flex-grow flex-1">
+    <div class="rounded-t mb-0 mr-4 px-4 py-3 bg-transparent ">
+        <div class="flex flex-wrap items-center ">
+        <div class="relative w-full max-w-full flex-grow flex-1 ">
             <br>
             <h6 class="uppercase text-blueGray-400 mb-1 text-xs font-semibold">
             AI Price Prediction
@@ -326,7 +326,7 @@
                 {#if filteredItems.length > 0}
                     <ul class="absolute z-10 mt-12 ml-10 ml-10 px-40 py-2 bg-white border border-gray-300 rounded shadow">
                         {#each filteredItems as item}
-                            <li class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-s whitespace-nowrap p-4 text-left flex items-center hover:bg-gray-500"
+                            <li class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-s whitespace-nowrap p-4 text-left flex items-center hover:shadow-lg:hover" style="cursor: pointer;"
                                 on:click={() => {handleItemClick(item); clearFilteredItems(); clearInput();}}
                             >
                                 <img

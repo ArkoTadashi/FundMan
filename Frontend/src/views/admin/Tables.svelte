@@ -2,6 +2,7 @@
   // core components
   import CardTable from "components/Cards/CardTable.svelte";
   import CardLineChartMarket from "../../components/Cards/CardLineChartMarket.svelte";
+  import { onMount } from "svelte";
   export let location;
 
   let tableWidth="w-full";
@@ -16,6 +17,12 @@
   function showMarket(){
     showChart=false;
   }
+
+  onMount (() => {
+    
+    sessionStorage.setItem('currentPage','Market');
+
+  })
 
   let pastMonthData = [
         { dataPoint: 'January 13', usd: 1847.0679792102258 },

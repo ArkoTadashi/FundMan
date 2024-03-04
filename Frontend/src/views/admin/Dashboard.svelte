@@ -18,6 +18,8 @@
   let coins = [];
   onMount (async () => {
 
+    sessionStorage.setItem('currentPage','dashboard');
+
     isLoggedIn = JSON.parse(sessionStorage.getItem('isLoggedIn'));
     if(!isLoggedIn){
       window.location.href="http://localhost:5000/auth/login"

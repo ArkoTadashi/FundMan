@@ -60,12 +60,7 @@
     >
       
       <ul class="flex flex-col lg:flex-row list-none lg:ml-auto">
-        {#if isLoggedIn}
         
-        <li class="flex items-center">
-          <PagesDropdown />
-        </li>
-        {/if}
         <li class="flex items-center">
           <a
             class="lg:text-white lg:hover:text-blueGray-200 text-blueGray-700 px-3 py-4 lg:py-2 flex items-center text-xs uppercase font-bold"

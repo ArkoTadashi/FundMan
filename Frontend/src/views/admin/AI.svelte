@@ -9,9 +9,9 @@
 
 
 
-  onMount (async () => {
+  onMount (() => {
     
-    
+    sessionStorage.setItem('currentPage','AI Prediction');
 
   })
 
