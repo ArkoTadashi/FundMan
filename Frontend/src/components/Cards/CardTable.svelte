@@ -19,6 +19,13 @@
   let data = [];
   let coins = [];
 
+  export let shrinkTable;
+
+  function showCoinHistory(coin){
+    sessionStorage.setItem("showCoin", coin.name);
+    shrinkTable();
+  }
+
   onMount(async () => {
     const response = await fetch('http://localhost:9000/market');
     const jsonData = await response.json();
@@ -118,7 +125,7 @@
       </thead>
       <tbody>
         {#each coins as coin, index}
-          <tr>
+          <tr on:click={showCoinHistory(coin)} style="cursor: pointer;transition: background-color 0.3s;">
             <th
               class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left flex items-center"
             >
