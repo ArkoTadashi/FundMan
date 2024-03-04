@@ -4056,6 +4056,14 @@ select {
   .lg\:w-9\/12 {
     width: 75%;
   }
+
+  .lg\:w-3\/5 {
+    width: 60%;
+  }
+
+  .lg\:w-2\/5 {
+    width: 40%;
+  }
 }
 
 @media (min-width: 1280px) {

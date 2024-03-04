@@ -800,6 +800,7 @@ app.get('/fundraiserequestdonar/:uid', (req, res) => {
         .toArray() 
         .then(entries => {
             panel = entries;
+            console.log(panel)
             res.status(200).json(panel);
         })
         .catch(error => {
@@ -963,6 +964,41 @@ app.patch('/fundraisepayee/updatestatus/:uid/:reqId', async (req, res) => {
         res.status(500).json({ error: 'Error updating payment status' });
     }
 });
+
+app.get('/academy', (req, res) => {
+    database.collection('academy')
+        .find()
+        .toArray()
+        .then(holdings => {
+            res.status(200).json(holdings);
+        })
+        .catch(error => {
+            console.error('Error fetching academy collection:', error);
+            res.status(500).json({ error: 'Academy collection fetching error' });
+        });
+});
+
+
+app.get('/academy/:id', async (req, res) => {
+    try {
+        const id = req.params.id;
+        if (!ObjectId.isValid(id)) {
+            return res.status(400).json({ error: 'Invalid ID' });
+        }
+        
+        const existing = await database.collection('academy')
+            .findOne({ '_id': new ObjectId(id) }); // Corrected from userId to id
+        if (existing) {
+            res.status(200).json(existing);
+        } else {
+            res.status(404).json({ error: 'Content not found' });
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Academy error' });
+    }    
+});
+
 
 
 

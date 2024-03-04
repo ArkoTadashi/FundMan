@@ -233,7 +233,7 @@
 
 
 <div
-class="relative flex flex-col w-full lg:w-8/12 px-4 break-words w-full mb-6 shadow-lg rounded bg-blueGray-700"
+class="relative flex flex-col w-full lg:w-3/5 px-4 break-words w-full mb-6 shadow-lg rounded bg-blueGray-700"
 >
 <div class="rounded-t mb-0 px-4 py-3 bg-transparent">
   <div class="flex flex-wrap items-center">
@@ -293,7 +293,7 @@ class="relative flex flex-col w-full lg:w-8/12 px-4 break-words w-full mb-6 shad
 
 
   <div
-    class="relative min-w-0 w-full lg:w-4/12 px-4 break-words bg-white mb-6 shadow-lg rounded"
+    class="relative min-w-0 w-full lg:w-2/5 px-4 break-words bg-white mb-6 shadow-lg rounded"
 >
     <div class="rounded-t mb-0 mr-4 px-4 py-3 bg-transparent">
       <div class="flex flex-wrap items-center">
