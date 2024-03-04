@@ -25,14 +25,6 @@
             data: [30, 78, 56, 34, 100, 45, 13],
             fill: false,
             barThickness: 8
-          },
-          {
-            label: new Date().getFullYear() - 1,
-            fill: false,
-            backgroundColor: "#4c51bf",
-            borderColor: "#4c51bf",
-            data: [27, 68, 86, 74, 10, 4, 87],
-            barThickness: 8
           }
         ]
       },
@@ -109,10 +101,10 @@
     <div class="flex flex-wrap items-center">
       <div class="relative w-full max-w-full flex-grow flex-1">
         <h6 class="uppercase text-blueGray-400 mb-1 text-xs font-semibold">
-          Performance
+          Total Transactions
         </h6>
         <h2 class="text-blueGray-700 text-xl font-semibold">
-          Total orders
+          
         </h2>
       </div>
     </div>

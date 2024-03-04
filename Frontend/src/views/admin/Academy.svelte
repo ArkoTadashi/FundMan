@@ -84,8 +84,20 @@
  
 <!-- Header -->
 <div class="grid grid-cols-2 gap-4">
+  
 <div class="relative bg-red-200 md:pt-32 pb-32 pt-12">
+  
   <div class="px-4 md:px-10 mx-auto w-full">
+    <div class="rounded-t mb-0 px-4 py-3 bg-transparent">
+      <div class="flex flex-wrap items-center">
+        <div class="relative w-full max-w-full flex-grow flex-1">
+          <h6 class="uppercase text-black-100 mb-1 text-xs font-semibold">
+            Academy
+          </h6>
+          <br>
+        </div>
+      </div>
+    </div>
     <div>
       <!-- Card stats -->
       <div class="flex flex-wrap">

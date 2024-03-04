@@ -2,6 +2,9 @@
     import { onMount } from 'svelte';
 
     const team1 = "/assets/img/team-1-800x800.jpg";
+
+
+
     async function getWalletAddress() {
         try {
             if (typeof window.ethereum !== 'undefined') {
@@ -31,78 +34,39 @@
 
     }
 
-    // async function submitForm() {
-    //     // Process the form submission here
-    //     console.log('Amount:', amount);
-    //     console.log('Percentage:', selectedPercentage);
-    //     console.log('Panel Member Name:', panelMember.name);
-    //     //pmem
+    async function submitForm(rid,curr,paidMoney,payeeID,malikWallet) {
+        // Process the form submission here
+        
+        //pmem
+        console.log(malikWallet)
 
-    //     let walletAddress = await getWalletAddress();
-    //     sessionStorage.setItem('walletAddress', walletAddress);
+        let walletAddress = await getWalletAddress();
+        sessionStorage.setItem('walletAddress', walletAddress);
 
-    //     let transactionParam = {
-    //         to: panelMember.wallet,
-    //         from: walletAddress,
-    //         value: '0x' + (amount*1.01*(10**18)).toString(16)
-    //     };
+        
+
+        let transactionParam = {
+            to: malikWallet,
+            from: walletAddress,
+            value: '0x' + (amount*1.01*(10**18)).toString(16)
+        };
 
 
 
-    //     ethereum.request({method: 'eth_sendTransaction', params:[transactionParam]}).then(txhash => {
-    //         checkTransaction(txhash).then(async (r) => {
-    //         if (r.status == "0x1") {
-    //             let data = {
-    //             "userID": userID,
-    //             "total":amount,
-    //             "starting": parseInt(Date.now()/1000),
-    //             "ending": parseInt(Date.now()/1000+30*24*60*60),
-    //             "wallet": walletAddress
-    //             }
-    //             console.log("----data",data)
+        ethereum.request({method: 'eth_sendTransaction', params:[transactionParam]}).then(txhash => {
+            checkTransaction(txhash).then(async (r) => {
+            if (r.status == "0x1") {
 
                 
 
-    //             let response = await fetch(`http://localhost:9000/management/${panelID}`, {
-    //                 method: 'PATCH',
-    //                 headers: {
-    //                 'Content-Type': 'application/json'
-    //                 },
-    //                 body: JSON.stringify(data)
-    //             });
-                
-    //             console.log(response.status)
-
-    //             //user
-    //             data = {
-    //                 "panelID": panelID,
-    //                 "total":amount,
-    //                 "starting": parseInt(Date.now()/1000),
-    //                 "ending": parseInt(Date.now()/1000+30*24*60*60),
-    //                 "wallet": walletAddress
-    //                 }
-
-    //             response = await fetch(`http://localhost:9000/umanagement/${userID}`, {
-    //             method: 'PATCH',
-    //             headers: {
-    //                 'Content-Type': 'application/json'
-    //             },
-    //             body: JSON.stringify(data)
-    //             });
-                
-    //             console.log(response.status)
-
-    //             //go back
-    //             sessionStorage.setItem('panelMemberUsername', '');
-    //             sessionStorage.setItem('panelID', 0);
-    //             push('/FundManage')
-    //         }
-    //         else {
-    //             alert("Transaction Failed");
-    //         }
-    //         });
-    //     })
-    // }
+                payMoney(rid,curr,paidMoney,payeeID);
+            }
+            else {
+                alert("Transaction Failed");
+            }
+            });
+        })
+    }
     
     
 
@@ -126,6 +90,7 @@
             userID:request.userID,
             requestID:request.requestID,
             amount:request.amount,
+            wallet:request.wallet,
             returnPolicy:request.returnPolicy,
             description:request.description,
             currentAmount:request.currentAmount,
@@ -161,7 +126,9 @@
         }
     }
 
-    async function payMoney(rid,curr,paidMoney,payeeID){
+    async function payMoney(rid,curr,paidMoney,payeeID) {
+
+
         curr = parseFloat(curr);
         paidMoney = parseFloat(paidMoney);
         let newamount=curr+paidMoney
@@ -374,7 +341,7 @@ class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded 
                     <button
                         class="bg-red-400 text-white active:bg-red-500 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
                         type="button"
-                        on:click={payMoney(requestDetail._id,requestDetail.currentAmount,paidMoney,userID)}
+                        on:click={submitForm(requestDetail._id,requestDetail.currentAmount,paidMoney,userID,requestDetail.wallet)}
                     >
                         Confirm
                     </button>

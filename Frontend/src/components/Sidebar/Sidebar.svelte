@@ -135,7 +135,7 @@
           </a>
         </li>
 
-        <li class="items-center">
+        <!-- <li class="items-center">
           <a
             use:link
             href="/admin/maps"
@@ -146,7 +146,7 @@
             ></i>
             News
           </a>
-        </li>
+        </li> -->
 
         <li class="items-center">
           <a
@@ -162,7 +162,7 @@
         </li>
 
 
-        <li class="items-center">
+        <!-- <li class="items-center">
           <a
             use:link
             href="/admin/maps"
@@ -173,7 +173,7 @@
             ></i>
             Forum
           </a>
-        </li>
+        </li> -->
 
         <li class="items-center">
           <a

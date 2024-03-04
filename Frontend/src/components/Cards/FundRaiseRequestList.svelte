@@ -74,6 +74,7 @@
       let data = {
                   "userName": userName,
                   "userID": userID,
+                  "wallet": sessionStorage.getItem("walletAddress"),
                   "requestID": parseInt(count.count)+1,
                   "amount": amount,
                   "returnPolicy": returnPolicy,
