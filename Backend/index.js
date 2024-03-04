@@ -800,6 +800,7 @@ app.get('/fundraiserequestdonar/:uid', (req, res) => {
         .toArray() 
         .then(entries => {
             panel = entries;
+            console.log(panel)
             res.status(200).json(panel);
         })
         .catch(error => {

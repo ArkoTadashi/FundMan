@@ -2,7 +2,6 @@
   // core components
 
   import { onMount } from 'svelte';
-  import CardAIChart from "components/Cards/CardAIChart.svelte";
   import CardAIList from "components/Cards/CardAIList.svelte";
   export let location;
 
@@ -22,12 +21,12 @@
   
 <div>
   <div class="flex flex-wrap">
-    <div class="w-full xl:w-4/12 px-4">
+    <div class="w-full px-4">
       <CardAIList />
     </div>
-    <div class="w-full xl:w-8/12 mb-12 xl:mb-0 px-4">
+    <!-- <div class="w-full xl:w-8/12 mb-12 xl:mb-0 px-4">
       <CardAIChart />
-    </div>
+    </div> -->
   </div>
   <!-- <div class="flex flex-wrap mt-4">
     <div class="w-full xl:w-8/12 mb-12 xl:mb-0 px-4">

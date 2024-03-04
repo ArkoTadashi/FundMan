@@ -14,6 +14,10 @@
   import Maps from "views/admin/Maps.svelte";
   import AI from "views/admin/AI.svelte";
   import Academy from "views/admin/Academy.svelte";
+  import FundManage from "views/admin/FundManage.svelte";
+  import FundRaiseOverview from "../views/admin/FundRaiseOverview.svelte";
+  import FundRaise from "../views/admin/FundRaise.svelte";
+  import FundRaiseRequest from "../views/admin/FundRaiseRequest.svelte";
 
   export let location;
   export let admin = "";
@@ -32,6 +36,10 @@
         <Route path="maps" component="{Maps}" />
         <Route path="ai" component="{AI}" />
         <Route path="academy" component="{Academy}" />
+        <Route path="fundmanage" component="{FundManage}" />
+        <Route path="fundraiseoverview" component="{FundRaiseOverview}" />
+        <Route path="fundraise" component="{FundRaise}" />
+        <Route path="fundraiserequest" component="{FundRaiseRequest}" />
       </Router>
       <FooterAdmin />
     </div>

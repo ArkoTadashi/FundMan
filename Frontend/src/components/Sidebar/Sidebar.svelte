@@ -178,11 +178,11 @@
         <li class="items-center">
           <a
             use:link
-            href="/admin/maps"
-            class="text-xs uppercase py-3 font-bold block {location.href.indexOf('/admin/maps') !== -1 ? 'text-red-500 hover:text-red-600':'text-blueGray-700 hover:text-blueGray-500'}"
+            href="/admin/fundmanage"
+            class="text-xs uppercase py-3 font-bold block {location.href.indexOf('/admin/fundmanage') !== -1 ? 'text-red-500 hover:text-red-600':'text-blueGray-700 hover:text-blueGray-500'}"
           >
             <i
-              class="fas fa-map-marked mr-2 text-sm {location.href.indexOf('/admin/maps') !== -1 ? 'opacity-75' : 'text-blueGray-300'}"
+              class="fas fa-map-marked mr-2 text-sm {location.href.indexOf('/admin/fundmanage') !== -1 ? 'opacity-75' : 'text-blueGray-300'}"
             ></i>
             Fund Management
           </a>
@@ -191,13 +191,39 @@
         <li class="items-center">
           <a
             use:link
-            href="/admin/maps"
-            class="text-xs uppercase py-3 font-bold block {location.href.indexOf('/admin/maps') !== -1 ? 'text-red-500 hover:text-red-600':'text-blueGray-700 hover:text-blueGray-500'}"
+            href="/admin/fundraise"
+            class="text-xs uppercase py-3 font-bold block {location.href.indexOf('/admin/fundraise') !== -1 ? 'text-red-500 hover:text-red-600':'text-blueGray-700 hover:text-blueGray-500'}"
           >
             <i
-              class="fas fa-map-marked mr-2 text-sm {location.href.indexOf('/admin/maps') !== -1 ? 'opacity-75' : 'text-blueGray-300'}"
+              class="fas fa-map-marked mr-2 text-sm {location.href.indexOf('/admin/fundraise') !== -1 ? 'opacity-75' : 'text-blueGray-300'}"
             ></i>
             Fund Raising
+          </a>
+        </li>
+
+        <li class="items-center">
+          <a
+            use:link
+            href="/admin/fundraiseoverview"
+            class="text-xs uppercase py-3 font-bold block {location.href.indexOf('/admin/fundraiseoverview') !== -1 ? 'text-red-500 hover:text-red-600':'text-blueGray-700 hover:text-blueGray-500'}"
+          >
+            <i
+              class="fas fa-map-marked mr-2 text-sm {location.href.indexOf('/admin/fundraiseoverview') !== -1 ? 'opacity-75' : 'text-blueGray-300'}"
+            ></i>
+            Fund Raising Overview
+          </a>
+        </li>
+
+        <li class="items-center">
+          <a
+            use:link
+            href="/admin/fundraiserequest"
+            class="text-xs uppercase py-3 font-bold block {location.href.indexOf('/admin/fundraiserequest') !== -1 ? 'text-red-500 hover:text-red-600':'text-blueGray-700 hover:text-blueGray-500'}"
+          >
+            <i
+              class="fas fa-map-marked mr-2 text-sm {location.href.indexOf('/admin/fundraiserequest') !== -1 ? 'opacity-75' : 'text-blueGray-300'}"
+            ></i>
+            Fund Raise Request
           </a>
         </li>
 
