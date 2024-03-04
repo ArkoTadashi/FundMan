@@ -62,7 +62,7 @@
         >
           <div class="items-center flex">
             <span
-              class="w-12 h-12 text-sm text-white bg-blueGray-200 inline-flex items-center justify-center rounded-full"
+              class="w-12 h-12 text-sm text-white bg-blueGray-200 inline-flex justify-items-center justify-center rounded-full"
             >
               <img
                 alt="..."

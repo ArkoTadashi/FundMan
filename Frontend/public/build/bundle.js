@@ -3669,7 +3669,7 @@ var app = (function () {
     			attr(img, "alt", "...");
     			attr(img, "class", "w-full rounded-full align-middle border-none shadow-lg");
     			if (!src_url_equal(img.src, img_src_value = image)) attr(img, "src", img_src_value);
-    			attr(span, "class", "w-12 h-12 text-sm text-white bg-blueGray-200 inline-flex items-center justify-center rounded-full");
+    			attr(span, "class", "w-12 h-12 text-sm text-white bg-blueGray-200 inline-flex justify-items-center justify-center rounded-full");
     			attr(div0, "class", "items-center flex");
     			attr(a, "class", "text-blueGray-500 block");
     			attr(a, "href", "/admin/profile");
@@ -35059,6 +35059,7 @@ var app = (function () {
 
     			attr(td1, "class", "border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4");
     			attr(td2, "class", "border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4");
+    			set_style(tr, "cursor", "pointer");
     		},
     		m(target, anchor) {
     			insert(target, tr, anchor);
@@ -35118,40 +35119,39 @@ var app = (function () {
 
     // (300:4) {#if selectedPanel != null}
     function create_if_block$1(ctx) {
-    	let div11;
+    	let div13;
     	let div2;
-    	let t3;
-    	let div10;
-    	let div9;
+    	let t1;
+    	let div12;
+    	let div11;
     	let div3;
-    	let span1;
     	let img;
     	let img_src_value;
-    	let t4;
-    	let span0;
-    	let t5_value = "  " + /*selectedPanel*/ ctx[1].name.toUpperCase() + "";
-    	let t5;
-    	let t6;
-    	let div6;
-    	let br;
-    	let t7;
+    	let t2;
     	let div4;
-    	let t9;
-    	let div5;
-    	let input0;
-    	let t10;
+    	let t3_value = "  " + /*selectedPanel*/ ctx[1].name.toUpperCase() + "";
+    	let t3;
+    	let t4;
     	let div7;
-    	let p;
-    	let t12;
+    	let br;
+    	let t5;
+    	let div5;
+    	let t7;
+    	let div6;
+    	let input0;
+    	let t8;
+    	let div8;
+    	let t10;
+    	let div9;
     	let label0;
     	let input1;
-    	let t13;
-    	let t14;
+    	let t11;
+    	let t12;
     	let label1;
     	let input2;
-    	let t15;
-    	let t16;
-    	let div8;
+    	let t13;
+    	let t14;
+    	let div10;
     	let button;
     	let binding_group;
     	let mounted;
@@ -35160,115 +35160,113 @@ var app = (function () {
 
     	return {
     		c() {
-    			div11 = element("div");
+    			div13 = element("div");
     			div2 = element("div");
-
-    			div2.innerHTML = `<div class="flex flex-wrap items-center"><div class="relative w-full max-w-full flex-grow flex-1"><h6 class="uppercase text-blueGray-100 mb-1 text-xs font-semibold">Overview</h6> 
-                <h2 class="text-white text-xl font-semibold">Staking Details</h2></div></div>`;
-
-    			t3 = space();
-    			div10 = element("div");
-    			div9 = element("div");
+    			div2.innerHTML = `<div class="flex flex-wrap items-center"><div class="relative w-full max-w-full flex-grow flex-1"><h2 class="text-white text-xl font-semibold">Staking Details</h2></div></div>`;
+    			t1 = space();
+    			div12 = element("div");
+    			div11 = element("div");
     			div3 = element("div");
-    			span1 = element("span");
     			img = element("img");
-    			t4 = space();
-    			span0 = element("span");
-    			t5 = text(t5_value);
-    			t6 = space();
-    			div6 = element("div");
-    			br = element("br");
-    			t7 = space();
+    			t2 = space();
     			div4 = element("div");
-    			div4.textContent = "Amount";
-    			t9 = space();
-    			div5 = element("div");
-    			input0 = element("input");
-    			t10 = space();
+    			t3 = text(t3_value);
+    			t4 = space();
     			div7 = element("div");
-    			p = element("p");
-    			p.textContent = "Percentage";
-    			t12 = space();
+    			br = element("br");
+    			t5 = space();
+    			div5 = element("div");
+    			div5.textContent = "Amount";
+    			t7 = space();
+    			div6 = element("div");
+    			input0 = element("input");
+    			t8 = space();
+    			div8 = element("div");
+    			div8.innerHTML = `<p>Percentage</p>`;
+    			t10 = space();
+    			div9 = element("div");
     			label0 = element("label");
     			input1 = element("input");
-    			t13 = text(" 5% APR for 1 Month");
-    			t14 = space();
+    			t11 = text(" 5% APR for 1 Month");
+    			t12 = space();
     			label1 = element("label");
     			input2 = element("input");
-    			t15 = text("  10% APR for 6 Months");
-    			t16 = space();
-    			div8 = element("div");
+    			t13 = text("  10% APR for 6 Months");
+    			t14 = space();
+    			div10 = element("div");
     			button = element("button");
     			button.textContent = "Confirm";
     			attr(div2, "class", "rounded-t ml-4 mb-0 px-4 py-3 bg-transparent");
     			if (!src_url_equal(img.src, img_src_value = team1$2)) attr(img, "src", img_src_value);
-    			attr(img, "class", "h-12 w-12 bg-white rounded-full border");
+    			attr(img, "class", "h-12 w-12 bg-white rounded-full border self-center");
     			attr(img, "alt", "...");
-    			attr(span0, "class", "uppercase text-blueGray-100 mb-1 text-xs font-semibold");
-    			attr(span1, "class", "border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left flex items-center");
-    			attr(div4, "class", "uppercase text-blueGray-100 mb-1 text-xs font-semibold");
+    			attr(div3, "class", "border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-2 flex justify-items-center justify-center");
+    			attr(div4, "class", "border-t-0 px-6 align-middle border-l-0 border-r-0 text-s whitespace-nowrap p-1 flex justify-items-center justify-center uppercase text-blueGray-100 mb-1 text-xs font-semibold self-center");
+    			attr(div5, "class", "uppercase text-blueGray-100 mb-1 text-xs font-semibold");
     			attr(input0, "type", "number");
     			attr(input0, "id", "amount");
     			attr(input0, "min", "0");
-    			attr(div6, "class", "grid grid-col-2");
+    			attr(div7, "class", "grid grid-col-2 border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-2 flex justify-items-center justify-center");
+    			attr(div8, "class", "uppercase text-blueGray-100 mb-1 text-xs font-semibold border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-2 flex justify-items-center justify-center");
     			attr(input1, "type", "radio");
     			attr(input1, "id", "percentage1");
     			attr(input1, "name", "percentage");
     			input1.__value = "5%";
     			input1.value = input1.__value;
+    			attr(label0, "class", "uppercase text-blueGray-100 mb-1 text-xs font-semibold border-t-0 px-6");
     			attr(label0, "for", "percentage1");
     			attr(input2, "type", "radio");
     			attr(input2, "id", "percentage2");
     			attr(input2, "name", "percentage");
     			input2.__value = "10%";
     			input2.value = input2.__value;
+    			attr(label1, "class", "uppercase text-blueGray-100 mb-1 text-xs font-semibold border-t-0 px-6");
     			attr(label1, "for", "percentage2");
-    			attr(div7, "class", "uppercase text-blueGray-100 mb-1 text-xs font-semibold");
+    			attr(div9, "class", "border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-2 flex justify-items-center justify-center");
     			attr(button, "class", "bg-red-400 text-white active:bg-red-500 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150");
     			attr(button, "type", "button");
-    			attr(div8, "class", "uppercase text-blueGray-100 mb-1 text-xs font-semibold");
-    			attr(div9, "class", "relative h-350-px");
-    			attr(div10, "class", "p-4 flex-auto");
-    			attr(div11, "class", "relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded bg-blueGray-700");
+    			attr(div10, "class", "uppercase text-blueGray-100 mb-1 text-xs font-semibold border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-2 flex justify-items-center justify-center");
+    			attr(div11, "class", "relative h-350-px items-center content-center");
+    			attr(div12, "class", "p-4 flex-auto");
+    			attr(div13, "class", "relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded bg-blueGray-700");
     			binding_group.p(input1, input2);
     		},
     		m(target, anchor) {
-    			insert(target, div11, anchor);
-    			append(div11, div2);
-    			append(div11, t3);
-    			append(div11, div10);
-    			append(div10, div9);
-    			append(div9, div3);
-    			append(div3, span1);
-    			append(span1, img);
-    			append(span1, t4);
-    			append(span1, span0);
-    			append(span0, t5);
-    			append(div9, t6);
-    			append(div9, div6);
-    			append(div6, br);
-    			append(div6, t7);
-    			append(div6, div4);
-    			append(div6, t9);
-    			append(div6, div5);
-    			append(div5, input0);
+    			insert(target, div13, anchor);
+    			append(div13, div2);
+    			append(div13, t1);
+    			append(div13, div12);
+    			append(div12, div11);
+    			append(div11, div3);
+    			append(div3, img);
+    			append(div11, t2);
+    			append(div11, div4);
+    			append(div4, t3);
+    			append(div11, t4);
+    			append(div11, div7);
+    			append(div7, br);
+    			append(div7, t5);
+    			append(div7, div5);
+    			append(div7, t7);
+    			append(div7, div6);
+    			append(div6, input0);
     			set_input_value(input0, /*amount*/ ctx[2]);
-    			append(div9, t10);
-    			append(div9, div7);
-    			append(div7, p);
-    			append(div7, t12);
-    			append(div7, label0);
+    			append(div11, t8);
+    			append(div11, div8);
+    			append(div11, t10);
+    			append(div11, div9);
+    			append(div9, label0);
     			append(label0, input1);
     			input1.checked = input1.__value === /*selectedPercentage*/ ctx[3];
-    			append(label0, t13);
-    			append(div7, t14);
-    			append(div7, label1);
+    			append(label0, t11);
+    			append(div9, t12);
+    			append(div9, label1);
     			append(label1, input2);
     			input2.checked = input2.__value === /*selectedPercentage*/ ctx[3];
-    			append(label1, t15);
-    			append(div9, t16);
-    			append(div9, div8);
-    			append(div8, button);
+    			append(label1, t13);
+    			append(div11, t14);
+    			append(div11, div10);
+    			append(div10, button);
 
     			if (!mounted) {
     				dispose = [
@@ -35282,7 +35280,7 @@ var app = (function () {
     			}
     		},
     		p(ctx, dirty) {
-    			if (dirty & /*selectedPanel*/ 2 && t5_value !== (t5_value = "  " + /*selectedPanel*/ ctx[1].name.toUpperCase() + "")) set_data(t5, t5_value);
+    			if (dirty & /*selectedPanel*/ 2 && t3_value !== (t3_value = "  " + /*selectedPanel*/ ctx[1].name.toUpperCase() + "")) set_data(t3, t3_value);
 
     			if (dirty & /*amount*/ 4 && to_number(input0.value) !== /*amount*/ ctx[2]) {
     				set_input_value(input0, /*amount*/ ctx[2]);
@@ -35297,7 +35295,7 @@ var app = (function () {
     			}
     		},
     		d(detaching) {
-    			if (detaching) detach(div11);
+    			if (detaching) detach(div13);
     			binding_group.r();
     			mounted = false;
     			run_all(dispose);
@@ -35305,7 +35303,7 @@ var app = (function () {
     	};
     }
 
-    // (432:8) {#each requests as request, index}
+    // (434:8) {#each requests as request, index}
     function create_each_block(ctx) {
     	let tr;
     	let th;
